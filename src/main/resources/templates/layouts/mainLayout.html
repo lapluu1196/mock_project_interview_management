@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:fragment="${title}">DEV IMS</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="wrapper">
+
+    <!-- Sidebar    -->
+    <aside th:replace="fragments/aside :: aside"></aside>
+    <!-- End Sidebar   -->
+
+    <!-- Main Board   -->
+    <div class="main p-3">
+        <!-- Main board header -->
+        <div class="row d-flex justify-content-between align-items-center mb-3">
+            <div id="hamburgerButton" class="col-1">
+                <button class="hamburger-btn" type="button">
+                    <img src="/images/hambuger.png" alt="hamburgerButton">
+                </button>
+            </div>
+
+            <!-- Title -->
+            <div class="col-5">
+                <div id="title" class="d-flex justify-content-start align-items-center">
+                    <h1 id="pageTitle"></h1>
+                </div>
+            </div>
+            <!-- End title -->
+
+            <!-- User and Role -->
+            <div class="col-6 d-flex justify-content-end align-items-center">
+                <div id="userAndRole" class="d-flex flex-column justify-content-center align-items-center">
+                    <div id="user">
+                        <span>hoannk</span>
+                    </div>
+                    <div id="role">
+                        <span>HR Department</span>
+                    </div>
+                </div>
+
+                <img id="userIcon" src="/images/people.png" alt="user">
+
+                <a href="#" id="logout">Logout</a>
+            </div>
+            <!-- End User and Role -->
+        </div>
+        <!-- End Main board header -->
+
+        <!-- Main board content -->
+        <div class="row">
+            <div id="mainBoard" class="vh-100" layout:fragment="content">
+            </div>
+        </div>
+        <!-- Main board content -->
+    </div>
+    <!-- End Main Board   -->
+</div>
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/js/script.js"></script>
+</body>
+</html>
