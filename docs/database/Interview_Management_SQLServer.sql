@@ -58,7 +58,7 @@ CREATE TABLE Jobs (
     salary_range_to DECIMAL(18,2),
     working_address NVARCHAR(255),
     benefits NVARCHAR(255),
-    level NVARCHAR(50) CHECK (level IN ('Fresher', 'Junior', 'Senior', 'Leader', 'Manager', 'Vice Head')),
+    level NVARCHAR(255) NOT NULL,
     status NVARCHAR(50) CHECK (status IN ('Draft', 'Open', 'Closed')),
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE()
