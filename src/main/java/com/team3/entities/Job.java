@@ -42,7 +42,7 @@ public class Job {
     @Column(name = "benefits", length = 255)
     private String benefits;
 
-    @Column(name = "level", nullable = false, length = 50)
+    @Column(name = "level", nullable = false, length = 255)
     private String level;
 
     @Column(name = "status", nullable = false, length = 50)
