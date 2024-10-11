@@ -21,13 +21,13 @@ public class Job {
     @Column(name = "job_title", nullable = false, length = 150)
     private String jobTitle;
 
-    @Column(name = "required_skills", length = 255)
+    @Column(name = "required_skills", nullable = false, length = 255)
     private String requiredSkills;
 
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column(name = "end_date")
+    @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
     @Column(name = "salary_range_from")
@@ -39,7 +39,7 @@ public class Job {
     @Column(name = "working_address", length = 255)
     private String workingAddress;
 
-    @Column(name = "benefits", length = 255)
+    @Column(name = "benefits", nullable = false, length = 255)
     private String benefits;
 
     @Column(name = "level", nullable = false, length = 255)
@@ -47,6 +47,9 @@ public class Job {
 
     @Column(name = "status", nullable = false, length = 50)
     private String status;
+
+    @Column(name = "description", length = 1000)
+    private String description;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

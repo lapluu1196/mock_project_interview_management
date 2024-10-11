@@ -33,16 +33,16 @@ public class Candidate {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(name = "gender", length = 50)
+    @Column(name = "gender", nullable = false, length = 50)
     private String gender;
 
     @Column(name = "cv", length = 255)
     private String cv;
 
-    @Column(name = "current_position", length = 100)
+    @Column(name = "current_position", nullable = false, length = 100)
     private String currentPosition;
 
-    @Column(name = "skills", length = 255)
+    @Column(name = "skills", nullable = false, length = 255)
     private String skills;
 
     @Column(name = "years_of_experience")
@@ -57,6 +57,9 @@ public class Candidate {
 
     @Column(name = "status", nullable = false, length = 50)
     private String status;
+
+    @Column(name = "notes", length = 1000)
+    private String notes;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
