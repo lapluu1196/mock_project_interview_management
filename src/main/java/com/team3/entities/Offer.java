@@ -27,22 +27,40 @@ public class Offer {
     private Job job;
 
     @ManyToOne
-    @JoinColumn(name = "approved_by", nullable = false)
-    private User approvedBy;
+    @JoinColumn(name = "approver", nullable = false)
+    private User approver;
 
     @Column(name = "contract_type", nullable = false, length = 50)
     private String contractType;
 
-    @Column(name = "salary")
-    private Double salary;
+    @Column(name = "level", nullable = false, length = 255)
+    private String level;
+
+    @Column(name = "department", nullable = false, length = 255)
+    private String department;
+
+    @Column(name = "interview_info", length = 255)
+    private String interviewInfo;
+
+    @Column(name = "recruiter_owner", nullable = false, length = 255)
+    private String recruiterOwner;
+
+    @Column(name = "contract_period_from", nullable = false)
+    private LocalDate contractPeriodFrom;
+
+    @Column(name = "contract_period_to", nullable = false)
+    private LocalDate contractPeriodTo;
+
+    @Column(name = "basic_salary", nullable = false)
+    private Double basicSalary;
 
     @Column(name = "offer_status", nullable = false, length = 50)
     private String offerStatus;
 
-    @Column(name = "due_date")
+    @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
 
-    @Column(name = "notes", length = 500)
+    @Column(name = "notes", length = 1000)
     private String notes;
 
     @Column(name = "created_at", nullable = false)
