@@ -222,3 +222,57 @@ a.sidebar-link:hover {
     }
 
 }
+
+/* User Management Page Styles */
+
+#searchForm form input {
+    background-color: #F0F3FB;
+    border: none;
+    outline: none;
+    padding: 0.5rem;
+}
+
+#searchForm form input:focus {
+    border: none;
+    outline: none;
+}
+
+#searchForm form button {
+    background-color: #F0F3FB;
+    border: none;
+    outline: none;
+    padding: 0.5rem;
+}
+
+#searchForm form button img {
+    width: 20px;
+}
+
+#sortByRole {
+    background-color: #F0F3FB;
+    padding: 0.5rem;
+    border: none;
+    outline: none;
+}
+
+#userTable {
+    background-color: #F1F6FB;
+}
+
+#userTable thead th {
+    background-color: #F2F2EE;
+}
+
+#userTable td, #userTable th {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table>:not(caption, thead)>*>* {
+    padding: 0;
+}
+
+#pagination a {
+    background-color: transparent;
+    border: none;
+}
