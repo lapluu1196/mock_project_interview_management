@@ -6,6 +6,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name = "InterviewSchedules")
@@ -19,7 +20,7 @@ public class InterviewSchedule {
     @Column(name = "schedule_id")
     private Long scheduleId;
 
-    @Column(name = "interview_title", length = 150)
+    @Column(name = "interview_title", nullable = false, length = 255)
     private String interviewTitle;
 
     @ManyToOne
@@ -42,9 +43,22 @@ public class InterviewSchedule {
     @Column(name = "location", length = 255)
     private String location;
 
-    @ManyToOne
-    @JoinColumn(name = "interviewer_id", nullable = false)
-    private User interviewer;
+    @ManyToMany
+    @JoinTable(
+            name = "interview_schedule_interviewers",
+            joinColumns = @JoinColumn(name = "schedule_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> interviewers;
+
+    @Column(name = "recruiter_owner", nullable = false, length = 255)
+    private String recruiterOwner;
+
+    @Column(name = "meeting_id", length = 255)
+    private String meetingId;
+
+    @Column(name = "notes", length = 1000)
+    private String notes;
 
     @Column(name = "status", nullable = false, length = 50)
     private String status;
