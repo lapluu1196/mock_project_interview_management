@@ -9,9 +9,11 @@ $(document).ready(function () {
     const $hamburgerDiv = $("#hamburgerButton");
     const $hamburgerBtn = $hamburgerDiv.find("button");
     const $sidebar = $("#sidebar");
-    const $mainBoard = $("#mainBoard");
+    const $rightBoard = $("#rightBoard").children().not("#hamburgerButton");
 
-    $hamburgerBtn.on("click", function () {
+    $hamburgerBtn.on("click", function (event) {
+        event.stopPropagation();
+
         $sidebar.toggleClass("active");
 
         if ($sidebar.hasClass("active")) {
@@ -21,7 +23,7 @@ $(document).ready(function () {
         }
     });
 
-    $mainBoard.on("click", function () {
+    $rightBoard.on("click", function () {
         if ($sidebar.hasClass("active")) {
             $sidebar.removeClass("active");
             $hamburgerDiv.removeClass("non-active");
@@ -30,4 +32,9 @@ $(document).ready(function () {
 
     const title = $('title').text();
     $('#pageTitle').text(title);
+
+//  Cancel button
+    $('#cancelButton').on('click', function () {
+        window.history.back();
+    });
 });
