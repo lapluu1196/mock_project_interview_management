@@ -32,11 +32,10 @@ $(document).ready(function () {
 
     const title = $('title').text();
     $('#pageTitle').text(title);
-
+  
     /* Back button */
     $('#cancelButton').on('click', function () {
         window.history.back();
     });
-
 
 });
