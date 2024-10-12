@@ -33,8 +33,10 @@ $(document).ready(function () {
     const title = $('title').text();
     $('#pageTitle').text(title);
 
-//  Cancel button
+    /* Back button */
     $('#cancelButton').on('click', function () {
         window.history.back();
     });
+
+
 });
