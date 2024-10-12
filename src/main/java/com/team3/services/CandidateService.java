@@ -1,17 +1,10 @@
 package com.team3.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-import com.team3.entities.Candidate;
-import com.team3.repositories.CandidateRepository;
+import com.team3.dtos.candidate.CandidateDTO;
 
-@Service
 public interface CandidateService {
-
-    @Autowired
-    private CandidateRepository candidateRepository;
-
-    public List<Candidate> getAllCandidates() {
-        return candidateRepository.findAll();
+    // Search for candidates based on keyword and status
+    List<CandidateDTO> searchCandidates(String keyword, String status);
 }
