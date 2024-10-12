@@ -15,4 +15,10 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
     
     // Find candidates by status only
     List<Candidate> findByStatus(String status);
+
+    // Find candidates by keyword only
+    List<Candidate> findByKeyword(String keyword);
+
+    // If nothing is filtered, return all candidates
+    List<Candidate> findAll();
 }
