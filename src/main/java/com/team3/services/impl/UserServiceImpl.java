@@ -75,4 +75,9 @@ public class UserServiceImpl implements UserService {
     public void deleteById(Long id) {
 
     }
+
+    @Override
+    public List<User> getInterviewers() {
+        return userRepository.findByRole("Interviewer");
+    }
 }
