@@ -9,8 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.team3.entities.Candidate;
 
 @Repository
-public interface CandidateRepository extends JpaRepository<Candidate, Long>, JpaSpecificationExecutor<Candidate> {
-    Candidate findFullNameByCandidateId(Long candidateId);
+public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 
     // Search candidates by keyword in name, email, or phone number and filter by status
     List<Candidate> findByKeywordAndStatus(String keyword, String status);
@@ -24,4 +23,3 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long>, Jpa
     // If nothing is filtered, return all candidates
     List<Candidate> findAll();
 }
-

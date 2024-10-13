@@ -1,7 +1,5 @@
 package com.team3.services.impl;
 
-import com.team3.repositories.CandidateRepository;
-=======
 import com.team3.entities.Candidate;
 import com.team3.dtos.candidate.CandidateDTO;
 import com.team3.services.CandidateService;
