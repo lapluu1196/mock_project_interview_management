@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainLayout}">
+<head>
+    <meta charset="UTF-8">
+    <title layout:fragment="title">Offer</title>
+</head>
+<body>
+<div id="mainBoard" layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <h4>Offer list</h4>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-start">
+        <!-- Search -->
+        <div class="col-3" id="searchForm">
+            <form action="/search" method="get">
+                <div class="input-group mb-3">
+                    <input class="form-control" type="search" name="keyword" id="searchOffer" aria-label="Recipient's username" aria-describedby="searchIcon" placeholder="Search" th:value="${keyword}" style="outline: none; box-shadow: none;">
+                    <button type="submit" class="btn btn-outline-secondary" style="pointer-events: none;">
+                        <img src="/images/search.png" alt="search-icon" id="searchIcon">
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Department -->
+        <div class="col-3" id="departmentForm">
+            <div>
+                <select class="form-select" name="sortByDepartment" id="sortByDepartment">
+                    <option value="" disabled selected hidden>Department</option>
+                    <option value="IT">IT</option>
+                    <option value="HR">HR</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Communication">Communication</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Accounting">Accounting</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- statusForm -->
+        <div class="col-3" id="statusForm">
+            <div>
+                <select class="form-select" name="sortByStatus" id="sortByStatus">
+                    <option value="" disabled selected hidden>Status</option>
+                    <option value="Waiting for approval">Waiting for approval</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Waiting for response">Waiting for response</option>
+                    <option value="Accepted">Accepted</option>
+                    <option value="Declined">Declined</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-3" id="searchButton">
+            <button type="submit" class="btn" style="background-color: #D9D9D9; font-weight: bold;">Search</button>
+        </div>
+    </div>
+
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button type="submit" class="btn" style="background-color: #D9D9D9; font-weight: bold;">Add new</button>
+        <button type="submit" class="btn" style="background-color: #D9D9D9; font-weight: bold;">Export</button>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-striped table-hover" id="offerTable">
+                <thead>
+                <tr>
+                    <th scope="col">Candidate Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Approver</th>
+                    <th scope="col">Department</th>
+                    <th scope="col">Notes</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody id="offerList">
+                <tr th:each="offer : ${offers}">
+                    <td th:text="${offer.candidate.fullName}"></td>
+                    <td th:text="${offer.candidate.email}"></td>
+                    <td th:text="${offer.approver.fullName}"></td>
+                    <td th:text="${offer.department}"></td>
+                    <td th:text="${offer.notes}"></td>
+                    <td th:text="${offer.offerStatus}"></td>
+                    <td style="background-color: #EBEFF3">
+                        <button type="button" class="btn">
+                            <img src="/images/visible.png" alt="info icon">
+                        </button>
+                        <button type="button" class="btn">
+                            <img src="/images/edit-button.png" alt="edit icon">
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
