@@ -21,9 +21,6 @@ public class CandidateServiceImpl implements CandidateService {
     @Autowired
     private CandidateRepository candidateRepository;
 
-    @Autowired
-    private CandidateRepository candidateRepository;
-
     @Override
     public List<CandidateDTO> searchCandidates(String keyword, String status) {
         List<Candidate> candidates;
