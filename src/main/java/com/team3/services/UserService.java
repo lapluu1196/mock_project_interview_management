@@ -12,7 +12,7 @@ public interface UserService {
 
     UserDTO findById(Long id);
 
-    UserDTO save(UserDTO userDTO);
+    String save(UserDTO userDTO);
 
     UserDTO update(UserDTO userDTO);
 
