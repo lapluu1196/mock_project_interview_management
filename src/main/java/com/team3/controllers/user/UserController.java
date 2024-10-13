@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -79,5 +80,15 @@ public class UserController {
         model.addAttribute("totalUsers", userDTOs.getTotalElements());
 
         return "fragments/user-table :: userTable";
+    }
+
+    @GetMapping("detail/{id}")
+    public String userDetail(@PathVariable("id") Long id, Model model) {
+
+        UserDTO userDTO = userService.findById(id);
+
+        model.addAttribute("userDTO", userDTO);
+
+        return "contents/user/user-detail";
     }
 }

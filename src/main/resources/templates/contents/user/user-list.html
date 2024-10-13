@@ -71,12 +71,12 @@
                         <td th:text="${user.role}" style="background-color: #EBEFF3"></td>
                         <td th:text="${user.status}"></td>
                         <td style="background-color: #EBEFF3">
-                            <button type="button" class="btn">
+                            <a th:href="@{/users/detail/{id}(id=${user.userId})}" class="btn">
                                 <img src="/images/visible.png" alt="info icon">
-                            </button>
-                            <button type="button" class="btn">
+                            </a>
+                            <a th:href="@{/users/detail/{id}(id=${user.userId})}" class="btn">
                                 <img src="/images/edit-button.png" alt="edit icon">
-                            </button>
+                            </a>
                         </td>
                     </tr>
                     </tbody>

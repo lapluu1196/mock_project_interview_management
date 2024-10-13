@@ -234,7 +234,7 @@ a.sidebar-link:hover {
 }
 
 /* Create new User Page Styles */
-#createUserForm {
+#createUserForm, .userBoardContent {
     background-color: #F1F6FB;
 }
 
@@ -242,6 +242,10 @@ a.sidebar-link:hover {
     margin-left: 1.5rem;
 }
 
+/* User Details Page Styles */
+#userDetail button, #userDetail a {
+    width: 10rem;
+}
 
 
 /* Media Queries */
