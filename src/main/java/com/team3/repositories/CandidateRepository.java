@@ -12,7 +12,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 
     // Search candidates by keyword in name, email, or phone number and filter by status
     List<Candidate> findByKeywordAndStatus(String keyword, String status);
-    
+
     // Find candidates by status only
     List<Candidate> findByStatus(String status);
 

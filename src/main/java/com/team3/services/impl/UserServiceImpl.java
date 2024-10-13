@@ -69,7 +69,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO findById(Long id) {
-        return null;
+
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found!");
+        }
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(user.getUserId());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setFullName(user.getFullName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setGender(user.getGender());
+        userDTO.setDepartment(user.getDepartment());
+        userDTO.setRole(user.getRole());
+        userDTO.setDateOfBirth(user.getDateOfBirth());
+        userDTO.setAddress(user.getAddress());
+        userDTO.setPhoneNumber(user.getPhoneNumber());
+        userDTO.setStatus(user.getStatus());
+        userDTO.setNotes(user.getNotes());
+
+        return userDTO;
     }
 
     @Override
@@ -125,6 +146,36 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO update(UserDTO userDTO) {
+
+        User user = userRepository.findById(userDTO.getUserId()).orElse(null);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found!");
+        }
+
+        if (userRepository.findByEmail(userDTO.getEmail()) != null) {
+            throw new IllegalArgumentException("Email has been used!");
+        }
+
+        user.setUsername(userDTO.getUsername());
+        user.setFullName(userDTO.getFullName());
+        user.setEmail(userDTO.getEmail());
+        user.setGender(userDTO.getGender());
+        user.setDepartment(userDTO.getDepartment());
+        user.setRole(userDTO.getRole());
+        user.setPhoneNumber(userDTO.getPhoneNumber());
+        user.setDateOfBirth(userDTO.getDateOfBirth());
+        user.setAddress(userDTO.getAddress());
+        user.setStatus(userDTO.getStatus());
+        user.setNotes(userDTO.getNotes());
+        user.setUpdatedAt(LocalDateTime.now());
+
+        User savedUser = userRepository.save(user);
+
+        if (savedUser.getUserId() != null) {
+            return userDTO;
+        }
+
         return null;
     }
 
