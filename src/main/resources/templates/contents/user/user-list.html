@@ -19,7 +19,7 @@
             <div class="col-3" id="searchForm">
                 <form action="#">
                     <div class="input-group mb-3">
-                        <input class="form-control" type="search" name="keyword" id="searchUser" aria-label="Recipient's username" aria-describedby="searchIcon" placeholder="Search" th:value="${keyword}">
+                        <input class="form-control" type="search" name="search" id="searchUser" aria-label="Recipient's username" aria-describedby="searchIcon" placeholder="Search" th:value="${keyword}">
                         <button type="submit" class="btn btn-outline-secondary">
                             <img src="/images/search.png" alt="search-icon" id="searchIcon">
                         </button>
@@ -28,7 +28,8 @@
             </div>
             <div class="col-3" id="sortByRoleForm">
                 <div>
-                    <select class="form-select" name="sortByRole" id="sortByRole">
+                    <select class="form-select" name="role" id="filterByRole" th:value="${role}">
+                        <option value="" selected>Role</option>
                         <option value="Admin">Admin</option>
                         <option value="Recruiter">Recruiter</option>
                         <option value="Manager">Manager</option>

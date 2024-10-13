@@ -1,7 +1,6 @@
 package com.team3.controllers.user;
 
 import com.team3.dtos.user.UserDTO;
-import com.team3.entities.User;
 import com.team3.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +22,15 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public String userList(@RequestParam(required = false) String keyword,
+    public String userList(@RequestParam(required = false) String search,
                            @RequestParam(defaultValue = "0") int page,
                            Model model) {
         int size = 10;;
         var pageable = PageRequest.of(page, size);
-        var userDTOs = userService.findAll(keyword, pageable);
+        var userDTOs = userService.findAll(search, pageable);
 
         model.addAttribute("userDTOs", userDTOs);
-        model.addAttribute("keyword", keyword);
+        model.addAttribute("keyword", search);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", userDTOs.getTotalPages());
         model.addAttribute("totalUsers", userDTOs.getTotalElements());
@@ -59,5 +58,26 @@ public class UserController {
         redirectAttributes.addFlashAttribute("result", result);
 
         return "redirect:/users";
+    }
+
+    @GetMapping("/filter")
+    public String filterUser(@RequestParam(required = false) String search,
+                             @RequestParam(required = false) String role,
+                             @RequestParam(defaultValue = "0") int page,
+                             Model model) {
+        int size = 10;
+        var pageable = PageRequest.of(page, size);
+
+        var userDTOs = userService.filterUser(search, role, pageable);
+
+
+        model.addAttribute("userDTOs", userDTOs);
+        model.addAttribute("keyword", search);
+        model.addAttribute("role", role);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", userDTOs.getTotalPages());
+        model.addAttribute("totalUsers", userDTOs.getTotalElements());
+
+        return "fragments/user-table :: userTable";
     }
 }
