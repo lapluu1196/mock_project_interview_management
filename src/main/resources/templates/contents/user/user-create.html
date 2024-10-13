@@ -129,8 +129,7 @@
                             <span th:if="${#fields.hasErrors('status')}" th:errors="*{status}"
                                   class="invalid-input-user text-danger"></span>
                             <select name="status" id="status" class="form-select" th:field="*{status}">
-                                <option value="">Select a status</option>
-                                <option value="Active">Active</option>
+                                <option value="Active" selected>Active</option>
                                 <option value="Inactive">Inactive</option>
                             </select>
                         </div>

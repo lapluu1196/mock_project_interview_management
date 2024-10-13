@@ -15,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -33,18 +32,18 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Page<UserDTO> findAll(String keyword, Pageable pageable) {
+    public Page<UserDTO> findAll(String search, Pageable pageable) {
         Specification<User> spec = (root, query, criteriaBuilder) -> {
-            if (keyword == null) {
+            if (search == null) {
                 return null;
             }
 
             return criteriaBuilder.or(
-                    criteriaBuilder.like(root.get("username"), "%" + keyword + "%"),
-                    criteriaBuilder.like(root.get("email"), "%" + keyword + "%"),
-                    criteriaBuilder.like(root.get("phoneNumber"), "%" + keyword + "%"),
-                    criteriaBuilder.like(root.get("role"), "%" + keyword + "%"),
-                    criteriaBuilder.like(root.get("status"), "%" + keyword + "%")
+                    criteriaBuilder.like(root.get("username"), "%" + search + "%"),
+                    criteriaBuilder.like(root.get("email"), "%" + search + "%"),
+                    criteriaBuilder.like(root.get("phoneNumber"), "%" + search + "%"),
+                    criteriaBuilder.like(root.get("role"), "%" + search + "%"),
+                    criteriaBuilder.like(root.get("status"), "%" + search + "%")
             );
         };
 
@@ -133,4 +132,49 @@ public class UserServiceImpl implements UserService {
     public void deleteById(Long id) {
 
     }
+
+    @Override
+    public Page<UserDTO> filterUser(String search, String role, Pageable pageable) {
+        Specification<User> spec = (Specification<User>) (root, query, criteriaBuilder) -> {
+            if ((search == null || search.isEmpty()) && (role == null || role.isEmpty())) {
+                return null;
+            }
+
+            if (search == null || search.isEmpty()) {
+                return criteriaBuilder.equal(root.get("role"), role);
+            }
+
+            return criteriaBuilder.and(
+                    criteriaBuilder.or(
+                        criteriaBuilder.like(root.get("username"), "%" + search + "%"),
+                        criteriaBuilder.like(root.get("email"), "%" + search + "%"),
+                        criteriaBuilder.like(root.get("phoneNumber"), "%" + search + "%"),
+                        criteriaBuilder.like(root.get("role"), "%" + search + "%"),
+                        criteriaBuilder.like(root.get("status"), "%" + search + "%")
+                    ),
+                    criteriaBuilder.equal(root.get("role"), role)
+            );
+        };
+
+        var users = userRepository.findAll(spec, pageable);
+
+        return users.map(user -> {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserId(user.getUserId());
+            userDTO.setUsername(user.getUsername());
+            userDTO.setFullName(user.getFullName());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setGender(user.getGender());
+            userDTO.setDepartment(user.getDepartment());
+            userDTO.setRole(user.getRole());
+            userDTO.setDateOfBirth(user.getDateOfBirth());
+            userDTO.setAddress(user.getAddress());
+            userDTO.setPhoneNumber(user.getPhoneNumber());
+            userDTO.setStatus(user.getStatus());
+            userDTO.setNotes(user.getNotes());
+            return userDTO;
+        });
+    }
+
+
 }

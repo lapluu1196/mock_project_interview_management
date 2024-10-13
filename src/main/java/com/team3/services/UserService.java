@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserService {
 
-    Page<UserDTO> findAll(String keyword, Pageable pageable);
+    Page<UserDTO> findAll(String search, Pageable pageable);
 
     UserDTO findById(Long id);
 
@@ -17,4 +17,6 @@ public interface UserService {
     UserDTO update(UserDTO userDTO);
 
     void deleteById(Long id);
+
+    Page<UserDTO> filterUser(String search, String role, Pageable pageable);
 }

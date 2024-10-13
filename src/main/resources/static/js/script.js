@@ -38,4 +38,26 @@ $(document).ready(function () {
         window.history.back();
     });
 
+    // Filter by Role
+
+    $("#filterByRole").on("change", function () {
+        const search = $('#searchUser').val();
+        const role = $('#filterByRole').val();
+
+        $.ajax({
+            type: 'GET',
+            url: '/users/filter',
+            data: {
+                search: search,
+                role: role
+            },
+            success: function (response) {
+                $('#userTable').html(response);
+            },
+            error: function () {
+                alert("Error fetching data");
+            }
+        });
+    });
+
 });
