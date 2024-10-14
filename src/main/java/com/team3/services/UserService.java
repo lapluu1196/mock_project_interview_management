@@ -8,13 +8,19 @@ import java.util.List;
 
 public interface UserService {
 
-    Page<UserDTO> findAll(String keyword, Pageable pageable);
+    Page<UserDTO> findAll(String search, Pageable pageable);
 
     UserDTO findById(Long id);
 
-    UserDTO save(UserDTO userDTO);
+    String save(UserDTO userDTO);
 
-    UserDTO update(UserDTO userDTO);
+    String update(UserDTO userDTO);
 
     void deleteById(Long id);
+
+    Page<UserDTO> filterUser(String search, String role, Pageable pageable);
+
+    String updateStatus(Long id);
+
+    UserDTO findByUsername(String username);
 }

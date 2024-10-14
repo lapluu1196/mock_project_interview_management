@@ -10,6 +10,7 @@ import com.team3.entities.Candidate;
 @Repository
 public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 
+<<<<<<< HEAD
     // Find candidates by keyword and status
     List<Candidate> findByKeywordAndStatus(String keyword, String status);
 
@@ -19,3 +20,17 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
     // Find candidates by status only
     List<Candidate> findByStatus(String status);
 }
+=======
+    // Search candidates by keyword in name, email, or phone number and filter by status
+    List<Candidate> findByKeywordAndStatus(String keyword, String status);
+
+    // Find candidates by status only
+    List<Candidate> findByStatus(String status);
+
+    // Find candidates by keyword only
+    List<Candidate> findByKeyword(String keyword);
+
+    // If nothing is filtered, return all candidates
+    List<Candidate> findAll();
+}
+>>>>>>> dev

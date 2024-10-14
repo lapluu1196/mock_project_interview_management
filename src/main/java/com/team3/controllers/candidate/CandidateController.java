@@ -13,11 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.team3.dtos.candidate.CandidateDTO;
+import com.team3.dtos.candidate.CandidateDTO;
 import com.team3.services.CandidateService;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/candidates")
+@RequestMapping("/candidates")
 public class CandidateController {
+
 
     @Autowired
     private CandidateService candidateService;

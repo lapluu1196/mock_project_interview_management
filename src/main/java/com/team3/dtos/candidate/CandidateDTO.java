@@ -1,5 +1,6 @@
 package com.team3.dtos.candidate;
 
+<<<<<<< HEAD
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -62,6 +63,50 @@ public class CandidateDTO {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+=======
+import java.io.Serializable;
+
+public class CandidateDTO implements Serializable {
+    
+    private Long id;
+    private String name;
+    private String email;
+    private String phoneNumber;
+    private String currentPosition;
+    private String ownerHR;
+    private String status;
+
+    // Default constructor
+    public CandidateDTO() {
+    }
+
+    // Parameterized constructor
+    public CandidateDTO(Long id, String name, String email, String phoneNumber, String currentPosition, String ownerHR, String status) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.currentPosition = currentPosition;
+        this.ownerHR = ownerHR;
+        this.status = status;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+>>>>>>> dev
     }
 
     public String getEmail() {
@@ -80,6 +125,7 @@ public class CandidateDTO {
         this.phoneNumber = phoneNumber;
     }
 
+<<<<<<< HEAD
     public String getAddress() {
         return address;
     }
@@ -112,6 +158,8 @@ public class CandidateDTO {
         this.cv = cv;
     }
 
+=======
+>>>>>>> dev
     public String getCurrentPosition() {
         return currentPosition;
     }
@@ -120,6 +168,7 @@ public class CandidateDTO {
         this.currentPosition = currentPosition;
     }
 
+<<<<<<< HEAD
     public String getSkills() {
         return skills;
     }
@@ -142,6 +191,14 @@ public class CandidateDTO {
 
     public void setHighestEducationLevel(String highestEducationLevel) {
         this.highestEducationLevel = highestEducationLevel;
+=======
+    public String getOwnerHR() {
+        return ownerHR;
+    }
+
+    public void setOwnerHR(String ownerHR) {
+        this.ownerHR = ownerHR;
+>>>>>>> dev
     }
 
     public String getStatus() {
@@ -152,6 +209,7 @@ public class CandidateDTO {
         this.status = status;
     }
 
+<<<<<<< HEAD
     public String getNotes() {
         return notes;
     }
@@ -176,3 +234,18 @@ public class CandidateDTO {
         this.updatedAt = updatedAt;
     }
 }
+=======
+    @Override
+    public String toString() {
+        return "CandidateDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", currentPosition='" + currentPosition + '\'' +
+                ", ownerHR='" + ownerHR + '\'' +
+                ", status='" + status + '\'' +
+                '}';
+    }
+}
+>>>>>>> dev

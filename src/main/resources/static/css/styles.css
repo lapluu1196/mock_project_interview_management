@@ -160,67 +160,25 @@ a.sidebar-link:hover {
     font-weight: 600;
 }
 
-#role, #logout {
+#roleAuth, #logoutBtn {
     font-style: italic;
 }
 
-#logout {
+#logoutBtn {
+    background-color: transparent;
+    border: none;
     text-decoration: underline;
 }
 
 #hamburgerButton {
     display: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
 }
 
 #title h1 {
     margin-bottom: 0;
-}
-
-@media (max-width: 768px) {
-    .main {
-        min-height: 100vh;
-        overflow: hidden;
-        background-color: #fafbfe;
-        position: relative;
-    }
-
-    #hamburgerButton {
-        display: block;
-    }
-
-    #hamburgerButton.non-active {
-        display: none;
-    }
-
-    #sidebar {
-        display: none;
-        opacity: 0;
-        transition: opacity 0.3s ease, transform 0.3s ease;
-        transform: translateX(-100%);
-    }
-
-    #sidebar.active {
-        display: block;
-        opacity: 1;
-        transform: translateX(0);
-    }
-
-    #hamburgerButton button {
-        background-color: transparent;
-        cursor: pointer;
-        border: 0;
-        padding: 0;
-        display: inline;
-        position: fixed;
-        top: 1rem;
-        left: 1rem;
-        z-index: 1000
-    }
-
-    #hamburgerButton img {
-        width: 30px;
-    }
-
 }
 
 /* User Management Page Styles */
@@ -275,4 +233,76 @@ a.sidebar-link:hover {
 #pagination a {
     background-color: transparent;
     border: none;
+}
+
+/* Create new User Page Styles */
+#createUserForm, .userBoardContent {
+    background-color: #F1F6FB;
+}
+
+#createUserForm label.label-right {
+    margin-left: 1.5rem;
+}
+
+/* User Details Page Styles */
+#userDetail button, #userDetail a {
+    width: 10rem;
+}
+
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .main {
+        min-height: 100vh;
+        overflow: hidden;
+        background-color: #fafbfe;
+        position: relative;
+    }
+
+    .main .container {
+        max-width: 100%;
+        margin: 0;
+    }
+
+    #hamburgerButton {
+        display: block;
+    }
+
+    #hamburgerButton.non-active {
+        display: none;
+    }
+
+    #sidebar {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        transform: translateX(-100%);
+    }
+
+    #sidebar.active {
+        display: block;
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    #hamburgerButton button {
+        background-color: transparent;
+        cursor: pointer;
+        border: 0;
+        padding: 0;
+        display: inline;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        z-index: 1000
+    }
+
+    #hamburgerButton img {
+        width: 30px;
+    }
+
+    #createUserForm label.label-right {
+        margin-left: 0;
+    }
+
 }
