@@ -14,9 +14,11 @@ public interface UserService {
 
     String save(UserDTO userDTO);
 
-    UserDTO update(UserDTO userDTO);
+    String update(UserDTO userDTO);
 
     void deleteById(Long id);
 
     Page<UserDTO> filterUser(String search, String role, Pageable pageable);
+
+    String updateStatus(Long id);
 }

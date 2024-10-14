@@ -32,12 +32,15 @@
 
         <div class="row mt-3 py-4 userBoardContent" id="userDetail">
             <div class="row mb-2">
-                <div class="col-12 d-flex justify-content-end">
-                    <button class="btn" th:classappend="${userDTO.status == 'Active'} ? 'btn-danger' : 'btn-success'" th:text="${userDTO.status == 'Active' ? 'Deactivate user' : 'Activate user'}"></button>
+                <div id="statusButtonContainer" class="col-12 d-flex justify-content-end">
+                    <button id="activeUserButton" class="btn" th:classappend="${userDTO.status == 'Active'} ? 'btn-danger' : 'btn-success'"
+                            th:text="${userDTO.status == 'Active' ? 'Deactivate user' : 'Activate user'}"
+                            th:attr="data-user-id=${userDTO.userId}"></button>
                 </div>
             </div>
 
             <div class="row d-flex justify-content-between mb-4">
+                <input type="hidden" name="id" id="id" th:value="${userDTO.userId}">
                 <div class="col-6 d-flex justify-content-start">
                     <span class="fw-bold w-25">Full name</span>
                     <span class="w-25" th:text="${userDTO.fullName}"></span>
@@ -80,7 +83,7 @@
             <div class="row d-flex justify-content-between mb-4">
                 <div class="col-6 d-flex justify-content-start">
                     <span class="fw-bold w-25">Status</span>
-                    <span class="w-25" th:text="${userDTO.status}"></span>
+                    <span class="w-25" th:text="${userDTO.status}" id="userStatus"></span>
                 </div>
                 <div class="col-6 d-flex justify-content-start">
                     <span class="fw-bold w-25">Note</span>

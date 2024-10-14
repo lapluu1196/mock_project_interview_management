@@ -145,21 +145,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO update(UserDTO userDTO) {
+    public String update(UserDTO userDTO) {
 
-        User user = userRepository.findById(userDTO.getUserId()).orElse(null);
+        User user = userRepository.findById(userDTO.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found!"));
 
-        if (user == null) {
-            throw new IllegalArgumentException("User not found!");
+        // Kiểm tra nếu email thay đổi, và nếu có trùng lặp với người dùng khác thì ném ngoại lệ
+        if (!user.getEmail().equals(userDTO.getEmail())) {
+            User userWithSameEmail = userRepository.findByEmail(userDTO.getEmail());
+            // Kiểm tra nếu email đã được sử dụng bởi một người dùng khác, không phải chính người dùng hiện tại
+            if (userWithSameEmail != null && !userWithSameEmail.getUserId().equals(user.getUserId())) {
+                throw new IllegalArgumentException("Email has been used!");
+            }
+
+            user.setEmail(userDTO.getEmail());
         }
 
-        if (userRepository.findByEmail(userDTO.getEmail()) != null) {
-            throw new IllegalArgumentException("Email has been used!");
-        }
-
-        user.setUsername(userDTO.getUsername());
+        // Cập nhật các thông tin khác
         user.setFullName(userDTO.getFullName());
-        user.setEmail(userDTO.getEmail());
         user.setGender(userDTO.getGender());
         user.setDepartment(userDTO.getDepartment());
         user.setRole(userDTO.getRole());
@@ -173,10 +176,10 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
 
         if (savedUser.getUserId() != null) {
-            return userDTO;
+            return "Change has been successfully updated!";
         }
 
-        return null;
+        return "Fail to updated change!";
     }
 
     @Override
@@ -225,6 +228,23 @@ public class UserServiceImpl implements UserService {
             userDTO.setNotes(user.getNotes());
             return userDTO;
         });
+    }
+
+    @Override
+    public String updateStatus(Long id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found!"));
+
+        if ("Active".equals(user.getStatus())) {
+            user.setStatus("Inactive");
+        } else {
+            user.setStatus("Active");
+        }
+
+        userRepository.save(user);
+
+        return user.getStatus();
     }
 
 
