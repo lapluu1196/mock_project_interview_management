@@ -1,7 +1,6 @@
 package com.team3.services.impl;
 
 import com.team3.dtos.interviewschedule.InterviewScheduleDTO;
-import com.team3.dtos.interviewschedule.InterviewScheduleFilter;
 import com.team3.dtos.user.UserDTO;
 import com.team3.entities.Candidate;
 import com.team3.entities.InterviewSchedule;

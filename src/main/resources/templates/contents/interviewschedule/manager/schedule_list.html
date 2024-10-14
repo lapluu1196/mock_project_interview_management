@@ -57,8 +57,11 @@
             <div class="container mt-3 d-flex justify-content-end px-0">
                 
                 <button type="button"
-                    class="btn btn-primary rounded-0 fw-bold btn-search border-0 text-dark fw-bold ">Add
-                    new</button>
+
+                    class="btn btn-primary rounded-0 fw-bold btn-search border-0 text-dark fw-bold ">
+                <a class="text-dark text-decoration-none" th:href="@{/interview-schedule/add}">
+                    Add new
+                </a></button>
             </div>
 
         </div>
@@ -95,11 +98,16 @@
                         <td th:text="${interviewSchedule.status}"></td>
                         <td  th:text="${interviewSchedule.jobTitle}"></td>
                         <td >
-                            <button aria-label="view" type="button" class="border-0 bg-transparent">
-                                <i class="far fa-eye"></i>
+                            <button aria-label="view" type="button" class="border-0 bg-transparent" >
+                                <a class="text-dark text-decoration-none" th:href="@{/interview-schedule/manager/scheduleDetail}">
+                                    <i class="far fa-eye"></i>
+                                </a>
                             </button>
                             <button aria-label="edit" type="button" class="border-0 bg-transparent">
-                                <i class="far fa-edit ms-2"></i>
+                                <a class="text-dark text-decoration-none" th:href="@{/interview-schedule/edit}">
+                                    <i class="far fa-edit ms-2"></i>
+                                </a>
+                                
                             </button>
                             
                         </td>

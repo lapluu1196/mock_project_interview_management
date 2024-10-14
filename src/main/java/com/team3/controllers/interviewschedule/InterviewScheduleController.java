@@ -62,22 +62,53 @@ public class InterviewScheduleController {
 
 
     //Interviewer
-    // @GetMapping("/interviewer")
-    // public String indexInterviewer(@RequestParam(required = false) String keyword,
-    //                        @RequestParam(defaultValue = "0") int page,
-    //                        Model model) {
-    //     int size = 10;;
-    //     var pageable = PageRequest.of(page, size);
-    //     var interviewScheduleDTOs = interviewScheduleService.findAll(keyword, pageable);
-    //     List<User> interviewers = userService.getInterviewers();
-    //      List<InterviewSchedule> schedules = interviewScheduleService.getAllSchedulesWithInterviewers();
-    //     model.addAttribute("schedules", schedules);
-    //     model.addAttribute("interviewers", interviewers);                    
-    //     model.addAttribute("interviewScheduleDTOs", interviewScheduleDTOs);
-    //     model.addAttribute("keyword", keyword);
-    //     model.addAttribute("currentPage", page);
-    //     model.addAttribute("totalPages", interviewScheduleDTOs.getTotalPages());
-    //     model.addAttribute("totalUsers", interviewScheduleDTOs.getTotalElements());
-    //     return "contents/interviewschedule/interviewer/interviewer_schedule_list";
-    // }
+    @GetMapping("/interviewer")
+    public String indexInterviewer(@RequestParam(required = false) String keyword,
+                        @RequestParam(name = "interviewerId", required = false) Long interviewerId,
+                        @RequestParam(name = "status", required = false) String status,
+                           @RequestParam(defaultValue = "0") int page,
+                           Model model) {
+        int size = 10;;
+        var pageable = PageRequest.of(page, size);
+        Page<InterviewScheduleDTO> interviewScheduleDTOs;
+        if(interviewerId == null || status == null){
+            interviewScheduleDTOs = interviewScheduleService.findAll(keyword, pageable);
+        }else{
+            interviewScheduleDTOs = interviewScheduleService.findAll(interviewerId, status ,pageable);
+        }
+        List<User> interviewers = userService.getInterviewers();
+        List<InterviewSchedule> schedules = interviewScheduleService.getAllSchedulesWithInterviewers();
+        if(interviewScheduleDTOs.isEmpty()){
+            model.addAttribute("message", "Data not found!");
+        }
+        model.addAttribute("schedules", schedules);
+        model.addAttribute("interviewers", interviewers);                    
+        model.addAttribute("interviewScheduleDTOs", interviewScheduleDTOs);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", interviewScheduleDTOs.getTotalPages());
+        model.addAttribute("totalUsers", interviewScheduleDTOs.getTotalElements());
+        return "contents/interviewschedule/interviewer/interviewer_schedule_list";
+    }
+
+    @GetMapping("/add")
+    public String addInterviewSchedule(Model model) {
+        return "contents/interviewschedule/manager/schedule_create";
+    }
+
+    @GetMapping("manager/scheduleDetail")
+    public String scheduleDetail(Model model) {
+        return "contents/interviewschedule/manager/schedule_detail";
+    }
+
+    @GetMapping("interviewer/scheduleDetail")
+    public String scheduleDetailInterviewer(Model model) {
+        return "contents/interviewschedule/interviewer/interviewer_schedule_detail";
+    }
+
+    @GetMapping("/edit")
+    public String updateInterviewSchedule(Model model) {
+        return "contents/interviewschedule/manager/schedule_edit";
+    }
+
 }
