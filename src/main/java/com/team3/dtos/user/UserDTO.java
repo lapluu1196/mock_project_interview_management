@@ -1,9 +1,9 @@
 package com.team3.dtos.user;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -33,6 +33,7 @@ public class UserDTO {
 
     private String phoneNumber;
 
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
     private String notes;
