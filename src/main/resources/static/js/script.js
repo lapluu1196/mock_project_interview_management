@@ -60,4 +60,30 @@ $(document).ready(function () {
         });
     });
 
+    /* Active and Inactive button */
+
+    $("#activeUserButton").on("click", function () {
+        const id = $(this).data('user-id');
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/users/updateStatus',
+            data: {
+                id: id
+            },
+            success: function (response) {
+                if (response === 'Active') {
+                    $('#activeUserButton').removeClass('btn-success').addClass('btn-danger');
+                    $('#activeUserButton').text('Deactivate user');
+                } else {
+                    $('#activeUserButton').removeClass('btn-danger').addClass('btn-success');
+                    $('#activeUserButton').text('Activate user');
+                }
+                $("#userStatus").html(response);
+            },
+            error: function () {
+                alert("Error updating user status!");
+            }
+        });
+    });
 });
