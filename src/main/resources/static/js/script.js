@@ -86,4 +86,9 @@ $(document).ready(function () {
             }
         });
     });
+
+    /* Logout button */
+    $("#logoutOkBtn").on("click", function () {
+        window.location.href = '/logout';
+    })
 });

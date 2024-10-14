@@ -40,9 +40,13 @@ public class SecurityConfig {
                         login.loginPage("/auth/login")
                                 .loginProcessingUrl("/authenticateUser")
                                 .permitAll())
+                .rememberMe(rememberMe -> rememberMe
+                        .tokenValiditySeconds(86400)
+                        .key("uniqueAndSecret")
+                        .rememberMeParameter("rememberMe"))
                 .logout(logout ->
                         logout.logoutUrl("/logout")
-                                .logoutSuccessUrl("/login?logout")
+                                .logoutSuccessUrl("/auth/login?logout")
                                 .permitAll())
                 .exceptionHandling(configurer ->
                         configurer.accessDeniedPage("/access-denied")

@@ -160,11 +160,13 @@ a.sidebar-link:hover {
     font-weight: 600;
 }
 
-#roleAuth, #logout {
+#roleAuth, #logoutBtn {
     font-style: italic;
 }
 
-#logout {
+#logoutBtn {
+    background-color: transparent;
+    border: none;
     text-decoration: underline;
 }
 
