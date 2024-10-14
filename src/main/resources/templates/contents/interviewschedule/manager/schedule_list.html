@@ -29,37 +29,42 @@
                 </form>
             </div>
 
-            <div class="col-3">
-                <select class="form-select option-bg rounded-0" aria-label="Default select example">
-                    <option selected value="interviewer">Interviewer</option>
-                    <option th:each="interviewer : ${interviewers}" th:value="${interviewer.userId}" th:text="${interviewer.fullName}"></option>
-
-                </select>
-            </div>
-
-            <div class="col-3">
-                <select class="form-select option-bg rounded-0" aria-label="Default select example">
-                    <option selected>Status</option>
-                    <option value="New">New</option>
-                    <option value="Canceled">Canceled</option>
-                    <option value="Interviewed">Interviewed</option>
-                    <option value="Invited">Invited</option>
-                </select>
-            </div>
-
-            <div class="col-2">
-                <button type="button" class="btn btn-search rounded-0 fw-bold">Search</button>
-            </div>
+            <form action="/interview-schedule/manager" method="get" class="col-8 d-flex justify-content-between">
+                <div class="col-4">
+                    <select class="form-select option-bg rounded-0" aria-label="Default select example" name="interviewerId">
+                        <option th:value="null">Interviewer</option>
+                        <option th:each="interviewer : ${interviewers}" th:value="${interviewer.userId}"
+                         th:text="${interviewer.fullName}" th:selected="${interviewer.userId == interviewerId}"></option>
+    
+                    </select>
+                </div>
+    
+                <div class="col-4">
+                    <select class="form-select option-bg rounded-0" aria-label="Default select example" name="status">
+                        <option selected th:value="null">Status</option>
+                        <option th:value="New" th:selected="${status == 'New'}">New</option>
+                        <option th:value="Canceled" th:selected="${status == 'Canceled'}">Canceled</option>
+                        <option th:value="Interviewed" th:selected="${status == 'Interviewed'}">Interviewed</option>
+                        <option th:value="Invited" th:selected="${status == 'Invited'}">Invited</option>
+                    </select>
+                </div>
+    
+                <div class="col-2">
+                    <button type="submit" class="btn btn-search rounded-0 fw-bold">Search</button>
+                </div>
+            </form>
 
             <div class="container mt-3 d-flex justify-content-end px-0">
+                
                 <button type="button"
-                    class="btn btn-primary rounded-0 fw-bold btn-search border-0 text-dark fw-bold">Add
+                    class="btn btn-primary rounded-0 fw-bold btn-search border-0 text-dark fw-bold ">Add
                     new</button>
             </div>
 
         </div>
 
         <div class="container-fluid mt-2">
+    
             <table class="table">
                 <thead>
                     <tr>
@@ -74,6 +79,9 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr th:if="${message}">
+                        <td colspan="8" class="text-start ">No item matches with your search data. Please try again.</td>
+                    </tr>
                     <tr th:each="interviewSchedule : ${interviewScheduleDTOs}">
                         <td th:text="${interviewSchedule.interviewTitle}"></td>
                         <td th:text="${interviewSchedule.candidateName}"></td>

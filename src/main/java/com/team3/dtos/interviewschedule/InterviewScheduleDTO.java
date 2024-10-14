@@ -37,7 +37,12 @@ public class InterviewScheduleDTO {
 
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate scheduleDate;
+
+
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime scheduleFrom;
+
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime scheduleTo;
 
     // private String location;
