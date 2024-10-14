@@ -247,5 +247,32 @@ public class UserServiceImpl implements UserService {
         return user.getStatus();
     }
 
+    @Override
+    public UserDTO findByUsername(String username) {
+
+        User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found!");
+        }
+
+        UserDTO userDTO = new UserDTO();
+
+        userDTO.setUserId(user.getUserId());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setFullName(user.getFullName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setGender(user.getGender());
+        userDTO.setDepartment(user.getDepartment());
+        userDTO.setRole(user.getRole());
+        userDTO.setDateOfBirth(user.getDateOfBirth());
+        userDTO.setAddress(user.getAddress());
+        userDTO.setPhoneNumber(user.getPhoneNumber());
+        userDTO.setStatus(user.getStatus());
+        userDTO.setNotes(user.getNotes());
+
+        return userDTO;
+    }
+
 
 }

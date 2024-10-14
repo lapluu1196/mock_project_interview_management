@@ -21,4 +21,6 @@ public interface UserService {
     Page<UserDTO> filterUser(String search, String role, Pageable pageable);
 
     String updateStatus(Long id);
+
+    UserDTO findByUsername(String username);
 }
