@@ -15,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -33,18 +32,18 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Page<UserDTO> findAll(String keyword, Pageable pageable) {
+    public Page<UserDTO> findAll(String search, Pageable pageable) {
         Specification<User> spec = (root, query, criteriaBuilder) -> {
-            if (keyword == null) {
+            if (search == null) {
                 return null;
             }
 
             return criteriaBuilder.or(
-                    criteriaBuilder.like(root.get("username"), "%" + keyword + "%"),
-                    criteriaBuilder.like(root.get("email"), "%" + keyword + "%"),
-                    criteriaBuilder.like(root.get("phoneNumber"), "%" + keyword + "%"),
-                    criteriaBuilder.like(root.get("role"), "%" + keyword + "%"),
-                    criteriaBuilder.like(root.get("status"), "%" + keyword + "%")
+                    criteriaBuilder.like(root.get("username"), "%" + search + "%"),
+                    criteriaBuilder.like(root.get("email"), "%" + search + "%"),
+                    criteriaBuilder.like(root.get("phoneNumber"), "%" + search + "%"),
+                    criteriaBuilder.like(root.get("role"), "%" + search + "%"),
+                    criteriaBuilder.like(root.get("status"), "%" + search + "%")
             );
         };
 
@@ -70,7 +69,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO findById(Long id) {
-        return null;
+
+        User user = userRepository.findById(id).orElse(null);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found!");
+        }
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(user.getUserId());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setFullName(user.getFullName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setGender(user.getGender());
+        userDTO.setDepartment(user.getDepartment());
+        userDTO.setRole(user.getRole());
+        userDTO.setDateOfBirth(user.getDateOfBirth());
+        userDTO.setAddress(user.getAddress());
+        userDTO.setPhoneNumber(user.getPhoneNumber());
+        userDTO.setStatus(user.getStatus());
+        userDTO.setNotes(user.getNotes());
+
+        return userDTO;
     }
 
     @Override
@@ -125,12 +145,136 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO update(UserDTO userDTO) {
-        return null;
+    public String update(UserDTO userDTO) {
+
+        User user = userRepository.findById(userDTO.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found!"));
+
+        // Kiểm tra nếu email thay đổi, và nếu có trùng lặp với người dùng khác thì ném ngoại lệ
+        if (!user.getEmail().equals(userDTO.getEmail())) {
+            User userWithSameEmail = userRepository.findByEmail(userDTO.getEmail());
+            // Kiểm tra nếu email đã được sử dụng bởi một người dùng khác, không phải chính người dùng hiện tại
+            if (userWithSameEmail != null && !userWithSameEmail.getUserId().equals(user.getUserId())) {
+                throw new IllegalArgumentException("Email has been used!");
+            }
+
+            user.setEmail(userDTO.getEmail());
+        }
+
+        // Cập nhật các thông tin khác
+        user.setFullName(userDTO.getFullName());
+        user.setGender(userDTO.getGender());
+        user.setDepartment(userDTO.getDepartment());
+        user.setRole(userDTO.getRole());
+        user.setPhoneNumber(userDTO.getPhoneNumber());
+        user.setDateOfBirth(userDTO.getDateOfBirth());
+        user.setAddress(userDTO.getAddress());
+        user.setStatus(userDTO.getStatus());
+        user.setNotes(userDTO.getNotes());
+        user.setUpdatedAt(LocalDateTime.now());
+
+        User savedUser = userRepository.save(user);
+
+        if (savedUser.getUserId() != null) {
+            return "Change has been successfully updated!";
+        }
+
+        return "Fail to updated change!";
     }
 
     @Override
     public void deleteById(Long id) {
 
+    }
+
+    @Override
+    public Page<UserDTO> filterUser(String search, String role, Pageable pageable) {
+        Specification<User> spec = (Specification<User>) (root, query, criteriaBuilder) -> {
+            if ((search == null || search.isEmpty()) && (role == null || role.isEmpty())) {
+                return null;
+            }
+
+            if (search == null || search.isEmpty()) {
+                return criteriaBuilder.equal(root.get("role"), role);
+            }
+
+            return criteriaBuilder.and(
+                    criteriaBuilder.or(
+                        criteriaBuilder.like(root.get("username"), "%" + search + "%"),
+                        criteriaBuilder.like(root.get("email"), "%" + search + "%"),
+                        criteriaBuilder.like(root.get("phoneNumber"), "%" + search + "%"),
+                        criteriaBuilder.like(root.get("role"), "%" + search + "%"),
+                        criteriaBuilder.like(root.get("status"), "%" + search + "%")
+                    ),
+                    criteriaBuilder.equal(root.get("role"), role)
+            );
+        };
+
+        var users = userRepository.findAll(spec, pageable);
+
+        return users.map(user -> {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserId(user.getUserId());
+            userDTO.setUsername(user.getUsername());
+            userDTO.setFullName(user.getFullName());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setGender(user.getGender());
+            userDTO.setDepartment(user.getDepartment());
+            userDTO.setRole(user.getRole());
+            userDTO.setDateOfBirth(user.getDateOfBirth());
+            userDTO.setAddress(user.getAddress());
+            userDTO.setPhoneNumber(user.getPhoneNumber());
+            userDTO.setStatus(user.getStatus());
+            userDTO.setNotes(user.getNotes());
+            return userDTO;
+        });
+    }
+
+    @Override
+    public String updateStatus(Long id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found!"));
+
+        if ("Active".equals(user.getStatus())) {
+            user.setStatus("Inactive");
+        } else {
+            user.setStatus("Active");
+        }
+
+        userRepository.save(user);
+
+        return user.getStatus();
+    }
+
+    @Override
+    public UserDTO findByUsername(String username) {
+
+        User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found!");
+        }
+
+        UserDTO userDTO = new UserDTO();
+
+        userDTO.setUserId(user.getUserId());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setFullName(user.getFullName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setGender(user.getGender());
+        userDTO.setDepartment(user.getDepartment());
+        userDTO.setRole(user.getRole());
+        userDTO.setDateOfBirth(user.getDateOfBirth());
+        userDTO.setAddress(user.getAddress());
+        userDTO.setPhoneNumber(user.getPhoneNumber());
+        userDTO.setStatus(user.getStatus());
+        userDTO.setNotes(user.getNotes());
+
+        return userDTO;
+    }
+
+    public List<User> getInterviewers() {
+        return userRepository.findByRole("Interviewer");
     }
 }
