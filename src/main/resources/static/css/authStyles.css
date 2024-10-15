@@ -51,3 +51,35 @@ body {
 #formLoginHeader img {
     width: 50px;
 }
+
+/* Login Page Styles */
+#loginForm, #forgotPasswordContent {
+    background-color: #EEF1DF;
+    padding: 3rem 2rem;
+}
+
+#loginForm {
+    width: 500px;
+}
+
+#formLoginHeader img, #forgotPasswordContent img {
+    width: 50px;
+}
+
+/* Forgot Password Page Styles */
+#resetPasswordForm {
+    width: 500px;
+}
+
+#resetPasswordForm input.form-control {
+    width: 65%;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+
+    #loginForm, #resetPasswordForm, #resetPasswordForm {
+        width: 100%;
+    }
+
+}

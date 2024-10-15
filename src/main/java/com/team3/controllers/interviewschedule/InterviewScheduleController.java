@@ -45,13 +45,13 @@ public class InterviewScheduleController {
         }else{
             interviewScheduleDTOs = interviewScheduleService.findAll(interviewerId, status ,pageable);
         }
-        List<User> interviewers = userService.getInterviewers();
+        List<UserDTO> interviewers = userService.getInterviewers();
         List<InterviewSchedule> schedules = interviewScheduleService.getAllSchedulesWithInterviewers();
         if(interviewScheduleDTOs.isEmpty()){
             model.addAttribute("message", "Data not found!");
         }
         model.addAttribute("schedules", schedules);
-        model.addAttribute("interviewers", interviewers);                    
+        model.addAttribute("interviewers", interviewers);
         model.addAttribute("interviewScheduleDTOs", interviewScheduleDTOs);
         model.addAttribute("keyword", keyword);
         model.addAttribute("currentPage", page);
@@ -76,13 +76,13 @@ public class InterviewScheduleController {
         }else{
             interviewScheduleDTOs = interviewScheduleService.findAll(interviewerId, status ,pageable);
         }
-        List<User> interviewers = userService.getInterviewers();
+        List<UserDTO> interviewers = userService.getInterviewers();
         List<InterviewSchedule> schedules = interviewScheduleService.getAllSchedulesWithInterviewers();
         if(interviewScheduleDTOs.isEmpty()){
             model.addAttribute("message", "Data not found!");
         }
         model.addAttribute("schedules", schedules);
-        model.addAttribute("interviewers", interviewers);                    
+        model.addAttribute("interviewers", interviewers);
         model.addAttribute("interviewScheduleDTOs", interviewScheduleDTOs);
         model.addAttribute("keyword", keyword);
         model.addAttribute("currentPage", page);

@@ -6,6 +6,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Users")
@@ -64,4 +65,8 @@ public class User {
     // Quan hệ nhiều-nhiều với InterviewSchedule
     @ManyToMany(mappedBy = "interviewers")
     private List<InterviewSchedule> interviewSchedules;
+
+    // Quan hệ 1-n với PasswordResetToken
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<PasswordResetToken> passwordResetTokens;
 }
