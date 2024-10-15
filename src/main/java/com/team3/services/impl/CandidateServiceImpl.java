@@ -64,46 +64,46 @@ public class CandidateServiceImpl implements CandidateService {
 
     private CandidateDTO convertToDTO(Candidate candidate) {
         return new CandidateDTO(
-                candidate.getCandidateId(),
-                candidate.getFullName(),
-                candidate.getEmail(),
-                candidate.getPhoneNumber(),
-                candidate.getAddress(),
-                candidate.getDateOfBirth(),
-                candidate.getGender(),
-                candidate.getCv(),
-                candidate.getCurrentPosition(),
-                candidate.getSkills(),
-                candidate.getYearsOfExperience(),
-                candidate.getHighestEducationLevel(),
-                candidate.getStatus(),
-                candidate.getNotes(),
-                candidate.getCreatedAt(),
-                candidate.getUpdatedAt()
+            candidate.getCandidateId(),
+            candidate.getFullName(),
+            candidate.getEmail(),
+            candidate.getPhoneNumber(),
+            candidate.getAddress(),
+            candidate.getDateOfBirth(),
+            candidate.getGender(),
+            candidate.getCv(),
+            candidate.getCurrentPosition(),
+            candidate.getSkills(),
+            candidate.getYearsOfExperience(),
+            candidate.getHighestEducationLevel(),
+            candidate.getStatus(),
+            candidate.getNotes(),
+            candidate.getCreatedAt(),
+            candidate.getUpdatedAt()
         );
     }
 
     private Candidate convertToEntity(CandidateDTO candidateDTO) {
         return new Candidate(
-                candidateDTO.getCandidateId(),
-                candidateDTO.getFullName(),
-                candidateDTO.getEmail(),
-                candidateDTO.getPhoneNumber(),
-                candidateDTO.getAddress(),
-                candidateDTO.getDateOfBirth(),
-                candidateDTO.getGender(),
-                candidateDTO.getCv(),
-                candidateDTO.getCurrentPosition(),
-                candidateDTO.getSkills(),
-                candidateDTO.getYearsOfExperience(),
-                candidateDTO.getHighestEducationLevel(),
-                null,  // recruiterOwner should be handled separately
-                candidateDTO.getStatus(),
-                candidateDTO.getNotes(),
-                candidateDTO.getCreatedAt(),
-                candidateDTO.getUpdatedAt()
+            candidateDTO.getCandidateId(),
+            candidateDTO.getFullName(),
+            candidateDTO.getEmail(),
+            candidateDTO.getPhoneNumber(),
+            candidateDTO.getAddress(),
+            candidateDTO.getDateOfBirth(),
+            candidateDTO.getGender(),
+            candidateDTO.getCv(),
+            candidateDTO.getCurrentPosition(),
+            candidateDTO.getSkills(),
+            candidateDTO.getYearsOfExperience(),
+            candidateDTO.getHighestEducationLevel(),
+            null,  // recruiterOwner should be handled separately
+            candidateDTO.getStatus(),
+            candidateDTO.getNotes(),
+            candidateDTO.getCreatedAt(),
+            candidateDTO.getUpdatedAt()
         );
     }
 
-
+    
 }
