@@ -20,4 +20,5 @@ public interface CandidateService {
 
     // Delete a candidate by ID
     void deleteCandidate(Long id);
+
 }

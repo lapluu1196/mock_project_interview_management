@@ -1,6 +1,8 @@
 package com.team3.services;
 
 import com.team3.dtos.user.UserDTO;
+import com.team3.entities.User;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -23,4 +25,7 @@ public interface UserService {
     String updateStatus(Long id);
 
     UserDTO findByUsername(String username);
+    
+    List<User> getInterviewers();
+
 }

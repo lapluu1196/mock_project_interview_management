@@ -274,5 +274,7 @@ public class UserServiceImpl implements UserService {
         return userDTO;
     }
 
-
+    public List<User> getInterviewers() {
+        return userRepository.findByRole("Interviewer");
+    }
 }
