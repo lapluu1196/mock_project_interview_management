@@ -9,7 +9,7 @@ $(document).ready(function () {
         $('#success-message').text('');
 
         $.ajax({
-            url: '/auth/password/forgot',
+            url: '/api/auth/password/forgot',
             type: 'POST',
             data: {
                 email: email

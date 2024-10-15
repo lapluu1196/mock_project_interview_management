@@ -39,6 +39,20 @@ body {
 }
 
 /* Login Page Styles */
+#loginForm {
+    background-color: #EEF1DF;
+    padding: 3rem 2rem;
+}
+
+#loginForm a {
+    margin-bottom: 0.5rem;
+}
+
+#formLoginHeader img {
+    width: 50px;
+}
+
+/* Login Page Styles */
 #loginForm, #forgotPasswordContent {
     background-color: #EEF1DF;
     padding: 3rem 2rem;

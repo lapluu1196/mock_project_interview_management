@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -190,6 +191,31 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Long id) {
 
+    }
+
+    @Override
+    public List<UserDTO> getInterviewers() {
+        List<User> users = userRepository.findByRole("Interviewer");
+
+        if (!users.isEmpty()) {
+            return users.stream().map(user -> {
+                UserDTO userDTO = new UserDTO();
+                userDTO.setUserId(user.getUserId());
+                userDTO.setUsername(user.getUsername());
+                userDTO.setFullName(user.getFullName());
+                userDTO.setEmail(user.getEmail());
+                userDTO.setGender(user.getGender());
+                userDTO.setDepartment(user.getDepartment());
+                userDTO.setRole(user.getRole());
+                userDTO.setDateOfBirth(user.getDateOfBirth());
+                userDTO.setAddress(user.getAddress());
+                userDTO.setPhoneNumber(user.getPhoneNumber());
+                userDTO.setStatus(user.getStatus());
+                userDTO.setNotes(user.getNotes());
+                return userDTO;
+            }).collect(Collectors.toList());
+        }
+        return List.of();
     }
 
     @Override
