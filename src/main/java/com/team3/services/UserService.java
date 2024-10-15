@@ -4,8 +4,6 @@ import com.team3.dtos.user.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface UserService {
 
     Page<UserDTO> findAll(String search, Pageable pageable);
@@ -23,4 +21,10 @@ public interface UserService {
     String updateStatus(Long id);
 
     UserDTO findByUsername(String username);
+
+    UserDTO findByEmail(String email);
+
+    void createPasswordResetTokenForUser(String email, String resetUrl, String token);
+
+    String updatePassword(Long id, String password);
 }
