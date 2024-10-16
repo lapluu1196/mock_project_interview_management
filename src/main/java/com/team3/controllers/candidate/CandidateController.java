@@ -24,47 +24,52 @@ public class CandidateController {
 
     // View list of candidates with optional search by keyword and status
     @GetMapping
-    public String viewCandidateList(@RequestParam(value = "keyword", required = false) String keyword,
-                                    @RequestParam(value = "status", required = false) String status,
-                                    Model model) {
+    public String viewCandidateList(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "status", required = false) String status,
+            Model model) {
+        
         List<CandidateDTO> candidateList = candidateService.searchCandidates(keyword, status);
         model.addAttribute("candidates", candidateList);
-        return "candidate_list"; // Candidate list view
+        return "candidate_list"; // Returns the view for the candidate list
     }
 
     // Show form to add a new candidate
     @GetMapping("/add")
     public String showAddCandidateForm(Model model) {
         model.addAttribute("candidate", new CandidateDTO());
-        return "add_candidate"; // Form for adding a candidate
+        return "add_candidate"; // Returns the form for adding a candidate
     }
 
     // Save a new candidate
     @PostMapping("/save")
     public String saveCandidate(@ModelAttribute("candidate") CandidateDTO candidateDTO) {
         candidateService.saveCandidate(candidateDTO);
-        return "redirect:/candidates"; // Redirect to candidate list
+        return "redirect:/candidates"; // Redirect to the candidate list after saving
     }
 
     // Show form to edit an existing candidate
     @GetMapping("/edit/{id}")
     public String showEditCandidateForm(@PathVariable("id") Long id, Model model) {
         CandidateDTO candidateDTO = candidateService.getCandidateById(id);
+        if (candidateDTO == null) {
+            return "redirect:/candidates"; // Redirect if candidate not found
+        }
         model.addAttribute("candidate", candidateDTO);
-        return "edit_candidate"; // Form for editing a candidate
+        return "edit_candidate"; // Returns the form for editing a candidate
     }
 
     // Update an existing candidate
     @PostMapping("/update")
     public String updateCandidate(@ModelAttribute("candidate") CandidateDTO candidateDTO) {
         candidateService.updateCandidate(candidateDTO);
-        return "redirect:/candidates"; // Redirect to candidate list
+        return "redirect:/candidates"; // Redirect to the candidate list after updating
     }
 
     // Delete a candidate
     @GetMapping("/delete/{id}")
     public String deleteCandidate(@PathVariable("id") Long id) {
         candidateService.deleteCandidate(id);
-        return "redirect:/candidates";
+        return "redirect:/candidates"; // Redirect to the candidate list after deletion
     }
 }
