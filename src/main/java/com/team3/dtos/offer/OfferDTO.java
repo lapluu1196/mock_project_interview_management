@@ -13,37 +13,17 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class OfferDTO {
 
-    private Long offerId;
-
-    private Long candidateId;
-
-    private Long jobId;
-
-    private Long approverId;
-
-    private String contractType;
-
-    private String level;
-
-    private String department;
-
-    private String interviewInfo;
-
-    private String recruiterOwner;
-
-    private LocalDate contractPeriodFrom;
-
-    private LocalDate contractPeriodTo;
-
-    private Double basicSalary;
-
-    private String offerStatus;
-
-    private LocalDate dueDate;
-
-    private String notes;
-
-    private LocalDate createdAt;
-
-    private LocalDate updatedAt;
+    public Long candidate;
+    public String position;
+    public String approver;
+    public String job;
+    public String contractPeriodFrom;
+    public String contractPeriodTo;
+    public String contractType;
+    public String level;
+    public String department;
+    public String recruiterOwner;
+    public String dueDate;
+    public String basicSalary;
+    public String notes;
 }
