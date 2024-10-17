@@ -3,6 +3,7 @@ package com.team3.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.team3.entities.Candidate;
 
 @Repository
-public interface CandidateRepository extends JpaRepository<Candidate, Long> {
+public interface CandidateRepository extends JpaRepository<Candidate, Long>, JpaSpecificationExecutor<Candidate> {
 
     // Find candidates by keyword (name or email) and status
     @Query("SELECT c FROM Candidate c WHERE (c.name LIKE %:keyword% OR c.email LIKE %:keyword%) AND c.status = :status")

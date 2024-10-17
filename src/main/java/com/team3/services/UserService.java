@@ -18,9 +18,17 @@ public interface UserService {
 
     void deleteById(Long id);
 
+    List<UserDTO> getInterviewers();
+
     Page<UserDTO> filterUser(String search, String role, Pageable pageable);
 
     String updateStatus(Long id);
 
     UserDTO findByUsername(String username);
+
+    UserDTO findByEmail(String email);
+
+    void createPasswordResetTokenForUser(String email, String resetUrl, String token);
+
+    String updatePassword(Long id, String password);
 }
