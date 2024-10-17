@@ -13,8 +13,6 @@ public interface OfferService {
 
 //    void saveOffer(Offer offer);
 
-//    void deleteOffer(Long id);
-
     // get all offers
     List<Offer> getAllOffers();
 

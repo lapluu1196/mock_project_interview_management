@@ -36,6 +36,10 @@ public class Offer {
     @Column(name = "level", nullable = false, length = 255)
     private String level;
 
+//    Thêm position
+    @Column(name = "position", length = 255)
+    private String position;
+
     @Column(name = "department", nullable = false, length = 255)
     private String department;
 

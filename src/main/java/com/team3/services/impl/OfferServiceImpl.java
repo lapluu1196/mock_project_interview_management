@@ -33,12 +33,10 @@ public class OfferServiceImpl implements OfferService {
     }
 
     public Page<Offer> searchOffers(String search, String department, String status, Pageable pageable) {
-        // Nếu các tham số không có giá trị, truyền vào null để repository xử lý
         String searchParam = (search == null || search.trim().isEmpty()) ? null : search;
         String departmentParam = (department == null || department.trim().isEmpty()) ? null : department;
         String statusParam = (status == null || status.trim().isEmpty()) ? null
                 : status;
-
         return offerRepository.searchOffers(searchParam, departmentParam, statusParam, pageable);
     }
 
