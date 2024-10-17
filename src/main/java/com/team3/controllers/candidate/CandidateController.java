@@ -19,7 +19,7 @@ import com.team3.services.CandidateService;
 @RequestMapping("/candidates")
 public class CandidateController {
 
-    @Autowired
+    // @Autowired
     private CandidateService candidateService;
 
     // View list of candidates with optional search by keyword and status
@@ -72,4 +72,5 @@ public class CandidateController {
         candidateService.deleteCandidate(id);
         return "redirect:/candidates"; // Redirect to the candidate list after deletion
     }
+
 }

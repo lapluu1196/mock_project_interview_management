@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.team3.dtos.candidate.CandidateDTO;
 
+
 public interface CandidateService {
 
     // Search candidates by keyword and status
@@ -20,5 +21,9 @@ public interface CandidateService {
 
     // Delete a candidate by ID
     void deleteCandidate(Long id);
+
+    // Get all candidates
+     List<CandidateDTO> getAllCandidates();
+     
 
 }

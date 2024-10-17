@@ -5,10 +5,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.team3.dtos.candidate.CandidateDTO;
@@ -21,6 +17,38 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Autowired
     private CandidateRepository candidateRepository;
+
+    @Override
+    public List<CandidateDTO> getAllCandidates() {
+        // Get List of entities
+        var candidates = candidateRepository.findAll();
+
+
+        // Convert entities to DTOs
+        var candidateDTOs = candidates.stream().map(candidate -> {
+            var candidateDTO = new CandidateDTO();
+
+            candidateDTO.setCandidateId(candidate.getCandidateId());
+            candidateDTO.setFullName(candidate.getFullName());
+            candidateDTO.setCv(candidate.getCv());
+            candidateDTO.setEmail(candidate.getEmail());
+            candidateDTO.setNotes(candidate.getNotes());
+            candidateDTO.setSkills(candidate.getSkills());
+            candidateDTO.setGender(candidate.getGender());
+            candidateDTO.setStatus(candidate.getStatus());
+            candidateDTO.setAddress(candidate.getAddress());
+            candidateDTO.setCurrentPosition(candidate.getCurrentPosition());
+            candidateDTO.setYearsOfExperience(candidate.getYearsOfExperience());
+            candidateDTO.setPhoneNumber(candidate.getPhoneNumber());
+            candidateDTO.setCreatedAt(candidate.getCreatedAt());
+            candidateDTO.setUpdatedAt(candidate.getUpdatedAt());
+            
+            return candidateDTO;
+        }).toList();
+
+        // Return DTOs
+        return candidateDTOs;
+    }
 
     @Override
     public List<CandidateDTO> searchCandidates(String keyword, String status) {
@@ -54,22 +82,26 @@ public class CandidateServiceImpl implements CandidateService {
         return candidate.map(this::convertToDTO).orElse(null);
     }
 
-    @Override
-    public void saveCandidate(CandidateDTO candidateDTO) {
-        Candidate candidate = convertToEntity(candidateDTO);
-        candidateRepository.save(candidate);
-    }
 
-    @Override
-    public void updateCandidate(CandidateDTO candidateDTO) {
-        Candidate candidate = convertToEntity(candidateDTO);
-        candidateRepository.save(candidate);
-    }
+    //     if (keyword != null && !keyword.isEmpty() && status != null && !status.isEmpty()) {
+    //         candidates = candidateRepository.findByKeywordAndStatus(keyword, status);
+    //     } else if (keyword != null && !keyword.isEmpty()) {
+    //         candidates = candidateRepository.findByKeyword(keyword);
+    //     } else if (status != null && !status.isEmpty()) {
+    //         candidates = candidateRepository.findByStatus(status);
+    //     } else {
+    //         candidates = candidateRepository.findAll();
+    //     }
 
-    @Override
-    public void deleteCandidate(Long id) {
-        candidateRepository.deleteById(id);
-    }
+    //     return candidates.stream().map(this::convertToDTO).collect(Collectors.toList());
+    // }
+
+    // @Override
+    // public CandidateDTO getCandidateById(Long id) {
+    //     Optional<Candidate> candidate = candidateRepository.findById(id);
+    //     return candidate.map(this::convertToDTO).orElse(null);
+    // }
+
 
     // Convert Candidate entity to CandidateDTO
     private CandidateDTO convertToDTO(Candidate candidate) {
@@ -114,6 +146,24 @@ public class CandidateServiceImpl implements CandidateService {
             candidateDTO.getCreatedAt(),
             candidateDTO.getUpdatedAt()
         );
+    }
+
+    @Override
+    public void saveCandidate(CandidateDTO candidateDTO) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveCandidate'");
+    }
+
+    @Override
+    public void updateCandidate(CandidateDTO candidateDTO) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateCandidate'");
+    }
+
+    @Override
+    public void deleteCandidate(Long id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteCandidate'");
     }
 
     
