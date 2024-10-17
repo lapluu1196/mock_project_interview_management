@@ -23,6 +23,9 @@ public interface CandidateService {
     // void deleteCandidate(Long id);
 
     // Get all candidates
+
+    //Dat: Anh dung xoa nhe
+        
      List<CandidateDTO> getAllCandidates();
      
 

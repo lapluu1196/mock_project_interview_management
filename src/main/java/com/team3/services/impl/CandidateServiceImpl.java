@@ -18,6 +18,8 @@ public class CandidateServiceImpl implements CandidateService {
     @Autowired
     private CandidateRepository candidateRepository;
 
+
+    //Dat: Code ham nay em can anh dung xoa nhe
     @Override
     public List<CandidateDTO> getAllCandidates() {
         // Get List of entities
