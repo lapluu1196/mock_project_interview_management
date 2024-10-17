@@ -20,14 +20,22 @@ public interface UserService {
 
     void deleteById(Long id);
 
+    List<User> getInterviewers();
+
     Page<UserDTO> filterUser(String search, String role, Pageable pageable);
 
     String updateStatus(Long id);
 
     UserDTO findByUsername(String username);
-    
-    List<User> getInterviewers();
+
 
     List<User> getRecruiters();
+
+
+    UserDTO findByEmail(String email);
+
+    void createPasswordResetTokenForUser(String email, String resetUrl, String token);
+
+    String updatePassword(Long id, String password);
 
 }

@@ -2,7 +2,9 @@ package com.team3.services.impl;
 
 import com.team3.dtos.user.EmailDTO;
 import com.team3.dtos.user.UserDTO;
+import com.team3.entities.PasswordResetToken;
 import com.team3.entities.User;
+import com.team3.repositories.PasswordResetTokenRepository;
 import com.team3.repositories.UserRepository;
 import com.team3.services.EmailService;
 import com.team3.services.UserService;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -29,6 +32,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
 
 
     @Override
@@ -137,7 +143,7 @@ public class UserServiceImpl implements UserService {
                     .data(Map.of("username", user.getUsername(), "password", password))
                     .build();
 
-            String result = emailService.sendEmail(emailDTO);
+            String result = emailService.sendEmail(emailDTO, "email-user-create-template");
 
             return "Successfully created user!";
         }
@@ -185,6 +191,31 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Long id) {
 
+    }
+
+    @Override
+    public List<User> getInterviewers() {
+        List<User> users = userRepository.findByRole("Interviewer");
+
+        // if (!users.isEmpty()) {
+        //     return users.stream().map(user -> {
+        //         UserDTO userDTO = new UserDTO();
+        //         userDTO.setUserId(user.getUserId());
+        //         userDTO.setUsername(user.getUsername());
+        //         userDTO.setFullName(user.getFullName());
+        //         userDTO.setEmail(user.getEmail());
+        //         userDTO.setGender(user.getGender());
+        //         userDTO.setDepartment(user.getDepartment());
+        //         userDTO.setRole(user.getRole());
+        //         userDTO.setDateOfBirth(user.getDateOfBirth());
+        //         userDTO.setAddress(user.getAddress());
+        //         userDTO.setPhoneNumber(user.getPhoneNumber());
+        //         userDTO.setStatus(user.getStatus());
+        //         userDTO.setNotes(user.getNotes());
+        //         return userDTO;
+        //     }).collect(Collectors.toList());
+        // }
+        return users;
     }
 
     @Override
@@ -274,12 +305,83 @@ public class UserServiceImpl implements UserService {
         return userDTO;
     }
 
-    public List<User> getInterviewers() {
-        return userRepository.findByRole("Interviewer");
+    @Override
+    public UserDTO findByEmail(String email) {
+
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            return null;
+        }
+
+        UserDTO userDTO = new UserDTO();
+
+        userDTO.setUserId(user.getUserId());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setFullName(user.getFullName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setGender(user.getGender());
+        userDTO.setDepartment(user.getDepartment());
+        userDTO.setRole(user.getRole());
+        userDTO.setDateOfBirth(user.getDateOfBirth());
+        userDTO.setAddress(user.getAddress());
+        userDTO.setPhoneNumber(user.getPhoneNumber());
+        userDTO.setStatus(user.getStatus());
+        userDTO.setNotes(user.getNotes());
+
+        return userDTO;
     }
 
     @Override
     public List<User> getRecruiters() {
         return userRepository.findByRole("Recruiter");
     }
+
+    public void createPasswordResetTokenForUser(String email, String resetUrl, String token) {
+
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new IllegalArgumentException("User not found!");
+        }
+
+        // save token
+        PasswordResetToken passwordResetToken = new PasswordResetToken();
+        passwordResetToken.setToken(token);
+        passwordResetToken.setUser(user);
+        passwordResetToken.setExpiryDate(LocalDateTime.now().plusMinutes(1440));
+
+        passwordResetTokenRepository.save(passwordResetToken);
+
+        // send email
+        EmailDTO emailDTO = EmailDTO.builder()
+                .subject("Password Reset")
+                .from("interviewmanagementsystem.team3@gmail.com")
+                .to(user.getEmail())
+                .data(Map.of("resetEmail", email, "resetUrl", resetUrl))
+                .build();
+        String result = emailService.sendEmail(emailDTO, "email-user-password-reset-template");
+    }
+
+    @Override
+    public String updatePassword(Long id, String password) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found!"));
+
+        String oldPassword = user.getPassword();
+
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+
+        String newPassword = user.getPassword();
+
+        if (!oldPassword.equals(newPassword)) {
+            return "Password has been updated successfully!";
+        }
+
+        return "Password has been updated failed!";
+    }
+
+
 }
