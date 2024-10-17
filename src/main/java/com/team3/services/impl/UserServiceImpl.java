@@ -197,6 +197,8 @@ public class UserServiceImpl implements UserService {
     public List<User> getInterviewers() {
         List<User> users = userRepository.findByRole("Interviewer");
 
+        /*Doan code nay em cmt của anh lại tại em chưa sửa để map vs code em ạ */
+
         // if (!users.isEmpty()) {
         //     return users.stream().map(user -> {
         //         UserDTO userDTO = new UserDTO();

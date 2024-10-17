@@ -19,7 +19,7 @@ import com.team3.services.CandidateService;
 @RequestMapping("/candidates")
 public class CandidateController {
 
-    // @Autowired
+    @Autowired
     private CandidateService candidateService;
 
     // View list of candidates with optional search by keyword and status

@@ -18,11 +18,12 @@ public class CandidateServiceImpl implements CandidateService {
     @Autowired
     private CandidateRepository candidateRepository;
 
+
+    //Dat: Code ham nay em can anh dung xoa nhe
     @Override
     public List<CandidateDTO> getAllCandidates() {
         // Get List of entities
         var candidates = candidateRepository.findAll();
-
 
         // Convert entities to DTOs
         var candidateDTOs = candidates.stream().map(candidate -> {
