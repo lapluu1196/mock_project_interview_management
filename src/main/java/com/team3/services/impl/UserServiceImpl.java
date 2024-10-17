@@ -277,4 +277,9 @@ public class UserServiceImpl implements UserService {
     public List<User> getInterviewers() {
         return userRepository.findByRole("Interviewer");
     }
+
+    @Override
+    public List<User> getRecruiters() {
+        return userRepository.findByRole("Recruiter");
+    }
 }

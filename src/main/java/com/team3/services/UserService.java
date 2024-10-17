@@ -28,4 +28,6 @@ public interface UserService {
     
     List<User> getInterviewers();
 
+    List<User> getRecruiters();
+
 }

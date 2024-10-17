@@ -12,13 +12,13 @@ import com.team3.entities.Candidate;
 public interface CandidateRepository extends JpaRepository<Candidate, Long>, JpaSpecificationExecutor<Candidate> {
 
     // Find candidates by keyword and status
-    List<Candidate> findByKeywordAndStatus(String keyword, String status);
+    // List<Candidate> findByKeywordAndStatus(String keyword, String status);
 
-    // Find candidates by keyword only
-    List<Candidate> findByKeyword(String keyword);
+    // // Find candidates by keyword only
+    // List<Candidate> findByKeyword(String keyword);
 
-    // Find candidates by status only
-    List<Candidate> findByStatus(String status);
+    // // Find candidates by status only
+    // List<Candidate> findByStatus(String status);
 
     Candidate findFullNameByCandidateId(Long candidateId);
 }

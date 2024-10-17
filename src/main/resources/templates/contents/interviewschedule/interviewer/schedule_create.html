@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/mainLayout}">
+
+<head>
+    <meta charset="UTF-8">
+    <title layout:fragment="title">New Interview Schedule</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <link rel="stylesheet" href="/css/interviewschedule/styles.css">
+
+    <style>
+        .input-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-container input {
+            width: 100%;
+            padding-right: 30px;
+            /* Đẩy text vào để tránh icon */
+        }
+
+        .input-container i {
+            position: absolute;
+            right: 10px;
+            /* Đưa icon sát bên phải */
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+
+        .popup {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .popup.show {
+            opacity: 1;
+        }
+    </style>
+
+    <script>
+        // Hàm hiển thị popup lỗi
+        function showErrorPopup(message) {
+            // Set thông điệp lỗi cho popup
+            document.getElementById('errorMessage').innerText = message;
+
+            // Hiển thị popup
+            var popup = document.getElementById('errorPopup');
+            popup.classList.add('show');
+
+            // Ẩn popup sau 3 giây
+            setTimeout(function () {
+                popup.classList.remove('show');
+            }, 3000);
+        }
+
+        // Kiểm tra lỗi từ phía Controller và hiển thị popup nếu có lỗi
+        function checkErrorAndShowPopup() {
+            const errorMessage = /*[[${errorPopupMessage}]]*/ 'error'; // Đây là dữ liệu lỗi từ server
+
+            if (errorMessage != null && errorMessage !== "") {
+                showErrorPopup(errorMessage);
+            }
+        }
+
+        // Gọi hàm kiểm tra lỗi khi trang được load
+        window.onload = function () {
+            checkErrorAndShowPopup();
+        };
+    </script>
+</head>
+
+<body>
+    <div id="mainBoard" layout:fragment="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <ul class="nav justify-content-start fs-4">
+                        <li class="nav-item">
+                            <a class="nav-link text-reset text-decoration-underline"
+                                th:href="@{/interview-schedule/manager}">Interview Schedule List</a>
+                        </li>
+                        <li class="nav-item d-flex ">
+                            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none"
+                                viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m9 5 7 7-7 7" />
+                            </svg>
+
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-reset text-decoration-none disabled" href="#"
+                                aria-disabled="true">New Interview Schedule</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row mt-3 py-4" id="createInterviewScheduleForm">
+                <form th:action="@{/interview-schedule/add}" method="post" th:object="${interviewScheduleCreateDTO}">
+                    <input type="hidden" name="interviewtitle" />
+                    <div class="row d-flex justify-content-between mb-3">
+                        <div class="col-6 d-flex justify-content-between ">
+                            <label for="interviewTitle" class="w-25">Schedule title <span
+                                    style="color: red">*</span></label>
+                            <div class="d-flex flex-column w-75 ms-3">
+                                <!-- Hiển thị lỗi nếu có -->
+                                <span th:if="${#fields.hasErrors('interviewTitle')}" th:errors="*{interviewTitle}"
+                                    class="invalid-input-user text-danger"></span>
+
+                                <!-- Trường nhập liệu -->
+                                <input type="text" class="form-control" placeholder="Type a title..."
+                                    id="interviewTitle" th:field="*{interviewTitle}">
+                            </div>
+                        </div>
+
+
+                        <div class="col-6 d-flex justify-content-end ">
+                            <label for="jobTitle" class="w-25 label-right">Job <span style="color: red">*</span></label>
+                            <div class="d-flex flex-column w-75 ms-3">
+                                <span th:if="${#fields.hasErrors('jobId')}" th:errors="*{jobId}"
+                                    class="invalid-input-user text-danger"></span>
+                                <select name="jobId" id="jobTitle" class="form-select">
+                                    <option value="">Select a job</option>
+                                    <option th:each="job : ${jobs}" th:value="${job.jobId}" th:text="${job.jobTitle}">
+                                    </option>
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row d-flex justify-content-between mb-3">
+                        <div class="col-6 d-flex justify-content-between ">
+                            <label for="candidateName" class="w-25 label-right">Candidate name <span
+                                    style="color: red">*</span></label>
+                            <div class="d-flex flex-column w-75 ms-3">
+                                <span th:if="${#fields.hasErrors('candidateId')}" th:errors="*{candidateId}"
+                                    class="invalid-input-user text-danger"></span>
+                                <select name="candidateId" id="candidateName" class="form-select">
+                                    <option value="">Select candidate</option>
+                                    <option th:each="candidate : ${candidates}" th:value="${candidate.candidateId}"
+                                        th:text="${candidate.fullName}"></option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-6 d-flex justify-content-end ">
+                            <label for="multiSelect" class="w-25 label-right">Interviewer
+                                <span style="color: red">*</span></label>
+                            <div class="d-flex flex-column w-75 ms-3">
+                                <span th:if="${#fields.hasErrors('interviewerIds')}" th:errors="*{interviewerIds}"
+                                    class="invalid-input-user text-danger"></span>
+                                <select name="interviewerIds" id="multiSelect" multiple>
+                                    <option value="">Select interviewer</option>
+                                    <option th:each="interviewer : ${interviewers}" th:value="${interviewer.userId}"
+                                        th:text="${interviewer.fullName}"></option>
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row d-flex justify-content-between mb-3">
+                        <div class="col-6 d-flex justify-content-between ">
+                            <label for="scheduleDateFormAdd" class="w-25 label-right">Schedule time <span
+                                    style="color: red">*</span></label>
+
+                            <input type="date" class="form-control w-75 ms-3" id="scheduleDateFormAdd"
+                                name="scheduleDate">
+                        </div>
+                        <div class="col-6 d-flex justify-content-end ">
+                            <label for="location" class="w-25 label-right">Location</label>
+                            <div class="d-flex flex-column w-75 ms-3">
+                                <span class="invalid-input-user text-danger"></span>
+                                <input type="text" class="form-control" placeholder="Type a location..." id="location"
+                                    name="location">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row d-flex justify-content-between mb-3">
+                        <div class="col-6 d-flex justify-content-end align-items-start">
+                            <div class="w-25"></div>
+                            <div class="d-flex w-75 ms-3 row justify-content-between">
+                                <span th:if="${#fields.hasErrors('scheduleFrom')}" th:errors="*{scheduleFrom}"
+                                    class="invalid-input-user text-danger"></span>
+                                <div class="col-6 d-flex ">
+                                    <label for="scheduleTimeFrom" class="w-25 ">From </label>
+                                    <div class="input-container w-75">
+                                        <input class="ps-4" type="text" id="scheduleTimeFrom" name="scheduleFrom"
+                                            value="09:00">
+                                        <i class="far fa-clock"></i>
+                                    </div>
+
+
+                                </div>
+                                <div class="col-6 d-flex ">
+                                    <label for="scheduleTimeTo" class="w-25 ">To </label>
+                                    <div class="input-container w-75">
+                                        <input class="ps-4" type="text" id="scheduleTimeTo" name="scheduleTo"
+                                            value="09:00">
+                                        <i class="far fa-clock"></i>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 d-flex justify-content-end position-relative">
+                            <label for="recruiter" class="w-25 label-right">Recruiter Owner <span
+                                    style="color: red">*</span></label>
+                            <div class="d-flex flex-column w-75 ms-3">
+                                <span class="invalid-input-user text-danger"></span>
+                                <div class="d-flex flex-column">
+                                    <span th:if="${#fields.hasErrors('recruiterOwner')}" th:errors="*{recruiterOwner}"
+                                        class="invalid-input-user text-danger"></span>
+                                    <select name="recruiterOwner" id="recruiter" class="form-select">
+                                        <option value="">Select a recruiter</option>
+                                        <option th:each="recruiter : ${recruiters}" th:value="${recruiter.fullName}"
+                                            th:text="${recruiter.fullName}"></option>
+
+                                    </select>
+                                    <a href="" class="text-dark text-decoration-underline">Asign me</a>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row d-flex justify-content-between mb-3">
+                        <div class="col-6 d-flex justify-content-end">
+                            <label for="notes" class="w-25 label-right">Note</label>
+                            <textarea name="notes" id="notes" cols="30" rows="4" placeholder="Type a note..."
+                                class="form-control w-75 ms-3"></textarea>
+                        </div>
+                        <div class="col-6 d-flex justify-content-between">
+                            <label for="meettingId" class="w-25">Meeting ID</label>
+                            <div class="d-flex flex-column w-75 ms-3">
+                                <span class="invalid-input-user text-danger"></span>
+                                <input type="text" class="form-control" placeholder="Type a meettingId..."
+                                    id="meettingId" name="meetingId">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-5">
+                        <button type="submit" class="btn btn-secondary">Submit</button>
+                        <button type="button" class="btn btn-secondary ms-5" id="cancelButton"><a class="text-light text-decoration-none" th:href="@{/interview-schedule/manager}">Cancel</a></button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- Hiển thị thông báo lỗi nếu có -->
+        <div id="errorPopup" class="popup" style="display: none;">
+            <p id="errorMessage"></p>
+        </div>
+
+    </div>
+</body>
+
+
+</html>
