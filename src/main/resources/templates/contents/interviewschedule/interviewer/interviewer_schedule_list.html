@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainLayout}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/css/interviewschedule/styles.css">
+    <title layout:fragment="title">Interview Schedule</title> 
+</head>
+
+<body>
+    <div class="container-fluid d-flex flex-column vh-100 align-items-center mt-2" layout:fragment="content">
+        <div class="container mt-3 row">
+            <p class="mb-0 col-10">Interview Schedule List</p>
+        </div>
+        <div class="container d-flex row mt-4">
+            <div class="col-4" id="searchForm">
+                <form action="#">
+                    <div class="input-group mb-3">
+                        <input class="form-control" type="search" name="keyword" id="searchUser" aria-label="Recipient's username" aria-describedby="searchIcon" placeholder="Search" th:value="${keyword}">
+                        <button type="submit" class="btn btn-outline-secondary">
+                            <img src="/images/search.png" alt="search-icon" id="searchIcon">
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <form action="/interview-schedule/manager" method="get" class="col-8 d-flex justify-content-between">
+                <div class="col-4">
+                    <select class="form-select option-bg rounded-0" aria-label="Default select example" name="interviewerId">
+                        <option th:value="null">Interviewer</option>
+                        <option th:each="interviewer : ${interviewers}" th:value="${interviewer.userId}"
+                         th:text="${interviewer.fullName}" th:selected="${interviewer.userId == interviewerId}"></option>
+    
+                    </select>
+                </div>
+    
+                <div class="col-4">
+                    <select class="form-select option-bg rounded-0" aria-label="Default select example" name="status">
+                        <option selected th:value="null">Status</option>
+                        <option th:value="New" th:selected="${status == 'New'}">New</option>
+                        <option th:value="Canceled" th:selected="${status == 'Canceled'}">Canceled</option>
+                        <option th:value="Interviewed" th:selected="${status == 'Interviewed'}">Interviewed</option>
+                        <option th:value="Invited" th:selected="${status == 'Invited'}">Invited</option>
+                    </select>
+                </div>
+    
+                <div class="col-2">
+                    <button type="submit" class="btn btn-search rounded-0 fw-bold">Search</button>
+                </div>
+            </form>
+
+        
+
+        </div>
+
+        <div class="container-fluid mt-2">
+    
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Candidate Name</th>
+                        <th scope="col">Interviewer</th>
+                        <th scope="col">Schedule</th>
+                        <th scope="col">Result</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Job</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${message}">
+                        <td colspan="8" class="text-start ">No item matches with your search data. Please try again.</td>
+                    </tr>
+                    <tr th:each="interviewSchedule : ${interviewScheduleDTOs}">
+                        <td th:text="${interviewSchedule.interviewTitle}"></td>
+                        <td th:text="${interviewSchedule.candidateName}"></td>
+                        <td>
+                            <ul>
+                                <li th:each="interviewer : ${interviewSchedule.interviewers}" th:text="${interviewer.fullName}"></li>
+                            </ul>
+                        </td>
+                        <td  th:text="${interviewSchedule.scheduleDate + ' ' + interviewSchedule.scheduleFrom + ' - ' + interviewSchedule.scheduleTo}"></td>
+                        <td th:text="${interviewSchedule.result}" ></td>
+                        <td th:text="${interviewSchedule.status}"></td>
+                        <td  th:text="${interviewSchedule.jobTitle}"></td>
+                        <td >
+                            <button aria-label="view" type="button" class="border-0 bg-transparent" >
+                                <a class="text-dark text-decoration-none" th:href="@{/interview-schedule/manager/scheduleDetail}">
+                                    <i class="far fa-eye"></i>
+                                </a>
+                            </button>
+                            <button aria-label="edit" type="button" class="border-0 bg-transparent">
+                                <a class="text-dark text-decoration-none" th:href="@{/interview-schedule/edit}">
+                                    <i class="far fa-edit ms-2"></i>
+                                </a>
+                                
+                            </button>
+                            
+                        </td>
+                    </tr>
+            
+                </tbody>
+            </table>
+            <!-- Pagination -->
+        <div class="row" id="pagination">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-end align-items-center">
+                    <li class="page-item">
+                        <span th:text="'10/' + ${totalUsers} + ' rows'"></span>
+                    </li>
+                    <li class="page-item">
+                        <a class="btn page-link" role="button" th:href="@{/users(keyword=${keyword}, page=${currentPage - 1})}"
+                           th:classappend="${currentPage > 0} ? '' : 'disabled'"
+                           th:attr="aria-disabled=${currentPage > 0} ? 'false' : 'true'">
+                            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+                            </svg>
+
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="btn page-link" role="button" th:href="@{/users(keyword=${keyword}, page=${currentPage + 1})}"
+                           th:classappend="${currentPage + 1 < totalPages} ? '' : 'disabled'"
+                           th:attr="aria-disabled=${currentPage + 1 < totalPages} ? 'false' : 'true'">
+                            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <!-- END Pagination -->
+        </div>
+        
+    </div>
+
+</body>
+
+</html>

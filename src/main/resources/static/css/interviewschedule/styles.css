@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.ms-n5 {
+    margin-left: -40px;
+}
+
+.option-bg {
+    background-color: #F0F3FB;
+}
+
+.btn-search {
+    background-color: #D9D9D9;
+}
+
+.table thead th {
+    background-color: #F2F2EE !important;
+    /* Chỉnh màu nền theo ý bạn */
+}
+
+
+body>div>div.container-fluid.px-5>table>tbody>tr>td:nth-child(odd) {
+    background-color: #F1F6FB;
+}
+
+body>div>div.container-fluid.px-5>table>tbody>tr>td:nth-child(even) {
+    background-color: #EBEFF3;
+}
+
+body>div>div.container-fluid.px-5>table>tbody>tr:nth-child(even)>td:nth-child(odd) {
+    background-color: #EBEFF3;
+}
+
+
+
+body>div>div.container-fluid.px-5>table>tbody>tr>td:nth-child(4) {
+    max-width: 8vw;
+}
+
+.table td, .table th{
+    /* display: flex; */
+    vertical-align: center;
+    text-align: center;
+}
+
+#pagination a {
+    background-color: transparent;
+    border: none;
+}
