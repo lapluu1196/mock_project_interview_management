@@ -14,11 +14,11 @@ import com.team3.entities.Candidate;
 public interface CandidateRepository extends JpaRepository<Candidate, Long>, JpaSpecificationExecutor<Candidate> {
 
     // Find candidates by keyword (name or email) and status
-    @Query("SELECT c FROM Candidate c WHERE (c.name LIKE %:keyword% OR c.email LIKE %:keyword%) AND c.status = :status")
+    @Query("SELECT c FROM Candidate c WHERE (c.fullName LIKE %:keyword% OR c.email LIKE %:keyword%) AND c.status = :status")
     List<Candidate> findByKeywordAndStatus(@Param("keyword") String keyword, @Param("status") String status);
 
     // Find candidates by keyword (searching by name or email)
-    @Query("SELECT c FROM Candidate c WHERE c.name LIKE %:keyword% OR c.email LIKE %:keyword%")
+    @Query("SELECT c FROM Candidate c WHERE c.fullName LIKE %:keyword% OR c.email LIKE %:keyword%")
     List<Candidate> findByKeyword(@Param("keyword") String keyword);
 
     // Find candidates by status
@@ -26,6 +26,6 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long>, Jpa
     List<Candidate> findByStatus(@Param("status") String status);
 
     // Find candidate's full name by candidate ID
-    @Query("SELECT c.fullName FROM Candidate c WHERE c.id = :candidateId")
+    @Query("SELECT c.fullName FROM Candidate c WHERE c.candidateId = :candidateId")
     Candidate findFullNameByCandidateId(@Param("candidateId") Long candidateId);
 }
