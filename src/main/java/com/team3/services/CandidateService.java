@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.team3.dtos.candidate.CandidateDTO;
 
+
 public interface CandidateService {
 
     // UC05: Search candidates by keyword, status, and role, with pagination
@@ -23,4 +24,11 @@ public interface CandidateService {
 
     // UC10: Ban candidate
     void banCandidate(Long id);
+    // Get all candidates
+
+    //Dat: Anh dung xoa nhe
+
+     List<CandidateDTO> getAllCandidates();
+     
+
 }

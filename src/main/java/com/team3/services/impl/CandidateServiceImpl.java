@@ -25,6 +25,39 @@ public class CandidateServiceImpl implements CandidateService {
     @Autowired
     private UserService userService;
 
+
+    //Dat: Code ham nay em can anh dung xoa nhe
+    @Override
+    public List<CandidateDTO> getAllCandidates() {
+        // Get List of entities
+        var candidates = candidateRepository.findAll();
+
+        // Convert entities to DTOs
+        var candidateDTOs = candidates.stream().map((Candidate candidate) -> {
+            var candidateDTO = new CandidateDTO();
+
+            candidateDTO.setCandidateId(candidate.getCandidateId());
+            candidateDTO.setFullName(candidate.getFullName());
+            candidateDTO.setCv(candidate.getCv());
+            candidateDTO.setEmail(candidate.getEmail());
+            candidateDTO.setNotes(candidate.getNotes());
+            candidateDTO.setSkills(candidate.getSkills());
+            candidateDTO.setGender(candidate.getGender());
+            candidateDTO.setStatus(candidate.getStatus());
+            candidateDTO.setAddress(candidate.getAddress());
+            candidateDTO.setCurrentPosition(candidate.getCurrentPosition());
+            candidateDTO.setYearsOfExperience(candidate.getYearsOfExperience());
+            candidateDTO.setPhoneNumber(candidate.getPhoneNumber());
+            candidateDTO.setCreatedAt(candidate.getCreatedAt());
+            candidateDTO.setUpdatedAt(candidate.getUpdatedAt());
+            
+            return candidateDTO;
+        }).toList();
+
+        // Return DTOs
+        return candidateDTOs;
+    }
+
     @Override
     public List<CandidateDTO> searchCandidates(String keyword, String status, String role, int page) {
         Pageable pageable = PageRequest.of(page, 10); // Pagination, 10 candidates per page
@@ -50,22 +83,26 @@ public class CandidateServiceImpl implements CandidateService {
         return candidate.map(this::convertToDTO).orElse(null);
     }
 
-    @Override
-    public void saveCandidate(CandidateDTO candidateDTO) {
-        Candidate candidate = convertToEntity(candidateDTO);
-        candidateRepository.save(candidate);
-    }
 
-    @Override
-    public void updateCandidate(CandidateDTO candidateDTO) {
-        Candidate candidate = convertToEntity(candidateDTO);
-        candidateRepository.save(candidate);
-    }
+    //     if (keyword != null && !keyword.isEmpty() && status != null && !status.isEmpty()) {
+    //         candidates = candidateRepository.findByKeywordAndStatus(keyword, status);
+    //     } else if (keyword != null && !keyword.isEmpty()) {
+    //         candidates = candidateRepository.findByKeyword(keyword);
+    //     } else if (status != null && !status.isEmpty()) {
+    //         candidates = candidateRepository.findByStatus(status);
+    //     } else {
+    //         candidates = candidateRepository.findAll();
+    //     }
 
-    @Override
-    public void deleteCandidate(Long id) {
-        candidateRepository.deleteById(id);
-    }
+    //     return candidates.stream().map(this::convertToDTO).collect(Collectors.toList());
+    // }
+
+    // @Override
+    // public CandidateDTO getCandidateById(Long id) {
+    //     Optional<Candidate> candidate = candidateRepository.findById(id);
+    //     return candidate.map(this::convertToDTO).orElse(null);
+    // }
+
 
     @Override
     public void banCandidate(Long id) {
@@ -119,4 +156,21 @@ public class CandidateServiceImpl implements CandidateService {
             candidateDTO.getUpdatedAt()
         );
     }
+
+    @Override
+    public void saveCandidate(CandidateDTO candidateDTO) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void updateCandidate(CandidateDTO candidateDTO) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void deleteCandidate(Long id) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    
 }

@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.team3.entities.Candidate;
-import com.team3.entities.InterviewSchedule;
 
 @Repository
 public interface CandidateRepository extends JpaRepository<Candidate, Long>, JpaSpecificationExecutor<Candidate> {
@@ -30,6 +29,9 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long>, Jpa
     // Find candidate's full name by candidate ID
     @Query("SELECT c.fullName FROM Candidate c WHERE c.candidateId = :candidateId")
     Candidate findFullNameByCandidateId(@Param("candidateId") Long candidateId);
+
+    //Code dat: EM them de lam phan em ạ
+   // Candidate findFullNameByCandidateId(Long candidateId);
 
     // UC05: Find candidates assigned to the logged-in interviewer by keyword and status with pagination
     @Query("SELECT c FROM Candidate c JOIN c.interviewSchedules i WHERE (c.fullName LIKE %:keyword% OR c.email LIKE %:keyword%) AND c.status = :status AND i IN :interviewSchedules")

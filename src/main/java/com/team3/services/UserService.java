@@ -20,13 +20,17 @@ public interface UserService {
 
     void deleteById(Long id);
 
-    List<UserDTO> getInterviewers();
+    List<User> getInterviewers();
 
     Page<UserDTO> filterUser(String search, String role, Pageable pageable);
 
     String updateStatus(Long id);
 
     UserDTO findByUsername(String username);
+
+
+    List<User> getRecruiters();
+
 
     UserDTO findByEmail(String email);
 
@@ -36,4 +40,5 @@ public interface UserService {
     
     // Long add phuong thuc lay User
     User getCurrentUser();
+
 }

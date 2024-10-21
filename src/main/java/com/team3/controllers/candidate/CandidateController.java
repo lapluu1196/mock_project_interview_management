@@ -97,4 +97,5 @@ public class CandidateController {
         candidateService.banCandidate(id);
         return "redirect:/candidates";
     }
+
 }
