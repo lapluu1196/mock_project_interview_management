@@ -6,19 +6,21 @@ import com.team3.dtos.candidate.CandidateDTO;
 
 public interface CandidateService {
 
-    // Search candidates by keyword and status
-    List<CandidateDTO> searchCandidates(String keyword, String status);
+    // UC05: Search candidates by keyword, status, and role, with pagination
+    List<CandidateDTO> searchCandidates(String keyword, String status, String role, int page);
 
-    // Get candidate by ID
-    CandidateDTO getCandidateById(Long id);
-
-    // Save a new candidate
+    // UC06: Save new candidate
     void saveCandidate(CandidateDTO candidateDTO);
 
-    // Update an existing candidate
+    // UC07: Get candidate by ID
+    CandidateDTO getCandidateById(Long id);
+
+    // UC08: Update existing candidate
     void updateCandidate(CandidateDTO candidateDTO);
 
-    // Delete a candidate by ID
+    // UC09: Delete candidate by ID
     void deleteCandidate(Long id);
 
+    // UC10: Ban candidate
+    void banCandidate(Long id);
 }

@@ -22,54 +22,79 @@ public class CandidateController {
     @Autowired
     private CandidateService candidateService;
 
-    // View list of candidates with optional search by keyword and status
+    // UC05: View list of candidates with role-based and status filtering
     @GetMapping
     public String viewCandidateList(
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "status", required = false) String status,
-            Model model) {
-        
-        List<CandidateDTO> candidateList = candidateService.searchCandidates(keyword, status);
+            Model model,
+            @RequestParam("role") String role,
+            @RequestParam(value = "page", defaultValue = "0") int page // For pagination
+    ) {
+        List<CandidateDTO> candidateList = candidateService.searchCandidates(keyword, status, role, page);
         model.addAttribute("candidates", candidateList);
-        return "candidate_list"; // Returns the view for the candidate list
+
+        if (role.equals("HR") || role.equals("Recruiter")) {
+            return "candidate_list_hr_recruiter";
+        } else if (role.equals("Interviewer")) {
+            return "candidate_list_interviewer";
+        }
+
+        return "redirect:/candidates";
     }
 
-    // Show form to add a new candidate
+    // UC06: Create Candidate (HR/Recruiter only)
     @GetMapping("/add")
     public String showAddCandidateForm(Model model) {
         model.addAttribute("candidate", new CandidateDTO());
-        return "add_candidate"; // Returns the form for adding a candidate
+        return "add_candidate";
     }
 
-    // Save a new candidate
     @PostMapping("/save")
     public String saveCandidate(@ModelAttribute("candidate") CandidateDTO candidateDTO) {
         candidateService.saveCandidate(candidateDTO);
-        return "redirect:/candidates"; // Redirect to the candidate list after saving
+        return "redirect:/candidates";
     }
 
-    // Show form to edit an existing candidate
+    // UC07: View Candidate Information
+    @GetMapping("/{id}")
+    public String viewCandidateDetails(@PathVariable("id") Long id, Model model) {
+        CandidateDTO candidateDTO = candidateService.getCandidateById(id);
+        if (candidateDTO == null) {
+            return "redirect:/candidates";
+        }
+        model.addAttribute("candidate", candidateDTO);
+        return "view_candidate";
+    }
+
+    // UC08: Edit Candidate Information (HR/Recruiter only)
     @GetMapping("/edit/{id}")
     public String showEditCandidateForm(@PathVariable("id") Long id, Model model) {
         CandidateDTO candidateDTO = candidateService.getCandidateById(id);
         if (candidateDTO == null) {
-            return "redirect:/candidates"; // Redirect if candidate not found
+            return "redirect:/candidates";
         }
         model.addAttribute("candidate", candidateDTO);
-        return "edit_candidate"; // Returns the form for editing a candidate
+        return "edit_candidate";
     }
 
-    // Update an existing candidate
     @PostMapping("/update")
     public String updateCandidate(@ModelAttribute("candidate") CandidateDTO candidateDTO) {
         candidateService.updateCandidate(candidateDTO);
-        return "redirect:/candidates"; // Redirect to the candidate list after updating
+        return "redirect:/candidates";
     }
 
-    // Delete a candidate
+    // UC09: Delete Candidate (HR/Recruiter only)
     @GetMapping("/delete/{id}")
     public String deleteCandidate(@PathVariable("id") Long id) {
         candidateService.deleteCandidate(id);
-        return "redirect:/candidates"; // Redirect to the candidate list after deletion
+        return "redirect:/candidates";
+    }
+
+    // UC10: Ban Candidate (HR/Recruiter only)
+    @PostMapping("/ban/{id}")
+    public String banCandidate(@PathVariable("id") Long id) {
+        candidateService.banCandidate(id);
+        return "redirect:/candidates";
     }
 }

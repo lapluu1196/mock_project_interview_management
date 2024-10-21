@@ -3,18 +3,18 @@ package com.team3.services.impl;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.team3.dtos.candidate.CandidateDTO;
 import com.team3.entities.Candidate;
+import com.team3.entities.User;
 import com.team3.repositories.CandidateRepository;
 import com.team3.services.CandidateService;
+import com.team3.services.UserService;
 
 @Service
 public class CandidateServiceImpl implements CandidateService {
@@ -22,35 +22,31 @@ public class CandidateServiceImpl implements CandidateService {
     @Autowired
     private CandidateRepository candidateRepository;
 
+    @Autowired
+    private UserService userService;
+
     @Override
-    public List<CandidateDTO> searchCandidates(String keyword, String status) {
+    public List<CandidateDTO> searchCandidates(String keyword, String status, String role, int page) {
+        Pageable pageable = PageRequest.of(page, 10); // Pagination, 10 candidates per page
         List<Candidate> candidates;
 
-        // If both keyword and status are provided
-        if (keyword != null && !keyword.isEmpty() && status != null && !status.isEmpty()) {
-            candidates = candidateRepository.findByKeywordAndStatus(keyword, status);
-        } 
-        // If only keyword is provided
-        else if (keyword != null && !keyword.isEmpty()) {
-            candidates = candidateRepository.findByKeyword(keyword);
-        } 
-        // If only status is provided
-        else if (status != null && !status.isEmpty()) {
-            candidates = candidateRepository.findByStatus(status);
-        } 
-        // If neither keyword nor status is provided, return all candidates
-        else {
-            candidates = candidateRepository.findAll();
+        // Get the currently logged-in user
+        User currentUser = userService.getCurrentUser();
+
+        if (currentUser.getRole().equals("Interviewer")) {
+            // Interviewer can only view candidates assigned to their interview schedules
+            candidates = candidateRepository.findCandidatesForInterviewer(keyword, status, currentUser.getInterviewSchedules(), pageable);
+        } else {
+            // HR/Recruiter can view all candidates
+            candidates = candidateRepository.findByKeywordAndStatus(keyword, status, pageable);
         }
 
-        // Convert the list of entities to DTOs
         return candidates.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
     public CandidateDTO getCandidateById(Long id) {
         Optional<Candidate> candidate = candidateRepository.findById(id);
-        // If candidate is found, map it to DTO; else return null
         return candidate.map(this::convertToDTO).orElse(null);
     }
 
@@ -71,7 +67,16 @@ public class CandidateServiceImpl implements CandidateService {
         candidateRepository.deleteById(id);
     }
 
-    // Convert Candidate entity to CandidateDTO
+    @Override
+    public void banCandidate(Long id) {
+        Optional<Candidate> candidateOpt = candidateRepository.findById(id);
+        if (candidateOpt.isPresent()) {
+            Candidate candidate = candidateOpt.get();
+            candidate.setStatus("Banned");
+            candidateRepository.save(candidate);
+        }
+    }
+
     private CandidateDTO convertToDTO(Candidate candidate) {
         return new CandidateDTO(
             candidate.getCandidateId(),
@@ -93,7 +98,6 @@ public class CandidateServiceImpl implements CandidateService {
         );
     }
 
-    // Convert CandidateDTO to Candidate entity
     private Candidate convertToEntity(CandidateDTO candidateDTO) {
         return new Candidate(
             candidateDTO.getCandidateId(),
@@ -108,13 +112,11 @@ public class CandidateServiceImpl implements CandidateService {
             candidateDTO.getSkills(),
             candidateDTO.getYearsOfExperience(),
             candidateDTO.getHighestEducationLevel(),
-            null,  // recruiterOwner will be handled separately or injected
+            null,
             candidateDTO.getStatus(),
             candidateDTO.getNotes(),
             candidateDTO.getCreatedAt(),
             candidateDTO.getUpdatedAt()
         );
     }
-
-    
 }
