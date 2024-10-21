@@ -1,10 +1,12 @@
 package com.team3.services;
 
-import com.team3.dtos.user.UserDTO;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import com.team3.dtos.user.UserDTO;
+import com.team3.entities.User;
 
 public interface UserService {
 
@@ -31,4 +33,7 @@ public interface UserService {
     void createPasswordResetTokenForUser(String email, String resetUrl, String token);
 
     String updatePassword(Long id, String password);
+    
+    // Long add phuong thuc lay User
+    User getCurrentUser();
 }

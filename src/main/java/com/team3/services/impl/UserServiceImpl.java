@@ -1,5 +1,18 @@
 package com.team3.services.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.team3.dtos.user.EmailDTO;
 import com.team3.dtos.user.UserDTO;
 import com.team3.entities.PasswordResetToken;
@@ -10,17 +23,6 @@ import com.team3.services.EmailService;
 import com.team3.services.UserService;
 import com.team3.utils.PasswordGenerateUtil;
 import com.team3.utils.UsernameGenerateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -379,4 +381,10 @@ public class UserServiceImpl implements UserService {
         return "Password has been updated failed!";
     }
 
+    // Long add phuong thuc lay User
+    @Override
+    public User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(username);
+    }
 }
