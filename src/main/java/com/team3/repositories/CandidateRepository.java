@@ -26,9 +26,9 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long>, Jpa
     List<Candidate> findByStatus(@Param("status") String status);
 
     // Find candidate's full name by candidate ID
-    @Query("SELECT c.fullName FROM Candidate c WHERE c.id = :candidateId")
-    Candidate findFullNameByCandidateId(@Param("candidateId") Long candidateId);
+    // @Query("SELECT c.fullName FROM Candidate c WHERE c.id = :candidateId")
+    // Candidate findFullNameByCandidateId(@Param("candidateId") Long candidateId);
 
     //Code dat: EM them de lam phan em ạ
-   // Candidate findFullNameByCandidateId(Long candidateId);
+   Candidate findFullNameByCandidateId(Long candidateId);
 }

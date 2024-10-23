@@ -84,26 +84,6 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
 
-    //     if (keyword != null && !keyword.isEmpty() && status != null && !status.isEmpty()) {
-    //         candidates = candidateRepository.findByKeywordAndStatus(keyword, status);
-    //     } else if (keyword != null && !keyword.isEmpty()) {
-    //         candidates = candidateRepository.findByKeyword(keyword);
-    //     } else if (status != null && !status.isEmpty()) {
-    //         candidates = candidateRepository.findByStatus(status);
-    //     } else {
-    //         candidates = candidateRepository.findAll();
-    //     }
-
-    //     return candidates.stream().map(this::convertToDTO).collect(Collectors.toList());
-    // }
-
-    // @Override
-    // public CandidateDTO getCandidateById(Long id) {
-    //     Optional<Candidate> candidate = candidateRepository.findById(id);
-    //     return candidate.map(this::convertToDTO).orElse(null);
-    // }
-
-
     // Convert Candidate entity to CandidateDTO
     private CandidateDTO convertToDTO(Candidate candidate) {
         return new CandidateDTO(
@@ -166,6 +146,7 @@ public class CandidateServiceImpl implements CandidateService {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteCandidate'");
     }
+
 
     
 }

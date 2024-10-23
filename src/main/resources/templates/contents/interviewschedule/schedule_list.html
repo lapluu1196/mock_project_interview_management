@@ -11,21 +11,49 @@
     <title layout:fragment="title">Interview Schedule</title>
     <script>
         // Hàm hiển thị và ẩn thông báo tự động sau 3 giây
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Kiểm tra nếu có thông báo thành công
             var successAlert = document.getElementById('successAlert');
             if (successAlert) {
                 successAlert.classList.add('show');  // Hiển thị thông báo
-                setTimeout(function() {
+                setTimeout(function () {
                     successAlert.classList.add('fade-out'); // Mờ dần thông báo sau 3s
-                    setTimeout(function() {
+                    setTimeout(function () {
                         successAlert.style.display = 'none'; // Ẩn thông báo sau khi mờ dần
                     }, 1000); // Chờ 1 giây sau khi mờ dần
                 }, 3000); // Chờ 3 giây trước khi bắt đầu mờ dần
             }
+
+            //
+            // Bắt sự kiện khi có thay đổi trên các trường
+            $("#filterByStatusSchedule, #filterByInterviewerSchedule, #searchInterviewSchedule").on("change", function () {
+                // Lấy giá trị từ các trường
+                const search = $('#searchInterviewSchedule').val();
+                const interviewerId = $('#filterByInterviewerSchedule').val();
+                const status = $('#filterByStatusSchedule').val();
+
+                // Gửi yêu cầu AJAX
+                $.ajax({
+                    type: 'GET',
+                    url: '/interview-schedule/filter',
+                    data: {
+                        search: search,
+                        interviewerId: interviewerId,
+                        status: status
+                    },
+                    success: function (response) {
+                        // Cập nhật bảng người dùng với dữ liệu nhận được từ máy chủ
+                        $('#interviewScheduleTable').html(response);
+                    },
+                    error: function () {
+                        alert("Error fetching data");
+                    }
+                });
+            });
+
         });
     </script>
-    
+
 </head>
 
 <body>
@@ -34,13 +62,14 @@
             <p class="mb-0 col-10">Interview Schedule List</p>
         </div>
 
-        <form action="/interview-schedule/manager" method="get" class="d-flex container px-0">
+        <form action="/interview-schedule/index" method="get" class="d-flex container px-0">
             <div class="container d-flex row mt-4">
                 <div class="col-3" id="searchForm">
                     <form action="#">
                         <div class="input-group mb-3">
-                            <input class="form-control" type="search" name="keyword" id="searchUser" aria-label="search"
-                                aria-describedby="searchIcon" placeholder="Search" th:value="${keyword}">
+                            <input class="form-control" type="search" name="keyword" id="searchInterviewSchedule"
+                                aria-label="search" aria-describedby="searchIcon" placeholder="Search"
+                                th:value="${keyword}">
                             <button type="submit" class="btn">
                                 <img src="/images/search.png" alt="search-icon" id="searchIcon">
                             </button>
@@ -49,7 +78,7 @@
                 </div>
                 <div class="col-3">
                     <select class="form-select option-bg rounded-0" aria-label="Default select example"
-                        name="interviewerId">
+                        name="interviewerId" id="filterByInterviewerSchedule">
                         <option value="">Interviewer</option>
                         <option th:each="interviewer : ${interviewers}" th:value="${interviewer.userId}"
                             th:text="${interviewer.fullName}" th:selected="${interviewer.userId == interviewerId}">
@@ -59,7 +88,8 @@
                 </div>
 
                 <div class="col-3">
-                    <select class="form-select option-bg rounded-0" aria-label="Default select example" name="status">
+                    <select class="form-select option-bg rounded-0" aria-label="Default select example" name="status"
+                        id="filterByStatusSchedule">
                         <option selected value="">Status</option>
                         <option th:value="New" th:selected="${status == 'New'}">New</option>
                         <option th:value="Canceled" th:selected="${status == 'Canceled'}">Canceled</option>
@@ -76,7 +106,7 @@
 
                 <div class="container mt-3 d-flex justify-content-end px-0">
 
-                    <button type="button"
+                    <button type="button" sec:authorize="hasAnyAuthority('Admin', 'Manager', 'Recruiter')"
                         class="btn btn-primary rounded-0 fw-bold btn-search border-0 text-dark fw-bold ">
                         <a class="text-dark text-decoration-none" th:href="@{/interview-schedule/add}">
                             Add new
@@ -87,7 +117,7 @@
         </form>
 
 
-        <div class="container-fluid mt-2" style="max-height: 400px;">
+        <div class="container-fluid mt-2" style="max-height: 400px;" id="interviewScheduleTable">
 
             <table class="table">
                 <thead>
@@ -125,15 +155,22 @@
                         <td>
                             <button aria-label="view" type="button" class="border-0 bg-transparent">
                                 <a class="text-dark text-decoration-none"
-                                    th:href="@{/interview-schedule/manager/scheduleDetail}">
+                                    th:href="@{/interview-schedule/scheduleDetail/{id}(id=${interviewSchedule.scheduleId})}">
                                     <i class="far fa-eye"></i>
                                 </a>
                             </button>
-                            <button aria-label="edit" type="button" class="border-0 bg-transparent">
-                                <a class="text-dark text-decoration-none" th:href="@{/interview-schedule/edit}">
+                            <button aria-label="edit" type="button" class="border-0 bg-transparent"  sec:authorize="hasAnyAuthority('Admin', 'Manager', 'Recruiter')">
+                                <a class="text-dark text-decoration-none"
+                                    th:href="@{/interview-schedule/edit/{id}(id=${interviewSchedule.scheduleId})}">
                                     <i class="far fa-edit ms-2"></i>
                                 </a>
+                            </button>
 
+                            <button aria-label="edit" type="button" class="border-0 bg-transparent"  sec:authorize="hasAuthority('Interviewer')">
+                                <a class="text-dark text-decoration-none"
+                                    th:href="@{/interview-schedule/edit/{id}(id=${interviewSchedule.scheduleId})}">
+                                    <i class="far fa-hand-pointer"></i>
+                                </a>
                             </button>
 
                         </td>
@@ -150,7 +187,7 @@
                         </li>
                         <li class="page-item">
                             <a class="btn page-link" role="button"
-                                th:href="@{/interview-schedule/manager(keyword=${keyword}, page=${currentPage - 1})}"
+                                th:href="@{/interview-schedule/index(keyword=${keyword}, page=${currentPage - 1})}"
                                 th:classappend="${currentPage > 0} ? '' : 'disabled'"
                                 th:attr="aria-disabled=${currentPage > 0} ? 'false' : 'true'">
                                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
@@ -164,7 +201,7 @@
                         </li>
                         <li class="page-item">
                             <a class="btn page-link" role="button"
-                                th:href="@{/interview-schedule/manager(keyword=${keyword}, page=${currentPage + 1})}"
+                                th:href="@{/interview-schedule/index(keyword=${keyword}, page=${currentPage + 1})}"
                                 th:classappend="${currentPage + 1 < totalPages} ? '' : 'disabled'"
                                 th:attr="aria-disabled=${currentPage + 1 < totalPages} ? 'false' : 'true'">
                                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
@@ -187,7 +224,9 @@
             <span th:text="${successMessage}"></span>
         </div>
 
-        
+        <div th:if="${errorMessage}" class="alert alert-error" role="alert" id="errorAlert">
+            <span th:text="${errorMessage}"></span>
+        </div>
 
 
     </div>

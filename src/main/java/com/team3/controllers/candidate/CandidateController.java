@@ -66,7 +66,7 @@ public class CandidateController {
         return "redirect:/candidates"; // Redirect to the candidate list after updating
     }
 
-    // Delete a candidate
+    //Delete a candidate
     @GetMapping("/delete/{id}")
     public String deleteCandidate(@PathVariable("id") Long id) {
         candidateService.deleteCandidate(id);

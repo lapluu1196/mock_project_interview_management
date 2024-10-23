@@ -97,3 +97,7 @@ body>div>div.container-fluid.px-5>table>tbody>tr>td:nth-child(4) {
     opacity: 0;
     transition: opacity 1s ease-out; /* Hiệu ứng mờ dần */
 }
+
+.table tr td {
+    vertical-align: middle;
+}

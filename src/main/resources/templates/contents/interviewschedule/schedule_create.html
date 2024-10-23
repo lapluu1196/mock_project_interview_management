@@ -76,11 +76,30 @@
                 showErrorPopup(errorMessage);
             }
         }
+        function assignMe() {
+            $('#assignMeButton').click(function () {
+                $.ajax({
+                    url: '/api/users/current-user-fullname', // API trả về userFullName
+                    type: 'GET',
 
-        // Gọi hàm kiểm tra lỗi khi trang được load
+                    success: function (userFullName) {
+                        // Cập nhật combobox với userFullName
+                        $('#recruiterOwnerComboBox').val(userFullName);
+                        alert("Assigned successfully!");
+                    },
+                    error: function (xhr) {
+                        alert("You don't have the Recruiter role or you are not logged in.");
+                    }
+                });
+            });
+        }
+
+        // Gọi hàm khi trang được load
         window.onload = function () {
-            checkErrorAndShowPopup();
+            checkErrorAndShowPopup(); // Hàm này không liên quan đến assignMe nhưng bạn đã gọi ở đây
+            assignMe();
         };
+
     </script>
 </head>
 
@@ -92,7 +111,7 @@
                     <ul class="nav justify-content-start fs-4">
                         <li class="nav-item">
                             <a class="nav-link text-reset text-decoration-underline"
-                                th:href="@{/interview-schedule/manager}">Interview Schedule List</a>
+                                th:href="@{/interview-schedule/index}">Interview Schedule List</a>
                         </li>
                         <li class="nav-item d-flex ">
                             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
@@ -111,17 +130,18 @@
                 </div>
             </div>
 
-            <div class="row mt-3 py-4" id="createInterviewScheduleForm">
+            <div class="row mt-3 py-4 " id="createInterviewScheduleForm">
                 <form th:action="@{/interview-schedule/add}" method="post" th:object="${interviewScheduleCreateDTO}">
                     <input type="hidden" name="interviewtitle" />
-                    <div class="row d-flex justify-content-between mb-3">
+                    <div class="row d-flex justify-content-between mb-4">
                         <div class="col-6 d-flex justify-content-between ">
                             <label for="interviewTitle" class="w-25">Schedule title <span
                                     style="color: red">*</span></label>
-                            <div class="d-flex flex-column w-75 ms-3">
+                            <div class="d-flex flex-column w-75 ms-3 position-relative">
                                 <!-- Hiển thị lỗi nếu có -->
                                 <span th:if="${#fields.hasErrors('interviewTitle')}" th:errors="*{interviewTitle}"
-                                    class="invalid-input-user text-danger"></span>
+                                    class="invalid-input-user text-danger position-absolute"
+                                    style="top: -25px; left: 0;"></span>
 
                                 <!-- Trường nhập liệu -->
                                 <input type="text" class="form-control" placeholder="Type a title..."
@@ -132,9 +152,10 @@
 
                         <div class="col-6 d-flex justify-content-end ">
                             <label for="jobTitle" class="w-25 label-right">Job <span style="color: red">*</span></label>
-                            <div class="d-flex flex-column w-75 ms-3">
+                            <div class="d-flex flex-column w-75 ms-3 position-relative">
                                 <span th:if="${#fields.hasErrors('jobId')}" th:errors="*{jobId}"
-                                    class="invalid-input-user text-danger"></span>
+                                    class="invalid-input-user text-danger position-absolute"
+                                    style="top: -25px; left: 0;"></span>
                                 <select name="jobId" id="jobTitle" class="form-select">
                                     <option value="">Select a job</option>
                                     <option th:each="job : ${jobs}" th:value="${job.jobId}" th:text="${job.jobTitle}">
@@ -145,13 +166,14 @@
                         </div>
                     </div>
 
-                    <div class="row d-flex justify-content-between mb-3">
+                    <div class="row d-flex justify-content-between mb-4">
                         <div class="col-6 d-flex justify-content-between ">
-                            <label for="candidateName" class="w-25 label-right">Candidate name <span
+                            <label for="candidateName" class="w-25 label-right d-flex">Candidate name <span
                                     style="color: red">*</span></label>
-                            <div class="d-flex flex-column w-75 ms-3">
+                            <div class="d-flex flex-column w-75 ms-3 position-relative">
                                 <span th:if="${#fields.hasErrors('candidateId')}" th:errors="*{candidateId}"
-                                    class="invalid-input-user text-danger"></span>
+                                    class="invalid-input-user text-danger position-absolute"
+                                    style="top: -25px; left: 0;"></span>
                                 <select name="candidateId" id="candidateName" class="form-select">
                                     <option value="">Select candidate</option>
                                     <option th:each="candidate : ${candidates}" th:value="${candidate.candidateId}"
@@ -163,9 +185,10 @@
                         <div class="col-6 d-flex justify-content-end ">
                             <label for="multiSelect" class="w-25 label-right">Interviewer
                                 <span style="color: red">*</span></label>
-                            <div class="d-flex flex-column w-75 ms-3">
+                            <div class="d-flex flex-column w-75 ms-3 position-relative">
                                 <span th:if="${#fields.hasErrors('interviewerIds')}" th:errors="*{interviewerIds}"
-                                    class="invalid-input-user text-danger"></span>
+                                    class="invalid-input-user text-danger position-absolute"
+                                    style="top: -25px; left: 0;"></span>
                                 <select name="interviewerIds" id="multiSelect" multiple>
                                     <option value="">Select interviewer</option>
                                     <option th:each="interviewer : ${interviewers}" th:value="${interviewer.userId}"
@@ -176,7 +199,7 @@
                         </div>
                     </div>
 
-                    <div class="row d-flex justify-content-between mb-3">
+                    <div class="row d-flex justify-content-between mb-4">
                         <div class="col-6 d-flex justify-content-between ">
                             <label for="scheduleDateFormAdd" class="w-25 label-right">Schedule time <span
                                     style="color: red">*</span></label>
@@ -186,20 +209,22 @@
                         </div>
                         <div class="col-6 d-flex justify-content-end ">
                             <label for="location" class="w-25 label-right">Location</label>
-                            <div class="d-flex flex-column w-75 ms-3">
-                                <span class="invalid-input-user text-danger"></span>
+                            <div class="d-flex flex-column w-75 ms-3 position-relative">
+                                <span class="invalid-input-user text-danger position-absolute"
+                                    style="top: -25px; left: 0;"></span>
                                 <input type="text" class="form-control" placeholder="Type a location..." id="location"
                                     name="location">
                             </div>
                         </div>
                     </div>
 
-                    <div class="row d-flex justify-content-between mb-3">
+                    <div class="row d-flex justify-content-between mb-4">
                         <div class="col-6 d-flex justify-content-end align-items-start">
                             <div class="w-25"></div>
-                            <div class="d-flex w-75 ms-3 row justify-content-between">
+                            <div class="d-flex w-75 ms-3 row justify-content-between position-relative mt-4">
                                 <span th:if="${#fields.hasErrors('scheduleFrom')}" th:errors="*{scheduleFrom}"
-                                    class="invalid-input-user text-danger"></span>
+                                    class="invalid-input-user text-danger position-absolute"
+                                    style="top: -25px; left: 0;"></span>
                                 <div class="col-6 d-flex ">
                                     <label for="scheduleTimeFrom" class="w-25 ">From </label>
                                     <div class="input-container w-75">
@@ -221,21 +246,26 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-6 d-flex justify-content-end position-relative">
-                            <label for="recruiter" class="w-25 label-right">Recruiter Owner <span
+                        <div class="col-6 d-flex justify-content-end position-relative mt-4">
+                            <label for="recruiterOwnerComboBox" class="w-25 label-right">Recruiter Owner <span
                                     style="color: red">*</span></label>
-                            <div class="d-flex flex-column w-75 ms-3">
-                                <span class="invalid-input-user text-danger"></span>
+                            <div class="d-flex flex-column w-75 ms-3 position-relative">
+                                <span class="invalid-input-user text-danger position-absolute"
+                                    style="top: -25px; left: 0;"></span>
                                 <div class="d-flex flex-column">
                                     <span th:if="${#fields.hasErrors('recruiterOwner')}" th:errors="*{recruiterOwner}"
-                                        class="invalid-input-user text-danger"></span>
-                                    <select name="recruiterOwner" id="recruiter" class="form-select">
+                                        class="invalid-input-user text-danger position-absolute"
+                                        style="top: -25px; left: 0;"></span>
+                                    <select name="recruiterOwner" id="recruiterOwnerComboBox" class="form-select">
                                         <option value="">Select a recruiter</option>
                                         <option th:each="recruiter : ${recruiters}" th:value="${recruiter.fullName}"
                                             th:text="${recruiter.fullName}"></option>
 
                                     </select>
-                                    <a href="" class="text-dark text-decoration-underline">Asign me</a>
+
+                                    <a id="assignMeButton" class="text-dark text-decoration-underline">Assign me</a>
+
+
                                 </div>
 
 
@@ -244,7 +274,7 @@
                         </div>
                     </div>
 
-                    <div class="row d-flex justify-content-between mb-3">
+                    <div class="row d-flex justify-content-between mb-4">
                         <div class="col-6 d-flex justify-content-end">
                             <label for="notes" class="w-25 label-right">Note</label>
                             <textarea name="notes" id="notes" cols="30" rows="4" placeholder="Type a note..."
@@ -252,8 +282,9 @@
                         </div>
                         <div class="col-6 d-flex justify-content-between">
                             <label for="meettingId" class="w-25">Meeting ID</label>
-                            <div class="d-flex flex-column w-75 ms-3">
-                                <span class="invalid-input-user text-danger"></span>
+                            <div class="d-flex flex-column w-75 ms-3 position-relative">
+                                <span class="invalid-input-user text-danger position-absolute"
+                                    style="top: -25px; left: 0;"></span>
                                 <input type="text" class="form-control" placeholder="Type a meettingId..."
                                     id="meettingId" name="meetingId">
                             </div>
@@ -263,8 +294,8 @@
 
                     <div class="d-flex justify-content-center mt-5">
                         <button type="submit" class="btn btn-secondary">Submit</button>
-                        <button type="button" class="btn btn-secondary ms-5" id="cancelButton"><a class="text-light text-decoration-none" th:href="@{/interview-schedule/manager}">Cancel</a></button>
-                    </div>
+                        <button type="button" class="btn btn-secondary ms-5" id="cancelButton"><a
+                            class="text-light text-decoration-none" th:href="${previousPageUrl}">Cancel</a></button>
 
                 </form>
             </div>

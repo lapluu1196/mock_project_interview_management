@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.team3.dtos.candidate.CandidateDTO;
@@ -20,6 +21,9 @@ import com.team3.entities.Job;
 import com.team3.entities.User;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 
 
@@ -36,12 +40,12 @@ public class InterviewScheduleDTO {
 
     private CandidateDTO candidate;
 
-    @NotBlank(message = "Candidate is required!")
+    @NotNull(message = "Candidate is required!")
     private Long candidateId;
 
     private String candidateName;
     
-    @NotBlank(message = "Job is required!")
+    @NotNull(message = "Job is required!")
     private Long jobId;
 
 
@@ -58,23 +62,32 @@ public class InterviewScheduleDTO {
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime scheduleTo;
 
-     private String location;
-
-    @NotBlank(message = "Location is required!")
-    private List<UserDTO> interviewers;
+    // @NotBlank(message = "Location is required!")
+    private String location;
     
-    private List<Long> interviewerIds;
+    private List<UserDTO> interviewers;
+
+    @NotNull(message = "Interviewer list cannot be null!")  // Chỉ để kiểm tra null
+    @Size(min = 1, message = "At least one interviewer must be selected!")
+    private List<Long> interviewerIds; 
+
     @NotBlank(message = "Recruiter is required!")
     private String recruiterOwner;
-    private String meetingId;
-    private String notes;
 
-    private String status;
-    private String result;
+
+    private String meetingId;
+
+    @Length(max = 500, message = "Notes must be less than 500 characters")
+    private String notes;
     
     @CreationTimestamp
     private LocalDateTime createdAt ;
     
     @UpdateTimestamp
     private LocalDateTime updatedAt ;
+
+    
+    private String status;
+    private String result;
+    
 }
