@@ -176,6 +176,7 @@ public class InterviewScheduleController {
         return "contents/interviewschedule/schedule_detail";
     }
 
+    //Edit interview schedule
     @GetMapping("/edit/{id}")
     public String updateInterviewSchedule(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
         // Tìm kiếm thông tin phỏng vấn
