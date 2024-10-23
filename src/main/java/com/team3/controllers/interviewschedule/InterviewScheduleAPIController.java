@@ -18,7 +18,7 @@ public class InterviewScheduleAPIController {
     @Autowired
     private InterviewScheduleService interviewScheduleService;
 
-    //Cancel interview
+    //Cancel interview schedule
     @PostMapping("/cancel/{id}")
     @Transactional
     public ResponseEntity<String> cancelInterview(@PathVariable Long id) {
