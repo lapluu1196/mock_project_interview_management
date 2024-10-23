@@ -1,6 +1,6 @@
 package com.team3.services.impl;
 
-import com.team3.dtos.candidate.CandidateDTO;
+
 import com.team3.dtos.interviewschedule.InterviewScheduleCreateDTO;
 import com.team3.dtos.interviewschedule.InterviewScheduleDTO;
 import com.team3.dtos.user.UserDTO;
@@ -14,11 +14,12 @@ import com.team3.repositories.JobRepository;
 import com.team3.repositories.UserRepository;
 import com.team3.services.InterviewScheduleService;
 
+
 import java.time.LocalDate;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,171 +50,187 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
         this.userRepository = userRepository;
     }
 
-    @Override
-    public Page<InterviewScheduleDTO> findAll(String keyword, Pageable pageable) {
-        // Tạo Specification để tìm kiếm theo keyword
-        Specification<InterviewSchedule> specification = (root, query, criteriaBuilder) -> {
-            if (keyword == null) {
-                return null;
-            }
+    // @Override
+    // public Page<InterviewScheduleDTO> findAll(String keyword, Pageable pageable)
+    // {
+    // // Tạo Specification để tìm kiếm theo keyword
+    // Specification<InterviewSchedule> specification = (root, query,
+    // criteriaBuilder) -> {
+    // if (keyword == null) {
+    // return null;
+    // }
 
-            List<Predicate> predicates = new ArrayList<>();
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    // List<Predicate> predicates = new ArrayList<>();
+    // DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-            if (keyword.matches("\\d{2}/\\d{2}/\\d{4}")) {
-                // Nếu keyword chứa ngày (dd/MM/yyyy)
-                LocalDate parsedDate = LocalDate.parse(keyword, dateFormatter);
-                predicates.add(criteriaBuilder.equal(root.get("scheduleDate"), parsedDate));
+    // if (keyword.matches("\\d{2}/\\d{2}/\\d{4}")) {
+    // // Nếu keyword chứa ngày (dd/MM/yyyy)
+    // LocalDate parsedDate = LocalDate.parse(keyword, dateFormatter);
+    // predicates.add(criteriaBuilder.equal(root.get("scheduleDate"), parsedDate));
 
-            } else {
-                // Nếu không phải ngày hoặc giờ thì tìm kiếm các trường khác
-                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("interviewTitle")),
-                        "%" + keyword.trim().toLowerCase() + "%"));
-                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("status")),
-                        "%" + keyword.trim().toLowerCase() + "%"));
-                predicates.add(criteriaBuilder.equal(root.get("result"), keyword.trim()));
-                predicates.add(criteriaBuilder.equal((root.get("candidate").get("fullName")), keyword));
-                predicates.add(criteriaBuilder.equal((root.get("job").get("jobTitle")), keyword));
-                predicates.add(criteriaBuilder.equal((root.get("interviewers").get("fullName")), keyword));
-            }
+    // } else {
+    // // Nếu không phải ngày hoặc giờ thì tìm kiếm các trường khác
+    // predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("interviewTitle")),
+    // "%" + keyword.trim().toLowerCase() + "%"));
+    // predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("status")),
+    // "%" + keyword.trim().toLowerCase() + "%"));
+    // predicates.add(criteriaBuilder.equal(root.get("result"), keyword.trim()));
+    // predicates.add(criteriaBuilder.equal((root.get("candidate").get("fullName")),
+    // keyword));
+    // predicates.add(criteriaBuilder.equal((root.get("job").get("jobTitle")),
+    // keyword));
+    // predicates.add(criteriaBuilder.equal((root.get("interviewers").get("fullName")),
+    // keyword));
+    // }
 
-            return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
-        };
+    // return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+    // };
 
-        // Tìm danh sách InterviewSchedule dựa trên keyword
-        var interviewSchedules = interviewScheduleRepository.findAll(specification, pageable);
+    // // Tìm danh sách InterviewSchedule dựa trên keyword
+    // var interviewSchedules = interviewScheduleRepository.findAll(specification,
+    // pageable);
 
-        // Chuyển đổi Page<InterviewSchedule> sang Page<InterviewScheduleDTO>
-        var interviewScheduleDTOs = interviewSchedules.map(interviewSchedule -> {
-            var interviewScheduleDTO = new InterviewScheduleDTO();
+    // // Chuyển đổi Page<InterviewSchedule> sang Page<InterviewScheduleDTO>
+    // var interviewScheduleDTOs = interviewSchedules.map(interviewSchedule -> {
+    // var interviewScheduleDTO = new InterviewScheduleDTO();
 
-            // Set các thuộc tính của InterviewScheduleDTO
-            interviewScheduleDTO.setScheduleId(interviewSchedule.getScheduleId());
-            interviewScheduleDTO.setInterviewTitle(interviewSchedule.getInterviewTitle());
+    // // Set các thuộc tính của InterviewScheduleDTO
+    // interviewScheduleDTO.setScheduleId(interviewSchedule.getScheduleId());
+    // interviewScheduleDTO.setInterviewTitle(interviewSchedule.getInterviewTitle());
 
-            if (interviewSchedule.getResult() == null) {
-                interviewScheduleDTO.setResult("N/A");
-            } else {
-                interviewScheduleDTO.setResult(interviewSchedule.getResult());
-            }
+    // if (interviewSchedule.getResult() == null) {
+    // interviewScheduleDTO.setResult("N/A");
+    // } else {
+    // interviewScheduleDTO.setResult(interviewSchedule.getResult());
+    // }
 
-            interviewScheduleDTO.setStatus(interviewSchedule.getStatus());
-            interviewScheduleDTO.setScheduleDate(interviewSchedule.getScheduleDate());
-            interviewScheduleDTO.setScheduleFrom(interviewSchedule.getScheduleFrom());
-            interviewScheduleDTO.setScheduleTo(interviewSchedule.getScheduleTo());
+    // interviewScheduleDTO.setStatus(interviewSchedule.getStatus());
+    // interviewScheduleDTO.setScheduleDate(interviewSchedule.getScheduleDate());
+    // interviewScheduleDTO.setScheduleFrom(interviewSchedule.getScheduleFrom());
+    // interviewScheduleDTO.setScheduleTo(interviewSchedule.getScheduleTo());
 
-            // Lấy thông tin candidate
-            var candidate = candidateRepository
-                    .findFullNameByCandidateId(interviewSchedule.getCandidate().getCandidateId());
-            interviewScheduleDTO.setCandidateName(candidate.getFullName());
+    // // Lấy thông tin candidate
+    // var candidate = candidateRepository
+    // .findFullNameByCandidateId(interviewSchedule.getCandidate().getCandidateId());
+    // interviewScheduleDTO.setCandidateName(candidate.getFullName());
 
-            // Lấy thông tin job
-            var job = jobRepository.findJobTitleByJobId(interviewSchedule.getJob().getJobId());
-            interviewScheduleDTO.setJobTitle(job.getJobTitle());
+    // // Lấy thông tin job
+    // var job =
+    // jobRepository.findJobTitleByJobId(interviewSchedule.getJob().getJobId());
+    // interviewScheduleDTO.setJobTitle(job.getJobTitle());
 
-            // Lấy danh sách interviewers và chuyển sang UserDTO
-            List<UserDTO> interviewers = interviewSchedule.getInterviewers().stream()
-                    .map(interviewer -> {
-                        UserDTO userDTO = new UserDTO();
-                        userDTO.setUserId(interviewer.getUserId());
-                        userDTO.setFullName(interviewer.getFullName());
-                        return userDTO;
-                    })
-                    .collect(Collectors.toList());
+    // // Lấy danh sách interviewers và chuyển sang UserDTO
+    // List<UserDTO> interviewers = interviewSchedule.getInterviewers().stream()
+    // .map(interviewer -> {
+    // UserDTO userDTO = new UserDTO();
+    // userDTO.setUserId(interviewer.getUserId());
+    // userDTO.setFullName(interviewer.getFullName());
+    // return userDTO;
+    // })
+    // .collect(Collectors.toList());
 
-            // Set danh sách interviewers vào DTO
-            interviewScheduleDTO.setInterviewers(interviewers);
+    // // Set danh sách interviewers vào DTO
+    // interviewScheduleDTO.setInterviewers(interviewers);
 
-            return interviewScheduleDTO;
-        });
+    // return interviewScheduleDTO;
+    // });
 
-        return interviewScheduleDTOs;
-    }
+    // return interviewScheduleDTOs;
+    // }
 
     //
     @Override
-    public Page<InterviewScheduleDTO> findAll(String keyword, Long interviewerId, String statusName,
+    public Page<InterviewScheduleDTO> findAll(String keyword, Long interviewerId, String status,
             Pageable pageable) {
 
-        Specification<InterviewSchedule> specification = (root, query, criteriaBuilder) -> {
+        Specification<InterviewSchedule> spec = (Specification<InterviewSchedule>) (root, query, criteriaBuilder) -> {
+            // Trường hợp không có giá trị tìm kiếm nào (keyword, status, interviewerId đều
+            // null hoặc rỗng)
+            if ((keyword == null || keyword.isEmpty()) && (status == null || status.isEmpty())
+                    && (interviewerId == null)) {
+                return null;
+            }
+
+            // Xây dựng danh sách các Predicate để giữ các điều kiện
             List<Predicate> predicates = new ArrayList<>();
-
-            // Nếu không có keyword, chỉ cần kiểm tra interviewerId và statusName
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                String parseKeyword = keyword.trim().toLowerCase();
-
-                // Kiểm tra tìm kiếm theo title, status, result, candidateName, jobTitle
-                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("interviewTitle")),
-                        "%" + parseKeyword + "%"));
-                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("status")),
-                        "%" + parseKeyword + "%"));
-                predicates.add(criteriaBuilder.equal(root.get("result"), parseKeyword));
-                predicates.add(criteriaBuilder.equal(root.get("candidate").get("fullName"), parseKeyword));
-                predicates.add(criteriaBuilder.equal(root.get("job").get("jobTitle"), parseKeyword));
+            // Điều kiện tìm kiếm theo từ khóa (keyword)
+            if (keyword != null && !keyword.isEmpty()) {
                 Join<InterviewSchedule, User> interviewersJoin = root.join("interviewers", JoinType.LEFT);
-                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(interviewersJoin.get("fullName")),
-                        "%" + parseKeyword + "%"));
+                // Tạo một danh sách để chứa các điều kiện tìm kiếm
+                List<Predicate> keywordPredicates = new ArrayList<>();
+
+                // Điều kiện tìm kiếm với các cột chuỗi
+                keywordPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("interviewTitle")),
+                        "%" + keyword.trim().toLowerCase() + "%"));
+                keywordPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("status")),
+                        "%" + keyword.trim().toLowerCase() + "%"));
+                keywordPredicates.add(criteriaBuilder.equal(root.get("result"), keyword));
+                keywordPredicates.add(criteriaBuilder.equal(root.get("candidate").get("fullName"), keyword));
+                keywordPredicates.add(criteriaBuilder.equal(root.get("job").get("jobTitle"), keyword));
+                keywordPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(interviewersJoin.get("fullName")),
+                        "%" + keyword.trim().toLowerCase() + "%"));
+
+                // Kiểm tra nếu từ khóa là ngày hợp lệ (dd/MM/yyyy)
+                try {
+                    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate date = LocalDate.parse(keyword.trim(), dateFormatter);
+                    keywordPredicates.add(
+                            criteriaBuilder.equal(root.get("scheduleDate"), date));
+                } catch (DateTimeParseException e) {
+                    // Bỏ qua nếu không phải ngày hợp lệ
+                }
+
+                // Kiểm tra nếu từ khóa là giờ hợp lệ (HH:mm)
+                // try {
+                //     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+                //     LocalTime time = LocalTime.parse(keyword.trim(), timeFormatter);
+                //     // So sánh trực tiếp với LocalTime
+                //     keywordPredicates.add(criteriaBuilder.equal(root.get("scheduleFrom").as(LocalTime.class), time));
+                //     keywordPredicates.add(criteriaBuilder.equal(root.get("scheduleTo").as(LocalTime.class), time));
+                // } catch (DateTimeParseException e) {
+                //     // Bỏ qua nếu không phải giờ hợp lệ
+                // }
+
+                // Kết hợp các điều kiện lại với nhau bằng OR
+                predicates.add(criteriaBuilder.or(keywordPredicates.toArray(new Predicate[0])));
             }
 
-            // Nếu keyword là một ngày (dd/MM/yyyy)
-            if (keyword != null && keyword.matches("\\d{2}/\\d{2}/\\d{4}")) {
-                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                LocalDate parsedDate = LocalDate.parse(keyword, dateFormatter);
-                predicates.add(criteriaBuilder.equal(root.get("scheduleDate"), parsedDate));
+            // Điều kiện lọc theo trạng thái (status) từ combo box
+            if (status != null && !status.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), status));
             }
 
-            // Nếu có chọn Interviewer
+            // Điều kiện lọc theo interviewerId từ combo box
             if (interviewerId != null) {
+                // Giả định bảng `User` có một quan hệ (join) với bảng `Interviewers`
                 predicates.add(criteriaBuilder.equal(root.get("interviewers").get("userId"), interviewerId));
             }
 
-            // Nếu có chọn Status
-            if (statusName != null && !statusName.isEmpty()) {
-                predicates.add(criteriaBuilder.equal(root.get("status"), statusName));
-            }
-
-            // Nếu không có bất kỳ điều kiện nào thì trả về tất cả các bản ghi
-            if (predicates.isEmpty()) {
-                return criteriaBuilder.conjunction(); // Tạo một điều kiện luôn đúng (tìm tất cả)
-            }
-
-            // Sử dụng AND nếu có điều kiện tìm kiếm, nếu không chỉ trả về tất cả
-            return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+            // Trả về điều kiện kết hợp (AND) của tất cả các Predicate
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
 
-        // Tìm danh sách InterviewSchedule dựa trên keyword
-        var interviewSchedules = interviewScheduleRepository.findAll(specification, pageable);
+        var interviewschedules = interviewScheduleRepository.findAll(spec, pageable);
 
-        // Chuyển đổi Page<InterviewSchedule> sang Page<InterviewScheduleDTO>
-        var interviewScheduleDTOs = interviewSchedules.map(interviewSchedule -> {
-            var interviewScheduleDTO = new InterviewScheduleDTO();
-
-            // Set các thuộc tính của InterviewScheduleDTO
-            interviewScheduleDTO.setScheduleId(interviewSchedule.getScheduleId());
-            interviewScheduleDTO.setInterviewTitle(interviewSchedule.getInterviewTitle());
-
-            if (interviewSchedule.getResult() == null) {
-                interviewScheduleDTO.setResult("N/A");
-            } else {
-                interviewScheduleDTO.setResult(interviewSchedule.getResult());
-            }
-
-            interviewScheduleDTO.setStatus(interviewSchedule.getStatus());
-            interviewScheduleDTO.setScheduleDate(interviewSchedule.getScheduleDate());
-            interviewScheduleDTO.setScheduleFrom(interviewSchedule.getScheduleFrom());
-            interviewScheduleDTO.setScheduleTo(interviewSchedule.getScheduleTo());
-
-            // Lấy thông tin candidate
-            var candidate = candidateRepository
-                    .findFullNameByCandidateId(interviewSchedule.getCandidate().getCandidateId());
-            interviewScheduleDTO.setCandidateName(candidate.getFullName());
-
-            // Lấy thông tin job
-            var job = jobRepository.findJobTitleByJobId(interviewSchedule.getJob().getJobId());
-            interviewScheduleDTO.setJobTitle(job.getJobTitle());
-
+        return interviewschedules.map(interviewerToSchedule -> {
+            InterviewScheduleDTO interviewScheduleDTO = new InterviewScheduleDTO();
+            interviewScheduleDTO.setScheduleId(interviewerToSchedule.getScheduleId());
+            interviewScheduleDTO.setInterviewTitle(interviewerToSchedule.getInterviewTitle());
+            interviewScheduleDTO.setScheduleDate(interviewerToSchedule.getScheduleDate());
+            interviewScheduleDTO.setScheduleFrom(interviewerToSchedule.getScheduleFrom());
+            interviewScheduleDTO.setScheduleTo(interviewerToSchedule.getScheduleTo());
+            interviewScheduleDTO.setLocation(interviewerToSchedule.getLocation());
+            interviewScheduleDTO.setRecruiterOwner(interviewerToSchedule.getRecruiterOwner());
+            interviewScheduleDTO.setMeetingId(interviewerToSchedule.getMeetingId());
+            interviewScheduleDTO.setNotes(interviewerToSchedule.getNotes());
+            interviewScheduleDTO.setStatus(interviewerToSchedule.getStatus());
+            interviewScheduleDTO.setResult(interviewerToSchedule.getResult());
+            interviewScheduleDTO.setCreatedAt(interviewerToSchedule.getCreatedAt());
+            interviewScheduleDTO.setUpdatedAt(interviewerToSchedule.getUpdatedAt());
+            interviewScheduleDTO.setCandidateName(interviewerToSchedule.getCandidate().getFullName());
+            interviewScheduleDTO.setJobTitle(interviewerToSchedule.getJob().getJobTitle());
             // Lấy danh sách interviewers và chuyển sang UserDTO
-            List<UserDTO> interviewers = interviewSchedule.getInterviewers().stream()
+            List<UserDTO> interviewers = interviewerToSchedule.getInterviewers().stream()
                     .map(interviewer -> {
                         UserDTO userDTO = new UserDTO();
                         userDTO.setUserId(interviewer.getUserId());
@@ -227,14 +244,62 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
 
             return interviewScheduleDTO;
         });
-
-        return interviewScheduleDTOs;
     }
 
     @Override
-    public InterviewSchedule findById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+    public InterviewScheduleDTO findById(Long id) {
+        InterviewSchedule interviewSchedule = interviewScheduleRepository.findById(id).orElse(null);
+
+        if (interviewSchedule == null) {
+            throw new IllegalArgumentException("Schedule not found!");
+        }
+
+        InterviewScheduleDTO interviewScheduleDTO = new InterviewScheduleDTO();
+
+        interviewScheduleDTO.setScheduleId(interviewSchedule.getScheduleId());
+        interviewScheduleDTO.setInterviewTitle(interviewSchedule.getInterviewTitle());
+
+        interviewScheduleDTO.setStatus(interviewSchedule.getStatus());
+        interviewScheduleDTO.setScheduleDate(interviewSchedule.getScheduleDate());
+        interviewScheduleDTO.setScheduleFrom(interviewSchedule.getScheduleFrom());
+        interviewScheduleDTO.setScheduleTo(interviewSchedule.getScheduleTo());
+        interviewScheduleDTO.setMeetingId(interviewSchedule.getMeetingId());
+        interviewScheduleDTO.setResult(interviewSchedule.getResult());
+        interviewScheduleDTO.setNotes(interviewSchedule.getNotes());
+        interviewScheduleDTO.setLocation(interviewSchedule.getLocation());
+        interviewScheduleDTO.setRecruiterOwner(interviewSchedule.getRecruiterOwner());
+        interviewScheduleDTO.setCandidateId(interviewSchedule.getCandidate().getCandidateId());
+        interviewScheduleDTO.setJobId(interviewSchedule.getJob().getJobId());
+
+        interviewScheduleDTO.setRecruiterOwner(interviewSchedule.getRecruiterOwner());
+        var candidate = candidateRepository
+                .findFullNameByCandidateId(interviewSchedule.getCandidate().getCandidateId());
+        interviewScheduleDTO.setCandidateName(candidate.getFullName());
+
+        var job = jobRepository.findJobTitleByJobId(interviewSchedule.getJob().getJobId());
+        interviewScheduleDTO.setJobTitle(job.getJobTitle());
+
+        List<UserDTO> interviewers = interviewSchedule.getInterviewers().stream()
+                .map(interviewer -> {
+                    UserDTO userDTO = new UserDTO();
+                    userDTO.setUserId(interviewer.getUserId());
+                    userDTO.setFullName(interviewer.getFullName());
+                    return userDTO;
+                })
+                .collect(Collectors.toList());
+
+        // Set danh sách interviewers vào DTO
+        interviewScheduleDTO.setInterviewers(interviewers);
+
+        // Lấy danh sách interviewerIds từ Interviewers của InterviewSchedule
+        if (interviewSchedule.getInterviewers() != null) {
+            List<Long> interviewerIds = interviewSchedule.getInterviewers().stream()
+                    .map(User::getUserId)
+                    .collect(Collectors.toList());
+            interviewScheduleDTO.setInterviewerIds(interviewerIds);
+        }
+
+        return interviewScheduleDTO;
     }
 
     @Override
@@ -257,12 +322,12 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
         interviewSchedule.setScheduleDate(interviewScheduleCreateDTO.getScheduleDate());
         interviewSchedule.setScheduleFrom(interviewScheduleCreateDTO.getScheduleFrom());
         interviewSchedule.setScheduleTo(interviewScheduleCreateDTO.getScheduleTo());
-        interviewSchedule.setLocation(interviewScheduleCreateDTO.getLocation());
+
         interviewSchedule.setRecruiterOwner(interviewScheduleCreateDTO.getRecruiterOwner());
-        interviewSchedule.setMeetingId(interviewScheduleCreateDTO.getMeetingId());
+        interviewSchedule.setLocation(interviewScheduleCreateDTO.getLocation());
         interviewSchedule.setNotes(interviewScheduleCreateDTO.getNotes());
-        interviewSchedule.setStatus("Open");
-        interviewSchedule.setResult("N/A");
+        interviewSchedule.setMeetingId(interviewScheduleCreateDTO.getMeetingId());
+        interviewSchedule.setStatus("New");
 
         // Xử lý Candidate
         if (interviewScheduleCreateDTO.getCandidateId() != null) {
@@ -280,7 +345,8 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
 
         interviewScheduleRepository.save(interviewSchedule);
 
-        interviewScheduleRepository.updateCandidateStatus(interviewSchedule.getCandidate().getCandidateId());
+        interviewScheduleRepository.updateCandidateStatus(interviewSchedule.getCandidate().getCandidateId(),
+                "Waiting to interview");
         // Xử lý danh sách interviewers (tạo các bản ghi trong bảng chung)
         if (interviewScheduleCreateDTO.getInterviewerIds() != null
                 && !interviewScheduleCreateDTO.getInterviewerIds().isEmpty()) {
@@ -292,8 +358,6 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
                         interviewer.getUserId());
             }
         }
-
-
 
         // Convert entity sang DTO
         var interviewScheduleDTO = new InterviewScheduleDTO();
@@ -315,6 +379,126 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
         return interviewScheduleDTO;
     }
 
+    // Update
+    @Override
+    @Transactional
+    public InterviewScheduleDTO update(Long id, InterviewScheduleDTO interviewScheduleDTO) {
+        var interviewSchedule = interviewScheduleRepository
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Interview schedule not found"));
+
+        interviewSchedule.setInterviewTitle(interviewScheduleDTO.getInterviewTitle());
+        interviewSchedule.setScheduleDate(interviewScheduleDTO.getScheduleDate());
+        interviewSchedule.setScheduleFrom(interviewScheduleDTO.getScheduleFrom());
+        interviewSchedule.setScheduleTo(interviewScheduleDTO.getScheduleTo());
+
+        interviewSchedule.setRecruiterOwner(interviewScheduleDTO.getRecruiterOwner());
+        interviewSchedule.setLocation(interviewScheduleDTO.getLocation());
+        interviewSchedule.setNotes(interviewScheduleDTO.getNotes());
+        interviewSchedule.setMeetingId(interviewScheduleDTO.getMeetingId());
+        if(interviewScheduleDTO.getResult() != null && !interviewScheduleDTO.getResult().isEmpty()){
+            interviewSchedule.setStatus("Close");
+        }
+        else{
+            interviewSchedule.setStatus("");
+        }
+        interviewSchedule.setResult(interviewScheduleDTO.getResult());
+
+        // Xử lý candidate: kiểm tra nếu admin chọn candidate khác candidate hiện tại
+        if (interviewScheduleDTO.getCandidateId() != null) {
+            Candidate currentCandidate = interviewSchedule.getCandidate();
+            Long newCandidateId = interviewScheduleDTO.getCandidateId();
+
+            // Nếu candidate mới khác candidate hiện tại, update status
+            if (currentCandidate != null && !currentCandidate.getCandidateId().equals(newCandidateId)) {
+                // Cập nhật status của candidate cũ thành null
+                interviewScheduleRepository.updateCandidateStatus(currentCandidate.getCandidateId(),
+                        "Waiting to interview");
+
+                // Cập nhật thông tin candidate mới
+                Candidate newCandidate = new Candidate();
+                newCandidate.setCandidateId(newCandidateId);
+                interviewSchedule.setCandidate(newCandidate);
+
+                // Cập nhật status của candidate mới
+                if (interviewSchedule.getResult().equals("Passed")) {
+                    interviewScheduleRepository.updateCandidateStatus(newCandidateId, "Passed interview");
+                }
+                if (interviewSchedule.getResult().equals("Failed")) {
+                    interviewScheduleRepository.updateCandidateStatus(newCandidateId, "Failed interview");
+                } else {
+                    interviewScheduleRepository.updateCandidateStatus(newCandidateId, "Waiting to interview");
+                }
+            } else {
+                // Cập nhật status của candidate mới
+                if (interviewSchedule.getResult().equals("Passed")) {
+                    interviewScheduleRepository.updateCandidateStatus(currentCandidate.getCandidateId(),
+                            "Passed interview");
+                }
+                if (interviewSchedule.getResult().equals("Failed")) {
+                    interviewScheduleRepository.updateCandidateStatus(currentCandidate.getCandidateId(),
+                            "Failed interview");
+                }
+            }
+        }
+
+        // Xử lý Job nếu có
+        if (interviewScheduleDTO.getJobId() != null) {
+            Job job = new Job();
+            job.setJobId(interviewScheduleDTO.getJobId());
+            interviewSchedule.setJob(job);
+        }
+
+        interviewScheduleRepository.save(interviewSchedule);
+
+        // Xử lý danh sách interviewers
+        if (interviewScheduleDTO.getInterviewerIds() != null && !interviewScheduleDTO.getInterviewerIds().isEmpty()) {
+            // Lấy danh sách interviewers hiện tại của schedule
+            List<Long> currentInterviewers = interviewScheduleRepository
+                    .findCurrentInterviewersByScheduleId(interviewSchedule.getScheduleId());
+
+            // Lọc ra các interviewers cần xóa (có trong danh sách hiện tại nhưng không có
+            // trong danh sách mới)
+            for (Long currentUserId : currentInterviewers) {
+                if (!interviewScheduleDTO.getInterviewerIds().contains(currentUserId)) {
+                    interviewScheduleRepository.deleteInterviewerFromSchedule(interviewSchedule.getScheduleId(),
+                            currentUserId);
+                }
+            }
+
+            // Lọc ra các interviewers cần thêm (có trong danh sách mới nhưng không có trong
+            // danh sách hiện tại)
+            for (Long newUserId : interviewScheduleDTO.getInterviewerIds()) {
+                if (!currentInterviewers.contains(newUserId)) {
+                    User interviewer = userRepository.findById(newUserId)
+                            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                    interviewScheduleRepository.addInterviewerToSchedule(interviewSchedule.getScheduleId(),
+                            interviewer.getUserId());
+                }
+            }
+        }
+
+        // Convert entity sang DTO
+        var updatedInterviewScheduleDTO = new InterviewScheduleDTO();
+        updatedInterviewScheduleDTO.setScheduleId(interviewSchedule.getScheduleId());
+        updatedInterviewScheduleDTO.setInterviewTitle(interviewSchedule.getInterviewTitle());
+        updatedInterviewScheduleDTO.setScheduleDate(interviewSchedule.getScheduleDate());
+        updatedInterviewScheduleDTO.setScheduleFrom(interviewSchedule.getScheduleFrom());
+        updatedInterviewScheduleDTO.setScheduleTo(interviewSchedule.getScheduleTo());
+        updatedInterviewScheduleDTO.setLocation(interviewSchedule.getLocation());
+        updatedInterviewScheduleDTO.setRecruiterOwner(interviewSchedule.getRecruiterOwner());
+        updatedInterviewScheduleDTO.setMeetingId(interviewSchedule.getMeetingId());
+        updatedInterviewScheduleDTO.setNotes(interviewSchedule.getNotes());
+        updatedInterviewScheduleDTO.setStatus(interviewSchedule.getStatus());
+        updatedInterviewScheduleDTO.setResult(interviewSchedule.getResult());
+        updatedInterviewScheduleDTO.setCreatedAt(interviewSchedule.getCreatedAt());
+        updatedInterviewScheduleDTO.setUpdatedAt(interviewSchedule.getUpdatedAt());
+        updatedInterviewScheduleDTO.setCandidateName(interviewSchedule.getCandidate().getFullName());
+        updatedInterviewScheduleDTO.setJobTitle(interviewSchedule.getJob().getJobTitle());
+
+        return updatedInterviewScheduleDTO;
+    }
+
     @Override
     public List<InterviewSchedule> getAllSchedulesWithInterviewers() {
         return interviewScheduleRepository.findAll();
@@ -322,12 +506,126 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
 
     @Override
     public boolean isInterviewTitleExists(String interviewTitle) {
-       return interviewScheduleRepository.existsByInterviewTitle(interviewTitle);
+        return interviewScheduleRepository.existsByInterviewTitle(interviewTitle);
     }
 
     @Override
     public boolean existsByCandidateId(Long candidateId) {
         return interviewScheduleRepository.existsByCandidate_CandidateId(candidateId);
+    }
+
+    //
+    @Override
+    public Page<InterviewScheduleDTO> filterSchedule(String keyword, Long interviewerId, String status,
+            Pageable pageable) {
+        Specification<InterviewSchedule> spec = (Specification<InterviewSchedule>) (root, query, criteriaBuilder) -> {
+            // Trường hợp không có giá trị tìm kiếm nào (keyword, status, interviewerId đều
+            // null hoặc rỗng)
+            if ((keyword == null || keyword.isEmpty()) && (status == null || status.isEmpty())
+                    && (interviewerId == null)) {
+                return null;
+            }
+
+            // Xây dựng danh sách các Predicate để giữ các điều kiện
+            List<Predicate> predicates = new ArrayList<>();
+            // Điều kiện tìm kiếm theo từ khóa (keyword)
+            if (keyword != null && !keyword.isEmpty()) {
+                Join<InterviewSchedule, User> interviewersJoin = root.join("interviewers", JoinType.LEFT);
+                // Tạo một danh sách để chứa các điều kiện tìm kiếm
+                List<Predicate> keywordPredicates = new ArrayList<>();
+
+                // Điều kiện tìm kiếm với các cột chuỗi
+                keywordPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("interviewTitle")),
+                        "%" + keyword.trim().toLowerCase() + "%"));
+                keywordPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("status")),
+                        "%" + keyword.trim().toLowerCase() + "%"));
+                keywordPredicates.add(criteriaBuilder.equal(root.get("result"), keyword));
+                keywordPredicates.add(criteriaBuilder.equal(root.get("candidate").get("fullName"), keyword));
+                keywordPredicates.add(criteriaBuilder.equal(root.get("job").get("jobTitle"), keyword));
+                keywordPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(interviewersJoin.get("fullName")),
+                        "%" + keyword.trim().toLowerCase() + "%"));
+
+                // Kiểm tra nếu từ khóa là ngày hợp lệ (dd/MM/yyyy)
+                try {
+                    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate date = LocalDate.parse(keyword.trim(), dateFormatter);
+                    keywordPredicates.add(
+                            criteriaBuilder.equal(root.get("scheduleDate"), date));
+                } catch (DateTimeParseException e) {
+                    // Bỏ qua nếu không phải ngày hợp lệ
+                }
+
+                // Kiểm tra nếu từ khóa là giờ hợp lệ (HH:mm)
+                try {
+                    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+                    LocalTime time = LocalTime.parse(keyword.trim(), timeFormatter);
+                    keywordPredicates.add(
+                            criteriaBuilder.equal(root.get("scheduleTime"), time));
+                } catch (DateTimeParseException e) {
+                    // Bỏ qua nếu không phải giờ hợp lệ
+                }
+
+                // Kết hợp các điều kiện lại với nhau bằng OR
+                predicates.add(criteriaBuilder.or(keywordPredicates.toArray(new Predicate[0])));
+            }
+
+            // Điều kiện lọc theo trạng thái (status) từ combo box
+            if (status != null && !status.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), status));
+            }
+
+            // Điều kiện lọc theo interviewerId từ combo box
+            if (interviewerId != null) {
+                // Giả định bảng `User` có một quan hệ (join) với bảng `Interviewers`
+                predicates.add(criteriaBuilder.equal(root.get("interviewers").get("userId"), interviewerId));
+            }
+
+            // Trả về điều kiện kết hợp (AND) của tất cả các Predicate
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        var interviewschedules = interviewScheduleRepository.findAll(spec, pageable);
+
+        return interviewschedules.map(interviewerToSchedule -> {
+            InterviewScheduleDTO interviewScheduleDTO = new InterviewScheduleDTO();
+            interviewScheduleDTO.setScheduleId(interviewerToSchedule.getScheduleId());
+            interviewScheduleDTO.setInterviewTitle(interviewerToSchedule.getInterviewTitle());
+            interviewScheduleDTO.setScheduleDate(interviewerToSchedule.getScheduleDate());
+            interviewScheduleDTO.setScheduleFrom(interviewerToSchedule.getScheduleFrom());
+            interviewScheduleDTO.setScheduleTo(interviewerToSchedule.getScheduleTo());
+            interviewScheduleDTO.setLocation(interviewerToSchedule.getLocation());
+            interviewScheduleDTO.setRecruiterOwner(interviewerToSchedule.getRecruiterOwner());
+            interviewScheduleDTO.setMeetingId(interviewerToSchedule.getMeetingId());
+            interviewScheduleDTO.setNotes(interviewerToSchedule.getNotes());
+            interviewScheduleDTO.setStatus(interviewerToSchedule.getStatus());
+            interviewScheduleDTO.setResult(interviewerToSchedule.getResult());
+            interviewScheduleDTO.setCreatedAt(interviewerToSchedule.getCreatedAt());
+            interviewScheduleDTO.setUpdatedAt(interviewerToSchedule.getUpdatedAt());
+            interviewScheduleDTO.setCandidateName(interviewerToSchedule.getCandidate().getFullName());
+            interviewScheduleDTO.setJobTitle(interviewerToSchedule.getJob().getJobTitle());
+            // Lấy danh sách interviewers và chuyển sang UserDTO
+            List<UserDTO> interviewers = interviewerToSchedule.getInterviewers().stream()
+                    .map(interviewer -> {
+                        UserDTO userDTO = new UserDTO();
+                        userDTO.setUserId(interviewer.getUserId());
+                        userDTO.setFullName(interviewer.getFullName());
+                        return userDTO;
+                    })
+                    .collect(Collectors.toList());
+
+            // Set danh sách interviewers vào DTO
+            interviewScheduleDTO.setInterviewers(interviewers);
+            return interviewScheduleDTO;
+        });
+    }
+    @Transactional
+    public boolean cancelStatusById(Long id){
+        if (interviewScheduleRepository.existsById(id)) {
+            interviewScheduleRepository.updateInterviewScheduleStatus(id, "Canceled");
+            return true;
+        }
+        return false;
+
     }
 
 }

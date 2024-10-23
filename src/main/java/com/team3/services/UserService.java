@@ -20,7 +20,7 @@ public interface UserService {
 
     void deleteById(Long id);
 
-    List<User> getInterviewers();
+    List<UserDTO> getInterviewers();
 
     Page<UserDTO> filterUser(String search, String role, Pageable pageable);
 
@@ -29,7 +29,7 @@ public interface UserService {
     UserDTO findByUsername(String username);
 
 
-    List<User> getRecruiters();
+    List<UserDTO> getRecruiters();
 
 
     UserDTO findByEmail(String email);
@@ -37,5 +37,6 @@ public interface UserService {
     void createPasswordResetTokenForUser(String email, String resetUrl, String token);
 
     String updatePassword(Long id, String password);
+
 
 }
