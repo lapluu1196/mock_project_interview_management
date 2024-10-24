@@ -102,23 +102,7 @@
             });
 
             // Cancel modal OK button click event
-            $('#comfirmCancelStatusBtn').click(function () {
-                const interviewId = $(this).data('id'); // Lấy ID từ data attribute
-
-                $.ajax({
-                    url: '/api/interview-schedule/cancel/' + interviewId,
-                    type: 'POST',
-                    success: function (response) {
-                        // Lưu thông báo thành công vào localStorage
-                        alert(response);
-                        // Chuyển hướng về trang danh sách lịch phỏng vấn
-                        window.location.href = '/interview-schedule/index';
-                    },
-                    error: function (xhr) {
-                        alert(xhr.responseText || "An error occurred while canceling the interview.");
-                    }
-                });
-            });
+            
 
         };
     </script>
@@ -178,12 +162,12 @@
                                 <input type="text" name="interviewTitle" class="form-control"
                                     placeholder="Type a title..." id="interviewTitle"
                                     th:value="${interviewScheduleDTO.interviewTitle}"
-                                    sec:authorize="hasAnyAuthority('Admin', 'Recruiter')" />
+                                    sec:authorize="hasAnyAuthority('Admin', 'Recruiter', 'Manager')" />
                                 <p name="interviewTitle" th:text="${interviewScheduleDTO.interviewTitle}"
-                                    class="ms-3 px-0" sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')"></p>
+                                    class="ms-3 px-0" sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')"></p>
                                 <input type="hidden" name="interviewTitle"
                                     th:value="${interviewScheduleDTO.interviewTitle}"
-                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')">
+                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                                 <span class="w-25 d-none" th:text="${interviewScheduleDTO.interviewTitle}"></span>
 
                             </div>
@@ -196,15 +180,15 @@
                                 <span th:if="${#fields.hasErrors('jobId')}" th:errors="*{jobId}"
                                     class="invalid-input-user text-danger"></span>
                                 <select name="jobId" id="jobTitle" class="form-select"
-                                    sec:authorize="hasAnyAuthority('Admin', 'Recruiter')">
+                                    sec:authorize="hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                                     <option th:each="job : ${jobs}" th:value="${job.jobId}" th:text="${job.jobTitle}"
                                         th:selected="${job.jobId == interviewScheduleDTO.jobId}">
                                     </option>
                                 </select>
                                 <p name="jobTitle" th:text="${interviewScheduleDTO.jobTitle}"
-                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')"></p>
+                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')"></p>
                                 <input type="hidden" name="jobId" th:value="${interviewScheduleDTO.jobId}"
-                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')">
+                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                                 <span class="d-none" th:text="${interviewScheduleDTO.jobTitle}"></span>
                             </div>
                         </div>
@@ -218,7 +202,7 @@
                                 <span th:if="${#fields.hasErrors('candidateId')}" th:errors="*{candidateId}"
                                     class="invalid-input-user text-danger"></span>
                                 <select name="candidateId" id="candidateName" class="form-select"
-                                    sec:authorize="hasAnyAuthority('Admin', 'Recruiter')">
+                                    sec:authorize="hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                                     <option value="">Select candidate</option>
                                     <option th:each="candidate : ${candidates}" th:value="${candidate.candidateId}"
                                         th:text="${candidate.fullName}"
@@ -226,9 +210,9 @@
                                     </option>
                                 </select>
                                 <p name="candidateName" th:text="${interviewScheduleDTO.candidateName}"
-                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')"></p>
+                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')"></p>
                                 <input type="hidden" name="candidateId" th:value="${interviewScheduleDTO.candidateId}"
-                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')">
+                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                                 <span class="d-none" th:text="${interviewScheduleDTO.candidateName}"></span>
 
                             </div>
@@ -240,16 +224,16 @@
                                 <!-- Kiểm tra và hiển thị thông báo lỗi nếu có -->
                                 <span th:if="${#fields.hasErrors('interviewerIds')}" th:errors="*{interviewerIds}"
                                     class="invalid-input-user text-danger"></span>
-                                    <input type="hidden" name="interviewerIds" value="" sec:authorize="hasAnyAuthority('Admin', 'Recruiter')">
+                                    <!-- <input type="hidden" name="interviewerIds" value="" sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')"> -->
                                 <select name="interviewerIds" id="multiSelect"
-                                    sec:authorize="hasAnyAuthority('Admin', 'Recruiter')" multiple>
-                                    <option value="">Select interviewer</option>
+                                    sec:authorize="hasAnyAuthority('Admin', 'Recruiter', 'Manager')" multiple>
+                        
                                     <option th:each="interviewer : ${interviewers}" th:value="${interviewer.userId}"
                                         th:text="${interviewer.fullName}"
                                         th:selected="${#lists.contains(interviewScheduleDTO.interviewerIds, interviewer.userId)}">
                                     </option>
                                 </select>
-                                <span sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')">
+                                <span sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                                     <span th:each="interviewer, iterStat : ${interviewScheduleDTO.interviewers}">
                                         <span th:text="${interviewer.fullName}"></span>
                                         <span th:if="${!iterStat.last}">,&nbsp;</span>
@@ -257,7 +241,7 @@
                                 </span>
 
                                 <!-- Lặp qua danh sách interviewers để tạo các input hidden cho các giá trị đã chọn -->
-                                <div sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')">
+                                <div sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                                     <span th:each="interviewer : ${interviewers}">
                                         <input type="hidden" name="interviewerIds" th:value="${interviewer.userId}"
                                             th:if="${#lists.contains(interviewScheduleDTO.interviewerIds, interviewer.userId)}" />
@@ -276,18 +260,18 @@
 
                             <input type="date" class="form-control w-75 ms-3" id="scheduleDateFormAdd"
                                 name="scheduleDate" th:value="${interviewScheduleDTO.scheduleDate}"
-                                sec:authorize="hasAnyAuthority('Admin', 'Recruiter')">
+                                sec:authorize="hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
 
-                            <div class="w-75 ms-4" sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')">
+                            <div class="w-75 ms-4" sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                                 <span th:text="${interviewScheduleDTO.scheduleDate}"></span> <br>
                                 <span th:text="'From ' + ${scheduleFrom} + ' To ' + ${scheduleTo}"></span>
                             </div>
                             <input type="hidden" name="scheduleDate" th:value="${interviewScheduleDTO.scheduleDate}"
-                                sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')">
+                                sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                             <input type="hidden" name="scheduleFrom" th:value="${interviewScheduleDTO.scheduleFrom}"
-                                sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')">
+                                sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                             <input type="hidden" name="scheduleTo" th:value="${interviewScheduleDTO.scheduleTo}"
-                                sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')">
+                                sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                         </div>
                         <div class="col-6 d-flex justify-content-end ">
                             <label for="location" class="w-25 label-right">Location</label>
@@ -295,11 +279,11 @@
                                 <span class="invalid-input-user text-danger"></span>
                                 <input type="text" class="form-control" placeholder="Type a location..." id="location"
                                     name="location" th:value="${interviewScheduleDTO.location}"
-                                    sec:authorize="hasAnyAuthority('Admin', 'Recruiter')">
+                                    sec:authorize="hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                                 <p name="location" th:text="${interviewScheduleDTO.location}"
-                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')"></p>
+                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')"></p>
                                 <input type="hidden" name="location" th:value="${interviewScheduleDTO.location}"
-                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')">
+                                    sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                             </div>
 
                         </div>
@@ -307,7 +291,7 @@
 
                     <div class="row d-flex justify-content-between mb-3">
                         <div class="col-6 d-flex justify-content-end align-items-start"
-                            sec:authorize="hasAnyAuthority('Admin', 'Recruiter')">
+                            sec:authorize="hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                             <div class="w-25"></div>
                             <div class="d-flex w-75 ms-3 row justify-content-between">
                                 <span th:if="${#fields.hasErrors('scheduleFrom')}" th:errors="*{scheduleFrom}"
@@ -335,20 +319,20 @@
                             </div>
                         </div>
                         <div class="col-6 d-flex justify-content-end align-items-start"
-                            sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')">
+                            sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
 
                         </div>
 
                         <div class="col-6 d-flex justify-content-end position-relative">
-                            <label for="recruiter" class="w-25 label-right">Recruiter Owner <span
+                            <label for="recruiterOwnerComboBox" class="w-25 label-right">Recruiter Owner <span
                                     style="color: red">*</span></label>
                             <div class="d-flex flex-column w-75 ms-3">
                                 <span class="invalid-input-user text-danger"></span>
                                 <div class="d-flex flex-column">
                                     <span th:if="${#fields.hasErrors('recruiterOwner')}" th:errors="*{recruiterOwner}"
                                         class="invalid-input-user text-danger"></span>
-                                    <select name="recruiterOwner" id="recruiter" class="form-select"
-                                        sec:authorize="hasAnyAuthority('Admin', 'Recruiter')">
+                                    <select name="recruiterOwner" id="recruiterOwnerComboBox" class="form-select"
+                                        sec:authorize="hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                                         <option>Select a recruiter</option>
                                         <option th:each="recruiter : ${recruiters}" th:value="${recruiter.fullName}"
                                             th:text="${recruiter.fullName}"
@@ -357,12 +341,12 @@
 
                                     </select>
                                     <p name="recruiterOwner" th:text="${interviewScheduleDTO.recruiterOwner}"
-                                        sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')"></p>
+                                        sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')"></p>
                                     <input type="hidden" name="recruiterOwner"
                                         th:value="${interviewScheduleDTO.recruiterOwner}"
-                                        sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')">
+                                        sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                                     <a id="assignMeButton" class="text-dark text-decoration-underline"
-                                        sec:authorize="hasAnyAuthority('Admin', 'Recruiter')">Assign me</a>
+                                        sec:authorize="hasAnyAuthority('Admin', 'Recruiter', 'Manager')">Assign me</a>
 
                                 </div>
 
@@ -385,12 +369,12 @@
                                     <span class="invalid-input-user text-danger"></span>
                                     <input type="text" class="form-control" placeholder="Type a meettingId..."
                                         id="meettingId" name="meetingId" th:value="${interviewScheduleDTO.meetingId}"
-                                        sec:authorize="hasAnyAuthority('Admin', 'Recruiter')">
+                                        sec:authorize="hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
 
                                     <p name="meetingId" th:text="${interviewScheduleDTO.meetingId}"
-                                        sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')"></p>
+                                        sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')"></p>
                                     <input type="hidden" name="meetingId" th:value="${interviewScheduleDTO.meetingId}"
-                                        sec:authorize="!hasAnyAuthority('Admin', 'Recruiter')">
+                                        sec:authorize="!hasAnyAuthority('Admin', 'Recruiter', 'Manager')">
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between">
@@ -440,26 +424,28 @@
             <p id="errorMessage"></p>
         </div>
 
-        <!-- Cancel schedule Confirmation Modal -->
+        
         <!-- Cancel schedule Confirmation Modal -->
         <div class="modal fade" id="cancelScheduleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <div class="modal-body d-flex flex-column align-items-center justify-content-center">
+                    <form th:action="@{/interview-schedule/cancel/{id}(id=${interviewScheduleDTO.scheduleId})}" method="post">
+                        <div class="modal-body d-flex flex-column align-items-center justify-content-center">
 
-                        <h6 class="text-center">Are you sure you want to cancel this interview?</h5>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-center grid gap-5">
-                        <button type="button" class="btn w-25 m-0 btn-secondary" id="comfirmCancelStatusBtn"
-                            th:data-id="${interviewScheduleDTO.scheduleId}">
-                            <a class="text-light text-decoration-none">
-                                Yes
-                            </a>
-                        </button>
-                        <button type="button" class="btn w-25 m-0 btn-secondary border-end"
-                            data-bs-dismiss="modal">No</button>
-                    </div>
+                            <h6 class="text-center">Are you sure you want to cancel this interview?</h5>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-center grid gap-5">
+                            <button type="submit" class="btn w-25 m-0 btn-secondary" id="comfirmCancelStatusBtn"
+                                th:data-id="${interviewScheduleDTO.scheduleId}">
+                                <a class="text-light text-decoration-none">
+                                    Yes
+                                </a>
+                            </button>
+                            <button type="button" class="btn w-25 m-0 btn-secondary border-end"
+                                data-bs-dismiss="modal">No</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
