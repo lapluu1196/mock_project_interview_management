@@ -8,7 +8,7 @@ import com.team3.dtos.candidate.CandidateDTO;
 public interface CandidateService {
 
     // UC05: Search candidates by keyword, status, and role, with pagination
-    List<CandidateDTO> searchCandidates(String keyword, String status, String role, int page);
+    List<CandidateDTO> searchCandidates(String keyword, String status, int page);
 
     // UC06: Save new candidate
     void saveCandidate(CandidateDTO candidateDTO);

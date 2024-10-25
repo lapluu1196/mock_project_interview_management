@@ -28,17 +28,11 @@ public class CandidateController {
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "status", required = false) String status,
             Model model,
-            @RequestParam("role") String role,
             @RequestParam(value = "page", defaultValue = "0") int page // For pagination
     ) {
-        List<CandidateDTO> candidateList = candidateService.searchCandidates(keyword, status, role, page);
+        
+        List<CandidateDTO> candidateList = candidateService.searchCandidates(keyword, status, page);
         model.addAttribute("candidates", candidateList);
-
-        if (role.equals("HR") || role.equals("Recruiter")) {
-            return "candidate_list_hr_recruiter";
-        } else if (role.equals("Interviewer")) {
-            return "candidate_list_interviewer";
-        }
 
         return "redirect:/candidates";
     }

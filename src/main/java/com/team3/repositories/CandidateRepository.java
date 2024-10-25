@@ -6,12 +6,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.team3.entities.Candidate;
 
-@Repository
+@EnableJpaRepositories
 public interface CandidateRepository extends JpaRepository<Candidate, Long>, JpaSpecificationExecutor<Candidate> {
 
     // UC05: Find candidates by keyword and status with pagination (for HR/Recruiter)
@@ -31,13 +32,10 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long>, Jpa
     Candidate findFullNameByCandidateId(@Param("candidateId") Long candidateId);
 
     //Code dat: EM them de lam phan em ạ
-   // Candidate findFullNameByCandidateId(Long candidateId);
+    //Candidate findFullNameByCandidateId(Long candidateId);
 
-    // UC05: Find candidates assigned to the logged-in interviewer by keyword and status with pagination
-    @Query("SELECT c FROM Candidate c JOIN c.interviewSchedules i WHERE (c.fullName LIKE %:keyword% OR c.email LIKE %:keyword%) AND c.status = :status AND i IN :interviewSchedules")
-    List<Candidate> findCandidatesForInterviewer(
-            @Param("keyword") String keyword, 
-            @Param("status") String status, 
-            @Param("interviewSchedules") List<InterviewSchedule> interviewSchedules,
-            Pageable pageable);
+    // Find list candidate by userid with interviewer role
+    @Query("SELECT i.candidate FROM InterviewSchedule i JOIN i.users u WHERE u.id = :userId AND u.role = 'Interviewer'")
+    List<Candidate> findCandidatesByInterviewer(@Param("userId") Long userId);
+
 }

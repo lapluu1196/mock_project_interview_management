@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.stereotype.Service;
 
 import com.team3.dtos.candidate.CandidateDTO;
@@ -59,18 +60,17 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public List<CandidateDTO> searchCandidates(String keyword, String status, String role, int page) {
+    public List<CandidateDTO> searchCandidates(String keyword, String status, int page) {
         Pageable pageable = PageRequest.of(page, 10); // Pagination, 10 candidates per page
         List<Candidate> candidates;
 
         // Get the currently logged-in user
         User currentUser = userService.getCurrentUser();
 
-        if (currentUser.getRole().equals("Interviewer")) {
-            // Interviewer can only view candidates assigned to their interview schedules
-            candidates = candidateRepository.findCandidatesForInterviewer(keyword, status, currentUser.getInterviewSchedules(), pageable);
-        } else {
-            // HR/Recruiter can view all candidates
+        if ("Interviewer".equals(currentUser.getRole())) {
+            candidates = candidateRepository.findCandidatesByInterviewer(currentUser.getUserId());
+        }
+        else {
             candidates = candidateRepository.findByKeywordAndStatus(keyword, status, pageable);
         }
 

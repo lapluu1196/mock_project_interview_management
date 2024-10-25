@@ -1,13 +1,13 @@
 package com.team3.repositories;
 
-import com.team3.entities.Candidate;
-import com.team3.entities.InterviewSchedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import com.team3.entities.InterviewSchedule;
 
 @Repository
 public interface InterviewScheduleRepository extends JpaRepository<InterviewSchedule, Long>, JpaSpecificationExecutor<InterviewSchedule> {
