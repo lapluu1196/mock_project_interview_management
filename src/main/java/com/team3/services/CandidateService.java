@@ -8,16 +8,16 @@ import com.team3.dtos.candidate.CandidateDTO;
 public interface CandidateService {
 
     // UC05: Search candidates by keyword, status, and role, with pagination
-    List<CandidateDTO> searchCandidates(String keyword, String status, int page);
+    List<CandidateDTO> searchCandidates(String keyword, String status, Long userID, int page);
 
     // UC06: Save new candidate
-    void saveCandidate(CandidateDTO candidateDTO);
+    void saveCandidate(CandidateDTO candidateDTO) throws IllegalArgumentException;
 
     // UC07: Get candidate by ID
     CandidateDTO getCandidateById(Long id);
 
     // UC08: Update existing candidate
-    void updateCandidate(CandidateDTO candidateDTO);
+    void updateCandidate(CandidateDTO candidateDTO) throws IllegalArgumentException;
 
     // UC09: Delete candidate by ID
     void deleteCandidate(Long id);
@@ -28,7 +28,7 @@ public interface CandidateService {
 
     //Dat: Anh dung xoa nhe
 
-     List<CandidateDTO> getAllCandidates();
+    List<CandidateDTO> getAllCandidates();
      
 
 }

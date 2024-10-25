@@ -39,6 +39,7 @@ public interface UserService {
     String updatePassword(Long id, String password);
     
     // Long add phuong thuc lay User
-    User getCurrentUser();
+    String getUserRole(Long userID); // Gets role based on userID
+    boolean isAuthorized(Long userID, String... roles); // Checks if user has one of the roles
 
 }

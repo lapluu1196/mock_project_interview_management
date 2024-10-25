@@ -5,10 +5,8 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.team3.dtos.candidate.CandidateDTO;
 import com.team3.dtos.interviewschedule.InterviewScheduleCreateDTO;
 import com.team3.dtos.interviewschedule.InterviewScheduleDTO;
-import com.team3.entities.Candidate;
 import com.team3.entities.InterviewSchedule;
 
 public interface InterviewScheduleService {

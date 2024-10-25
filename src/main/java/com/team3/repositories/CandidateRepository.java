@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import com.team3.entities.Candidate;
 
@@ -34,8 +33,12 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long>, Jpa
     //Code dat: EM them de lam phan em ạ
     //Candidate findFullNameByCandidateId(Long candidateId);
 
-    // Find list candidate by userid with interviewer role
-    @Query("SELECT i.candidate FROM InterviewSchedule i JOIN i.users u WHERE u.id = :userId AND u.role = 'Interviewer'")
-    List<Candidate> findCandidatesByInterviewer(@Param("userId") Long userId);
+    // UC05: Find candidates assigned to a specific interviewer by keyword and status with pagination
+    @Query("SELECT c FROM Candidate c JOIN c.interviewSchedules i WHERE (c.fullName LIKE %:keyword% OR c.email LIKE %:keyword%) AND c.status = :status AND i.interviewer.id = :interviewerId")
+    List<Candidate> findCandidatesForInterviewer(
+            @Param("keyword") String keyword, 
+            @Param("status") String status, 
+            @Param("interviewerId") Long interviewerId,
+            Pageable pageable);
 
 }
