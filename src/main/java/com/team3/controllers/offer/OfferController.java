@@ -1,17 +1,28 @@
 package com.team3.controllers.offer;
 
+import com.team3.dtos.offer.OfferDTO;
+import com.team3.entities.Candidate;
+import com.team3.entities.InterviewSchedule;
 import com.team3.entities.Offer;
+import com.team3.entities.User;
+import com.team3.services.CandidateService;
+import com.team3.services.InterviewScheduleService;
 import com.team3.services.OfferService;
+import com.team3.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +32,15 @@ public class OfferController {
 
     @Autowired
     private OfferService offerService;
+
+    @Autowired
+    private CandidateService candidateService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private InterviewScheduleService interviewScheduleService;
 
     @GetMapping("")
     public String listOffers(
@@ -51,5 +71,70 @@ public class OfferController {
         model.addAttribute("departments", departments);
         model.addAttribute("status", status);
         return "contents/offer/offer_list";
+    }
+
+    @GetMapping("/add")
+    public String addOffer(Model model) {
+        model.addAttribute("offer", new OfferDTO());
+        List<Candidate> candidates = candidateService.getAllCandidatesNoBanned();
+        List<User> managers = userService.getAllManagers();
+        List<InterviewSchedule> interviewSchedules = interviewScheduleService.getAllInterviewSchedules();
+        List<User> recruiters = userService.getAllRecruiters();
+        model.addAttribute("candidates", candidates);
+        model.addAttribute("managers", managers);
+        model.addAttribute("interviewSchedules", interviewSchedules);
+        model.addAttribute("recruiters", recruiters);
+        return "contents/offer/offer_add";
+    }
+
+    @PostMapping("/add")
+    public String saveOffer(@Valid @ModelAttribute("offer") OfferDTO offerDTO, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            List<Candidate> candidates = candidateService.getAllCandidatesNoBanned();
+            List<User> managers = userService.getAllManagers();
+            List<InterviewSchedule> interviewSchedules = interviewScheduleService.getAllInterviewSchedules();
+            List<User> recruiters = userService.getAllRecruiters();
+            model.addAttribute("candidates", candidates);
+            model.addAttribute("managers", managers);
+            model.addAttribute("interviewSchedules", interviewSchedules);
+            model.addAttribute("recruiters", recruiters);
+            return "offer/add";
+        }
+        String username = "admin";
+
+        Offer offer = new Offer();
+        offer.setModifiedBy(username);
+        Candidate c = candidateService.getCandidateById(Long.parseLong(offerDTO.getCandidate()));
+        User m = userService.getUser(Long.parseLong(offerDTO.getApprover()));
+        offer.setCandidate(c);
+        offer.setContractType(offerDTO.getContractType());
+        offer.setPosition(offerDTO.getPosition());
+        offer.setLevel(offerDTO.getLevel());
+        offer.setApprover(m);
+        offer.setDepartment(offerDTO.getDepartment());
+        offer.setInterviewInfo(offerDTO.getInterviewNote());
+        offer.setInterviewNote(offerDTO.getInterviewNote());
+        offer.setRecruiterOwner(offerDTO.getRecruiterOwner());
+        offer.setBasicSalary(Double.parseDouble(offerDTO.getBasicSalary()));
+        offer.setNotes(offerDTO.getNotes());
+        try {
+            System.out.println(offerDTO.getContractPeriodFrom());
+            LocalDate contractPeriodFrom = LocalDate.parse(offerDTO.getContractPeriodFrom(),
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            LocalDate contractPeriodTo = LocalDate.parse(offerDTO.getContractPeriodTo(),
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            offer.setContractPeriodFrom(contractPeriodFrom);
+            offer.setContractPeriodTo(contractPeriodTo);
+            LocalDate dueDate = LocalDate.parse(offerDTO.getDueDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            offer.setDueDate(dueDate);
+        } catch (DateTimeParseException e) {
+            model.addAttribute("error", "Invalid date format.");
+            return "contents/offer/offer_add";
+        } catch (Exception e) {
+            model.addAttribute("error", "Invalid date format.");
+            return "contents/offer/offer_add";
+        }
+        offerService.saveOffer(offer);
+        return "redirect:/offers";
     }
 }

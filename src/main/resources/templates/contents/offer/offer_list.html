@@ -12,7 +12,7 @@
             <h4>Offer List</h4>
         </div>
     </div>
-    <form id="searchForm">
+    <form id="searchForm" action="/offers" method="get">
         <div class="row d-flex justify-content-start">
             <div class="col-3">
                 <div class="input-group">
@@ -23,7 +23,7 @@
                 </div>
             </div>
             <div class="col-3">
-                <select class="form-select" id="department" name="department">
+                <select class="form-select" id="department" name="department" th:value="${department}">
                     <option value="">Select Department</option>
                     <option value="IT">IT</option>
                     <option value="HR">HR</option>
@@ -34,7 +34,7 @@
                 </select>
             </div>
             <div class="col-3">
-                <select class="form-select" id="status" name="status">
+                <select class="form-select" id="status" name="status" >
                     <option value="">Status</option>
                     <option value="Waiting for approval">Waiting for approval</option>
                     <option value="Approved">Approved</option>
@@ -53,7 +53,7 @@
 
     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
         <a class="btn" style="background-color: #D9D9D9; font-weight: bold;" href="/offers/add">Add new</a>
-        <button type="submit" class="btn" style="background-color: #D9D9D9; font-weight: bold;">Export</button>
+        <button type="submit" class="btn" style="background-color: #D9D9D9; font-weight: bold;" id="exportButton">Export</button>
     </div>
     <div class="table-responsive-md p-0">
         <table class="table table-bordered table-striped ">
@@ -123,8 +123,8 @@
             </ul>
         </nav>
     </div>
-
 </div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

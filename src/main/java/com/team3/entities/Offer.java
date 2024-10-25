@@ -67,6 +67,12 @@ public class Offer {
     @Column(name = "notes", length = 1000)
     private String notes;
 
+    // Minh
+    private String modifiedBy;
+
+    private String interviewNote;
+    // kết thúc
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
