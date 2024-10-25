@@ -24,14 +24,18 @@ public class UserController {
 
     @GetMapping
     public String userList(@RequestParam(required = false) String search,
+                           @RequestParam(required = false) String role,
                            @RequestParam(defaultValue = "0") int page,
                            Model model) {
-        int size = 10;;
+        int size = 10;
         var pageable = PageRequest.of(page, size);
-        var userDTOs = userService.findAll(search, pageable);
+
+        var userDTOs = userService.filterUser(search, role, pageable);
+
 
         model.addAttribute("userDTOs", userDTOs);
         model.addAttribute("keyword", search);
+        model.addAttribute("role", role);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", userDTOs.getTotalPages());
         model.addAttribute("totalUsers", userDTOs.getTotalElements());
