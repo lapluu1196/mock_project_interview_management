@@ -31,17 +31,28 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(configurer ->
+        http. csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(configurer ->
                         configurer.requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                                .requestMatchers("/auth/password/**").permitAll()
+                                .requestMatchers("/interview-schedule/index").hasAnyAuthority("Admin", "Interviewer",  "Recruiter")
+                                .requestMatchers("/interview-schedule/add").hasAnyAuthority("Admin",  "Recruiter")
+                                .requestMatchers("/interview-schedule/edit/**").hasAnyAuthority("Admin",  "Recruiter", "Interviewer")
+                                .requestMatchers("/interview-schedule/scheduleDetail/**").hasAnyAuthority("Admin",  "Recruiter", "Interviewer")
                                 .requestMatchers("/**").permitAll()
+                                
                                 .anyRequest().authenticated())
                 .formLogin(login ->
                         login.loginPage("/auth/login")
                                 .loginProcessingUrl("/authenticateUser")
                                 .permitAll())
+                .rememberMe(rememberMe -> rememberMe
+                        .tokenValiditySeconds(86400)
+                        .key("uniqueAndSecret")
+                        .rememberMeParameter("rememberMe"))
                 .logout(logout ->
                         logout.logoutUrl("/logout")
-                                .logoutSuccessUrl("/login?logout")
+                                .logoutSuccessUrl("/auth/login?logout")
                                 .permitAll())
                 .exceptionHandling(configurer ->
                         configurer.accessDeniedPage("/access-denied")

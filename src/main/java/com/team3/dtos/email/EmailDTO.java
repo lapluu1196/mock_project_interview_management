@@ -1,4 +1,4 @@
-package com.team3.dtos.user;
+package com.team3.dtos.email;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

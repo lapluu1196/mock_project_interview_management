@@ -1,6 +1,6 @@
 package com.team3.services.impl;
 
-import com.team3.dtos.user.EmailDTO;
+import com.team3.dtos.email.EmailDTO;
 import com.team3.services.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -24,7 +24,7 @@ public class EmailServiceImpl implements EmailService {
 
 
     @Override
-    public String sendEmail(EmailDTO emailDTO) {
+    public String sendEmail(EmailDTO emailDTO, String templateName) {
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
@@ -34,11 +34,10 @@ public class EmailServiceImpl implements EmailService {
             messageHelper.setSubject(emailDTO.getSubject());
             messageHelper.setFrom(emailDTO.getFrom());
 
-            // Sử dụng Thymeleaf để render email template
             Context context = new Context();
             context.setVariables((Map<String, Object>) emailDTO.getData());
 
-            String htmlContent = templateEngine.process("email-user-create-template", context);
+            String htmlContent = templateEngine.process(templateName, context);
             messageHelper.setText(htmlContent, true);
 
             javaMailSender.send(mimeMessage);

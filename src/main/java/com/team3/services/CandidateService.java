@@ -4,7 +4,29 @@ import java.util.List;
 
 import com.team3.dtos.candidate.CandidateDTO;
 
+
 public interface CandidateService {
-    // Search for candidates based on keyword and status
+
+    // Search candidates by keyword and status
     List<CandidateDTO> searchCandidates(String keyword, String status);
+
+    // Get candidate by ID
+    CandidateDTO getCandidateById(Long id);
+
+    // Save a new candidate
+    void saveCandidate(CandidateDTO candidateDTO);
+
+    // Update an existing candidate
+    void updateCandidate(CandidateDTO candidateDTO);
+
+    // Delete a candidate by ID
+    void deleteCandidate(Long id);
+
+    // Get all candidates
+
+    //Dat: Anh dung xoa nhe
+
+     List<CandidateDTO> getAllCandidates();
+     
+
 }
