@@ -333,6 +333,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDTO> getRecruiters() {
+        List<User> users = userRepository.findByRole("Recruiter");
+        if (!users.isEmpty()) {
+            return users.stream().map(user -> {
+                UserDTO userDTO = new UserDTO();
+                userDTO.setUserId(user.getUserId());
+                userDTO.setUsername(user.getUsername());
+                userDTO.setFullName(user.getFullName());
+                userDTO.setEmail(user.getEmail());
+                userDTO.setGender(user.getGender());
+                userDTO.setDepartment(user.getDepartment());
+                userDTO.setRole(user.getRole());
+                userDTO.setDateOfBirth(user.getDateOfBirth());
+                userDTO.setAddress(user.getAddress());
+                userDTO.setPhoneNumber(user.getPhoneNumber());
+                userDTO.setStatus(user.getStatus());
+                userDTO.setNotes(user.getNotes());
+                return userDTO;
+            }).collect(Collectors.toList());
+        }
+        return List.of();
+    }
+
+    @Override
     public void createPasswordResetTokenForUser(String email, String resetUrl, String token) {
 
         User user = userRepository.findByEmail(email);
