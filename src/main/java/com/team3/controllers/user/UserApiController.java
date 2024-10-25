@@ -31,23 +31,23 @@ public class UserApiController {
         }
     }
 
-    @GetMapping("/current-user-fullname")
-    @ResponseBody
-    public ResponseEntity<?> getCurrentUserFullName() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            // Kiểm tra nếu người dùng có vai trò Recruiter
-            if (authentication.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals("Recruiter"))) {
-                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-                // Giả sử bạn có userFullName lưu trữ trong UserDetails hoặc có thể tìm từ cơ sở dữ liệu
-                String userFullName = userService.findByUsername(userDetails.getUsername()).getFullName(); // Hàm tìm userFullName dựa trên username
+    // @GetMapping("/current-user-fullname")
+    // @ResponseBody
+    // public ResponseEntity<?> getCurrentUserFullName() {
+    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    //     if (authentication != null && authentication.isAuthenticated()) {
+    //         // Kiểm tra nếu người dùng có vai trò Recruiter
+    //         if (authentication.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals("Recruiter"))) {
+    //             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    //             // Giả sử bạn có userFullName lưu trữ trong UserDetails hoặc có thể tìm từ cơ sở dữ liệu
+    //             String userFullName = userService.findByUsername(userDetails.getUsername()).getFullName(); // Hàm tìm userFullName dựa trên username
 
-                return ResponseEntity.ok(userFullName); // Trả về userFullName của người dùng
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You must be a Recruiter to assign yourself.");
-            }
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
+    //             return ResponseEntity.ok(userFullName); // Trả về userFullName của người dùng
+    //         } else {
+    //             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You must be a Recruiter to assign yourself.");
+    //         }
+    //     }
+    //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    // }
 
 }

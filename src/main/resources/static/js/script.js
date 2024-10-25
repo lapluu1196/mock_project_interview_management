@@ -112,17 +112,17 @@ $(document).ready(function () {
         enableTime: true,        // Cho phép chọn thời gian
         noCalendar: true,        // Ẩn lịch ngày tháng
         dateFormat: "H:i", 
-         
+
         time_24hr: true          // Hiển thị định dạng 24 giờ, không AM/PM
     });
 
-    
+
     flatpickr("#scheduleTimeTo", {
         enableTime: true,        // Cho phép chọn thời gian
         noCalendar: true,        // Ẩn lịch ngày tháng
         dateFormat: "H:i",       // Định dạng 24 giờ (HH:mm)
         time_24hr: true          // Hiển thị định dạng 24 giờ, không AM/PM
     });
- 
-    
+
+
 });
