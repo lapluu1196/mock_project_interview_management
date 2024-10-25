@@ -1,5 +1,6 @@
 package com.team3.controllers.interviewschedule;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -242,7 +243,12 @@ public class InterviewScheduleController {
             }
         }
 
-        if (interviewScheduleDTO.getScheduleFrom().isAfter(interviewScheduleDTO.getScheduleTo())) {
+        if(interviewScheduleDTO.getScheduleDate().isBefore((existingSchedule.getCreatedAt().toLocalDate()))) {
+            bindingResult.rejectValue("scheduleDate", "scheduleDate.invalid", "Schedule date must be in the future!");
+        }
+        
+
+        if (interviewScheduleDTO.getScheduleFrom().isAfter(interviewScheduleDTO.getScheduleTo()) ) {
 
             bindingResult.rejectValue("scheduleFrom", "scheduleFrom.invalid",
                     "Schedule to must be after schedule from!");
@@ -251,6 +257,8 @@ public class InterviewScheduleController {
 
 
         if (bindingResult.hasErrors()) {
+            InterviewScheduleDTO test = interviewScheduleService.findById(id);
+            Long testId = test.getScheduleId();
             // Nếu có lỗi, giữ lại các lựa chọn cho các trường
             List<UserDTO> interviewers = userService.getInterviewers();
             model.addAttribute("interviewers", interviewers);
@@ -263,7 +271,7 @@ public class InterviewScheduleController {
 
             List<UserDTO> recruiters = userService.getRecruiters();
             model.addAttribute("recruiters", recruiters);
-
+            
             return "contents/interviewschedule/schedule_edit"; // Trả lại form nếu có lỗi
         }
 

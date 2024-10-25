@@ -34,6 +34,12 @@
                 <td th:text="${interviewSchedule.status}"></td>
                 <td th:text="${interviewSchedule.jobTitle}"></td>
                 <td>
+                    <button aria-label="view" type="button" class="border-0 bg-transparent">
+                        <a class="text-dark text-decoration-none"
+                            th:href="@{/interview-schedule/scheduleDetail/{id}(id=${interviewSchedule.scheduleId})}">
+                            <i class="far fa-eye"></i>
+                        </a>
+                    </button>
                     <button aria-label="edit" type="button" class="border-0 bg-transparent"  sec:authorize="hasAnyAuthority('Admin', 'Manager', 'Recruiter')">
                         <a class="text-dark text-decoration-none"
                             th:href="@{/interview-schedule/edit/{id}(id=${interviewSchedule.scheduleId})}">

@@ -1,6 +1,6 @@
 package com.team3.services.impl;
 
-import com.team3.dtos.interviewschedule.CustomUserDetails;
+
 import com.team3.dtos.interviewschedule.InterviewScheduleCreateDTO;
 import com.team3.dtos.interviewschedule.InterviewScheduleDTO;
 import com.team3.dtos.log.LogDTO;
@@ -32,7 +32,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import org.springframework.security.core.userdetails.UserDetails;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,24 +45,21 @@ import jakarta.persistence.criteria.Predicate;
 public class InterviewScheduleServiceImpl implements InterviewScheduleService {
 
     @Autowired
-    private  InterviewScheduleRepository interviewScheduleRepository;
+    private InterviewScheduleRepository interviewScheduleRepository;
 
     @Autowired
-    private  CandidateRepository candidateRepository;
-    
-    @Autowired
-    private  JobRepository jobRepository;
+    private CandidateRepository candidateRepository;
 
     @Autowired
-    private  UserRepository userRepository;
+    private JobRepository jobRepository;
 
     @Autowired
-    private  LogRepository logRepository;
+    private UserRepository userRepository;
 
-    
+    @Autowired
+    private LogRepository logRepository;
 
-
-    //Find by id
+    // Find by id
     @Override
     public InterviewScheduleDTO findById(Long id) {
         InterviewSchedule interviewSchedule = interviewScheduleRepository.findById(id).orElse(null);
@@ -87,6 +84,8 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
         interviewScheduleDTO.setRecruiterOwner(interviewSchedule.getRecruiterOwner());
         interviewScheduleDTO.setCandidateId(interviewSchedule.getCandidate().getCandidateId());
         interviewScheduleDTO.setJobId(interviewSchedule.getJob().getJobId());
+        interviewScheduleDTO.setCreatedAt(interviewSchedule.getCreatedAt());
+        interviewScheduleDTO.setUpdatedAt(interviewSchedule.getUpdatedAt());
 
         interviewScheduleDTO.setRecruiterOwner(interviewSchedule.getRecruiterOwner());
         var candidate = candidateRepository
@@ -119,8 +118,7 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
         return interviewScheduleDTO;
     }
 
-
-    //Ham create
+    // Ham create
     @Override
     @Transactional
     public InterviewScheduleDTO create(InterviewScheduleCreateDTO interviewScheduleCreateDTO) {
@@ -163,6 +161,8 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
         }
 
         interviewScheduleRepository.save(interviewSchedule);
+        logUserAction("Created interview schedule with id: " + interviewSchedule.getScheduleId(), "Create");
+
 
         interviewScheduleRepository.updateCandidateStatus(interviewSchedule.getCandidate().getCandidateId(),
                 "Waiting to interview");
@@ -268,6 +268,8 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
         }
 
         interviewScheduleRepository.save(interviewSchedule);
+        logUserAction("Update interview schedule with id: " + interviewSchedule.getScheduleId(), "Update");
+
 
         // Xử lý danh sách interviewers
         if (interviewScheduleDTO.getInterviewerIds() != null && !interviewScheduleDTO.getInterviewerIds().isEmpty()) {
@@ -288,11 +290,16 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
             // danh sách hiện tại)
             for (Long newUserId : newInterviewerIds) {
 
-                if (!currentInterviewers.contains(newUserId)) {
-                    User interviewer = userRepository.findById(newUserId)
-                            .orElseThrow(() -> new IllegalArgumentException("User not found"));
-                    interviewScheduleRepository.addInterviewerToSchedule(interviewSchedule.getScheduleId(),
-                            interviewer.getUserId());
+                if(newUserId == null){
+                    continue;
+                }
+                else{
+                    if (!currentInterviewers.contains(newUserId)) {
+                        User interviewer = userRepository.findById(newUserId)
+                                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                        interviewScheduleRepository.addInterviewerToSchedule(interviewSchedule.getScheduleId(),
+                                interviewer.getUserId());
+                    }
                 }
             }
         }
@@ -373,7 +380,6 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
                 } catch (DateTimeParseException e) {
                     // Bỏ qua nếu không phải ngày hợp lệ
                 }
-        
 
                 // Kết hợp các điều kiện lại với nhau bằng OR
                 predicates.add(criteriaBuilder.or(keywordPredicates.toArray(new Predicate[0])));
@@ -408,7 +414,12 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
             interviewScheduleDTO.setMeetingId(interviewerToSchedule.getMeetingId());
             interviewScheduleDTO.setNotes(interviewerToSchedule.getNotes());
             interviewScheduleDTO.setStatus(interviewerToSchedule.getStatus());
-            interviewScheduleDTO.setResult(interviewerToSchedule.getResult());
+            if(interviewerToSchedule.getResult() != null){
+                interviewScheduleDTO.setResult(interviewerToSchedule.getResult());
+            }
+            else{
+                interviewScheduleDTO.setResult("N/A");
+            }
             interviewScheduleDTO.setCreatedAt(interviewerToSchedule.getCreatedAt());
             interviewScheduleDTO.setUpdatedAt(interviewerToSchedule.getUpdatedAt());
             interviewScheduleDTO.setCandidateName(interviewerToSchedule.getCandidate().getFullName());
@@ -440,31 +451,41 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
 
     }
 
-    //Lấy id  người dùng
+    // Lấy id người dùng
     public Long getCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            CustomUserDetails currentUser = (CustomUserDetails) authentication.getPrincipal(); // Assuming your User entity is used as the principal
-            return currentUser.getUserId(); // Assuming User entity has getId() method
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    
+        // Check if the principal is an instance of Spring Security's User
+        if (principal instanceof org.springframework.security.core.userdetails.User) {
+            String username = ((org.springframework.security.core.userdetails.User) principal).getUsername();
+            return userRepository.findByUsername(username).getUserId();
         }
-        return null;
+        
+        // Alternatively, if the principal is already your custom User entity
+        if (principal instanceof com.team3.entities.User) {
+            return ((com.team3.entities.User) principal).getUserId();
+        }
+    
+        // If no valid user found, throw an exception or handle as needed
+        throw new IllegalStateException("User not authenticated or unknown principal type");
     }
+    
+
     public void logUserAction(String actionDescription, String action) {
-    Long userId = getCurrentUserId();
-    User user = userRepository.findById(userId).orElse(null);
-    if (userId != null) {
-        // Tạo log và lưu vào cơ sở dữ liệu
-        Log log = new Log();
-        log.setUser(user);
-        log.setAction(action);
-        log.setEntityType("InterviewSchedule");
-        log.setDescription(actionDescription);
-        log.setTimestamp(LocalDateTime.now());
+        Long userId = getCurrentUserId();
+        User user = userRepository.findById(userId).orElse(null);
+        if (userId != null) {
+            // Tạo log và lưu vào cơ sở dữ liệu
+            Log log = new Log();
+            log.setUser(user);
+            log.setAction(action);
+            log.setEntityType("InterviewSchedule");
+            log.setDescription(actionDescription);
+            log.setTimestamp(LocalDateTime.now());
 
-        // Lưu log vào database
-        logRepository.save(log);
+            // Lưu log vào database
+            logRepository.save(log);
+        }
     }
-}
-
 
 }

@@ -20,8 +20,12 @@ import com.team3.entities.Candidate;
 import com.team3.entities.Job;
 import com.team3.entities.User;
 
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 
 
@@ -50,7 +54,9 @@ public class InterviewScheduleCreateDTO {
     private Job job;
     private String jobTitle;
 
+
     @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @NotNull(message = "Schedule date is required!")
     private LocalDate scheduleDate;
 
 
@@ -66,8 +72,9 @@ public class InterviewScheduleCreateDTO {
     
     private List<UserDTO> interviewers;
 
-    @NotNull(message = "Interviewer is required!")
-    private List<Long> interviewerIds; 
+    @NotEmpty(message = "Interviewer is required!")
+    @Size(min = 1, message = "At least one Interviewer is required!")
+    private List< @NotNull(message = "Interviewer is required!") Long > interviewerIds; 
 
     @NotBlank(message = "Recruiter is required!")
     private String recruiterOwner;
