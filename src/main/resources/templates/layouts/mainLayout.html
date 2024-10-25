@@ -37,7 +37,7 @@
             <div class="col-6 d-flex justify-content-end align-items-center">
                 <div id="userAndRole" class="d-flex flex-column justify-content-center align-items-center">
                     <div id="user">
-                         <span sec:authentication="principal.username"></span>
+                        <span sec:authentication="principal.username"></span>
                     </div>
                     <div id="roleAuth">
                         <span th:if="${currentUser != null}" th:text="${currentUser.department}"></span>
