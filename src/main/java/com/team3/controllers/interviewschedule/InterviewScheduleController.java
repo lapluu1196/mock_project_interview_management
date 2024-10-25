@@ -1,5 +1,6 @@
 package com.team3.controllers.interviewschedule;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -176,7 +178,6 @@ public class InterviewScheduleController {
         return "contents/interviewschedule/schedule_detail";
     }
 
-    //Edit interview schedule
     @GetMapping("/edit/{id}")
     public String updateInterviewSchedule(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
         // Tìm kiếm thông tin phỏng vấn
@@ -212,7 +213,7 @@ public class InterviewScheduleController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateInterviewSchedulePost(@PathVariable("id") Long id,
+    public String updateInterviewSchedulePost(@PathVariable("id") Long id, 
             @Valid InterviewScheduleDTO interviewScheduleDTO,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
@@ -242,7 +243,12 @@ public class InterviewScheduleController {
             }
         }
 
-        if (interviewScheduleDTO.getScheduleFrom().isAfter(interviewScheduleDTO.getScheduleTo())) {
+        if(interviewScheduleDTO.getScheduleDate().isBefore((existingSchedule.getCreatedAt().toLocalDate()))) {
+            bindingResult.rejectValue("scheduleDate", "scheduleDate.invalid", "Schedule date must be in the future!");
+        }
+        
+
+        if (interviewScheduleDTO.getScheduleFrom().isAfter(interviewScheduleDTO.getScheduleTo()) ) {
 
             bindingResult.rejectValue("scheduleFrom", "scheduleFrom.invalid",
                     "Schedule to must be after schedule from!");
@@ -251,6 +257,8 @@ public class InterviewScheduleController {
 
 
         if (bindingResult.hasErrors()) {
+            InterviewScheduleDTO test = interviewScheduleService.findById(id);
+            Long testId = test.getScheduleId();
             // Nếu có lỗi, giữ lại các lựa chọn cho các trường
             List<UserDTO> interviewers = userService.getInterviewers();
             model.addAttribute("interviewers", interviewers);
@@ -263,7 +271,7 @@ public class InterviewScheduleController {
 
             List<UserDTO> recruiters = userService.getRecruiters();
             model.addAttribute("recruiters", recruiters);
-
+            
             return "contents/interviewschedule/schedule_edit"; // Trả lại form nếu có lỗi
         }
 
@@ -306,5 +314,20 @@ public class InterviewScheduleController {
 
         return "fragments/interview-schedule-table :: interviewScheduleTable";
     }
+
+    @PostMapping("/cancel/{id}")
+    @Transactional
+    public String cancelInterview(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        boolean isCancelled = interviewScheduleService.cancelStatusById(id); // Gọi phương thức để hủy lịch phỏng vấn
+        if (isCancelled) {
+            redirectAttributes.addFlashAttribute("successMessage", "Interview has been successfully canceled!");
+            return "redirect:/interview-schedule/index";
+
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Interview not found.");
+            return "redirect:/interview-schedule/index";
+        }
+    }
+
 
 }

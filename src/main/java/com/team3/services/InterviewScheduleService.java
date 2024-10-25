@@ -12,8 +12,7 @@ import com.team3.dtos.interviewschedule.InterviewScheduleDTO;
 import com.team3.entities.InterviewSchedule;
 
 public interface InterviewScheduleService {
-    //Page<InterviewScheduleDTO> findAll(String keyword, Pageable pageable);
-    Page<InterviewScheduleDTO> findAll(String keyword, Long userId , String status ,Pageable pageable);
+    
     Page<InterviewScheduleDTO> filterSchedule(String keyword, Long userId , String status, Pageable pageable);
     // InterviewSchedule findById(Long id);
     InterviewScheduleDTO create(InterviewScheduleCreateDTO interviewScheduleCreateDTO);

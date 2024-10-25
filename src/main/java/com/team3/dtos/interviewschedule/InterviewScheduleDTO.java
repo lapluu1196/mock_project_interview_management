@@ -53,6 +53,7 @@ public class InterviewScheduleDTO {
     private String jobTitle;
 
     @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @NotNull(message = "Schedule date is required!")
     private LocalDate scheduleDate;
 
 

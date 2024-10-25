@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 @Entity
 @Table(name = "InterviewSchedules")
 @Getter
@@ -67,8 +70,10 @@ public class InterviewSchedule {
     private String result;
 
     @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "updated_at", nullable = false)
+    @UpdateTimestamp
     private LocalDateTime updatedAt = LocalDateTime.now();
 }
