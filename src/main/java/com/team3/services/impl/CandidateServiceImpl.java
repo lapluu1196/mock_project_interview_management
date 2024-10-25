@@ -148,6 +148,20 @@ public class CandidateServiceImpl implements CandidateService {
     // }
 
 
+    // Minh
+    @Override
+    public List<Candidate> getAllCandidatesNoBanned() {
+        return candidateRepository.findAllNoBanned();
+    }
+
+    @Override
+    public Candidate getCandidateById(Long candidateId) {
+        Candidate candidate = candidateRepository.findById(candidateId).get();
+        if (candidate == null) {
+            throw new RuntimeException("Candidate not found");
+        }
+        return candidate;
+    }
     
 }
 

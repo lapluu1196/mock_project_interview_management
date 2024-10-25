@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainLayout}">
+<head>
+  <meta charset="UTF-8">
+  <title layout:fragment="title">Offer</title>
+</head>
+<body>
+<div id="mainBoard" layout:fragment="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav justify-content-start fs-4">
+                    <li class="nav-item">
+                        <a class="nav-link text-reset text-decoration-underline" th:href="@{/offer}">OfferList</a>
+                    </li>
+                    <li class="nav-item d-flex align-items-center">
+                        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                             xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="m9 5 7 7-7 7"/>
+                        </svg>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-reset text-decoration-underline disabled" href="#" aria-disabled="true">Create
+                            Offer</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3 py-4" id="createOffer">
+        <form th:action="@{/offers/add}" th:object="${offer}" method="post" id="offerAdd">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="candidate" class="form-label required">Candidate <span style="color: red">*</span></label>
+                        <select id="candidate" class="form-select" th:field="*{candidate}">
+                            <option selected value="">Select Candidate Name</option>
+                            <!-- for candidates and get name -->
+                            <option th:each="candidate : ${candidates}" th:value="${candidate.candidateId}"
+                                    th:text="${candidate.fullName}"></option>
+                        </select>
+                        <div class="text-danger" th:if="${#fields.hasErrors('candidate')}" th:errors="*{candidate}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+
+                        <label for="position" class="form-label required">Position <span style="color: red">*</span></label>
+                        <select id="position" th:field="*{position}" class="form-select" required>
+                            <option selected value="">Select a position</option>
+                            <option value="Backend Developer">Backend Developer</option>
+                            <option value="Business Analyst">Business Analyst</option>
+                            <option value="Tester">Tester</option>
+                            <option value="HR">HR</option>
+                            <option value="Project manager">Project manager</option>
+                            <option value="Not available">Not available</option>
+                        </select>
+                        <div class="text-danger" th:if="${#fields.hasErrors('position')}" th:errors="*{position}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="approver" class="form-label required">Approver <span style="color: red">*</span></label>
+                        <select id="approver" class="form-select" required th:field="*{approver}">
+                            <option selected value="">Select an approver</option>
+
+                            <option th:each="manager : ${managers}" th:value="${manager.userId}"
+                                    th:text="${manager.fullName}"></option>
+
+                        </select>
+                        <div class="text-danger" th:if="${#fields.hasErrors('approver')}" th:errors="*{approver}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="interview-info" class="form-label">Interview info</label>
+                        <select id="interview-info" class="form-select" onchange="displayInterviewInfo()"
+                                th:field="*{job}">
+                            <option selected value="">Select an interview schedule title</option>
+                            <!-- for interviewSchedules and get name -->
+                            <option th:each="schedule : ${interviewSchedules}" th:value="${schedule.scheduleId}"
+                                    th:text="${schedule.interviewTitle}"></option>
+                        </select>
+                        <div class="text-danger" th:if="${#fields.hasErrors('job')}" th:errors="*{job}">
+                        </div>
+                    </div>
+                    <div id="interview-schedule-info" class="mb-3" style="display: none;">
+                        <h5>List of Interviewers</h5>
+                        <ul id="interviewers-list"></ul>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label required">Contract Period <span style="color: red">*</span></label>
+                        <div class="d-flex">
+                            <input type="date" class="form-control me-2" placeholder="From DD/MM/YYYY"
+                                   th:field="*{contractPeriodFrom}" required>
+                            <input type="date" th:field="*{contractPeriodTo}" class="form-control"
+                                   placeholder="To DD/MM/YYYY" required>
+                        </div>
+                        <div class="text-danger" th:if="${#fields.hasErrors('contractPeriodFrom')}"
+                             th:errors="*{contractPeriodFrom}">
+                        </div>
+                        <div class="text-danger" th:if="${#fields.hasErrors('contractPeriodTo')}"
+                             th:errors="*{contractPeriodTo}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="interview-notes" class="form-label">Interview Notes</label>
+                        <textarea id="interview-notes" class="form-control" th:field="*{interviewNote}"
+                                  rows="3"> </textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('interviewNote')}"
+                             th:errors="*{interviewNote}">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="contract-type" class="form-label required">Contract Type <span style="color: red">*</span></label>
+                        <select id="contract-type" class="form-select" th:field="*{contractType}" required>
+                            <option selected value="">Select a type of contract</option>
+                            <option value="Trial 2 months">Trial 2 months</option>
+                            <option value="Trainee 3 months">Trainee 3 months</option>
+                            <option value="1 year">1 year</option>
+                            <option value="3 years">3 years</option>
+                            <option value="Unlimited">Unlimited</option>
+                        </select>
+                        <div class="text-danger" th:if="${#fields.hasErrors('contractType')}"
+                             th:errors="*{contractType}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="level" class="form-label required">Level <span style="color: red">*</span></label>
+                        <select id="level" class="form-select" th:field="*{level}" required>
+                            <option selected value="">Select a level</option>
+                            <option value="Fresher">Fresher</option>
+                            <option value="Junior">Junior</option>
+                            <option value="Senior">Senior</option>
+                            <option value="Leader">Leader</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Vice Head">Vice Head</option>
+                        </select>
+                        <div class="text-danger" th:if="${#fields.hasErrors('level')}" th:errors="*{level}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="department" class="form-label required">Department <span style="color: red">*</span></label>
+                        <select id="department" class="form-select" th:field="*{department}" required>
+                            <option selected value="">Select a department</option>
+                            <option value="IT">IT</option>
+                            <option value="HR">HR</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Communication">Communication</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Accounting">Accounting</option>
+                        </select>
+                        <div class="text-danger" th:if="${#fields.hasErrors('department')}" th:errors="*{department}">
+
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="recruiter-owner" class="form-label required">Recruiter Owner <span style="color: red">*</span></label>
+                        <select id="recruiter-owner" th:field="*{recruiterOwner}" class="form-select" required>
+                            <option selected value="">Select a recruiter owner</option>
+                            <!-- for recruiters and get name -->
+                            <option th:each="recruiter : ${recruiters}" th:value="${recruiter.userId}"
+                                    th:text="${recruiter.fullName} "></option>
+                        </select>
+                        <div class="text-danger" th:if="${#fields.hasErrors('recruiterOwner')}"
+                             th:errors="*{recruiterOwner}">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="due-date" class="form-label required">Due Date <span style="color: red">*</span></label>
+                        <input type="date" id="due-date" class="form-control" th:field="*{dueDate}"
+                               placeholder="DD/MM/YYYY" required>
+                        <div class="text-danger" th:if="${#fields.hasErrors('dueDate')}" th:errors="*{dueDate}">
+
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="basic-salary" class="form-label required">Basic Salary <span style="color: red">*</span></label>
+                        <input type="text" id="basic-salary" class="form-control" placeholder="Enter basic salary"
+                               required th:field="*{basicSalary}">
+                        <div class="text-danger" th:if="${#fields.hasErrors('basicSalary')}" th:errors="*{basicSalary}">
+
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="note" class="form-label">Note</label>
+                        <textarea id="note" class="form-control" rows="3" placeholder="Type a note"
+                                  th:field="*{notes}"></textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('notes')}" th:errors="*{notes}"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-danger" th:if="${error}">
+                <span th:text="${error}"></span>
+            </div>
+            <div class="text-center mt-4">
+                <button type="submit" class="btn" style="background-color: #D9D9D9; font-weight: bold;">Submit</button>
+                <button type="button" class="btn" style="background-color: #D9D9D9; font-weight: bold;">Cancel</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

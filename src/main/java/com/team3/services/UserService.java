@@ -38,5 +38,10 @@ public interface UserService {
 
     String updatePassword(Long id, String password);
 
+    // Minh
+    List<User> getAllManagers();
 
+    List<User> getAllRecruiters();
+
+    User getUser(Long id);
 }

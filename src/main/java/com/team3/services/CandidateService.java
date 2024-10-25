@@ -3,6 +3,7 @@ package com.team3.services;
 import java.util.List;
 
 import com.team3.dtos.candidate.CandidateDTO;
+import com.team3.entities.Candidate;
 
 
 public interface CandidateService {
@@ -27,6 +28,10 @@ public interface CandidateService {
     // //Dat: Anh dung xoa nhe
 
      List<CandidateDTO> getAllCandidates();
-     
+
+     // Minh
+     public List<Candidate> getAllCandidatesNoBanned();
+
+     public Candidate getCandidateById(Long candidateId);
 
 }

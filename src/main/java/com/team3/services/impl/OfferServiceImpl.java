@@ -32,6 +32,11 @@ public class OfferServiceImpl implements OfferService {
         return offerRepository.findById(id).get();
     }
 
+    @Override
+    public void saveOffer(Offer offer) {
+        offerRepository.save(offer);
+    }
+
     public Page<Offer> searchOffers(String search, String department, String candidateStatus, Pageable pageable) {
         String searchParam = (search == null || search.trim().isEmpty()) ? null : search;
         String departmentParam = (department == null || department.trim().isEmpty()) ? null : department;
