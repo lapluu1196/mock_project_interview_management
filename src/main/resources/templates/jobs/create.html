@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/authLayout}">
+<head>
+    <title>Create Job</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f1f6fb;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .header a {
+            text-decoration: none;
+            color: #000;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .salary-inputs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .small-input {
+            width: calc(50% - 5px);
+        }
+
+        .form-group textarea {
+            height: 100px;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .buttons button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .buttons button:hover {
+            background-color: #0056b3;
+        }
+
+        .buttons button.cancel {
+            background-color: #ccc;
+            color: #000;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
+</head>
+<body>
+<div class="d-flex justify-content-center align-items-center" layout:fragment="content">
+    <div class="container">
+        <div class="header">
+            <h1>Create Job</h1>
+            <a href="/jobs">Job List</a>
+        </div>
+
+        <form th:action="@{/jobs/createjob}" th:object="${job}" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="jobTitle">Job title *</label>
+                    <input type="text" id="jobTitle" th:field="*{jobTitle}" placeholder="Type a title..." />
+                </div>
+
+                <div class="form-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate" th:field="*{endDate}" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="startDate">Start Date *</label>
+                    <input type="date" id="startDate" th:field="*{startDate}" />
+                </div>
+
+                <div class="form-group">
+                    <label for="workingAddress">Working address</label>
+                    <input type="text" id="workingAddress" th:field="*{workingAddress}" placeholder="Type an address" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="salaryRange">Salary Range</label>
+                    <div class="salary-inputs">
+                        <input type="number" id="salaryRangeFrom" th:field="*{salaryRangeFrom}" placeholder="From" class="small-input" />
+                        <input type="number" id="salaryRangeTo" th:field="*{salaryRangeTo}" placeholder="To" class="small-input" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="skills">Skills *</label>
+                    <select id="skills" name="requiredSkills" multiple >
+                        <option value="java">Java</option>
+                        <option value="flutter" >Flutter</option>
+                        <option value="nodejs">Node.js</option>
+                        <option value="system_design">System design</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                <label for="benefits">Benefits *</label>
+                <select id="benefits" name="benefits" multiple>
+                    <option value="travel">Travel</option>
+                    <option value="leave" >25 leave days</option>
+                    <option value="hybrid" >Hybrid working</option>
+                    <option value="lunch" >Lunch</option>
+                </select>
+            </div>
+
+                <div class="form-group">
+                    <label for="level">Level *</label>
+                    <select id="level" name="level" multiple>
+                        <option value="fresher">Fresher</option>
+                        <option value="junior">Junior</option>
+                        <option value="mid" >Mid</option>
+                        <option value="senior" >Senior</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" th:field="*{description}" placeholder="Type description"></textarea>
+            </div>
+
+            <div class="buttons">
+                <button type="submit">Submit</button>
+                <button type="button" class="cancel" onclick="window.location.href='/jobs/list'">Cancel</button>
+            </div>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
+    <script>
+        new MultiSelectTag('benefits')
+        new MultiSelectTag('skills')
+        new MultiSelectTag('level')
+    </script>
+</div>
+
+</body>
+</html>

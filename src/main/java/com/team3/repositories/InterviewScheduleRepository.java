@@ -41,7 +41,7 @@ public interface InterviewScheduleRepository
     @Query(value = "UPDATE candidates SET status = :status WHERE candidate_id = :candidateId", nativeQuery = true)
     void updateCandidateStatus(@Param("candidateId") Long candidateId, String status);
     
-
+    // Thêm query để cập nhật status của interview
     @Modifying
     @Query(value = "UPDATE interview_schedules SET status = :status WHERE schedule_id = :scheduleId", nativeQuery = true)
     void updateInterviewScheduleStatus(@Param("scheduleId") Long scheduleId, String status);

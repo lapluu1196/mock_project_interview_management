@@ -1,6 +1,6 @@
 package com.team3.services.impl;
 
-import com.team3.dtos.user.EmailDTO;
+import com.team3.dtos.email.EmailDTO;
 import com.team3.services.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
