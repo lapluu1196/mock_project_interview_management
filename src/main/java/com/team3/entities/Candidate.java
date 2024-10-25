@@ -57,8 +57,6 @@ public class Candidate {
 
     @Column(name = "status", nullable = false, length = 50)
     private String status;
-    @Column(name = "keyword", nullable = false, length = 50)
-    private String keyword;
 
     @Column(name = "notes", length = 1000)
     private String notes;
@@ -68,7 +66,4 @@ public class Candidate {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
-
-    public Candidate(Long candidateId, String fullName, String email, String phoneNumber, String address, LocalDate dateOfBirth, String gender, String cv, String currentPosition, String skills, Integer yearsOfExperience, String highestEducationLevel, Object o, String status, String keyword, String notes, LocalDateTime createdAt, LocalDateTime updatedAt) {
-    }
 }
