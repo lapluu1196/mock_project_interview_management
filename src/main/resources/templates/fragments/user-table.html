@@ -39,7 +39,7 @@
                     <span th:text="${(currentPage + 1) * 10 < totalUsers} ? ${(currentPage + 1) * 10} + '/' + ${totalUsers} + ' rows' : ${totalUsers} + '/' + ${totalUsers} + ' rows'"></span>
                 </li>
                 <li class="page-item">
-                    <a class="btn page-link" role="button" th:href="@{/users/filter(search=${keyword}, role=${role}, page=${currentPage - 1})}"
+                    <a class="btn page-link" role="button" th:href="@{/users(search=${keyword}, role=${role}, page=${currentPage - 1})}"
                        th:classappend="${currentPage > 0} ? '' : 'disabled'"
                        th:attr="aria-disabled=${currentPage > 0} ? 'false' : 'true'">
                         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">
@@ -49,7 +49,7 @@
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="btn page-link" role="button" th:href="@{/users/filter(search=${keyword}, role=${role}, page=${currentPage + 1})}"
+                    <a class="btn page-link" role="button" th:href="@{/users(search=${keyword}, role=${role}, page=${currentPage + 1})}"
                        th:classappend="${currentPage + 1 < totalPages} ? '' : 'disabled'"
                        th:attr="aria-disabled=${currentPage + 1 < totalPages} ? 'false' : 'true'">
                         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">

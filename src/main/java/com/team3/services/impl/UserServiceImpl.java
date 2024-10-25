@@ -1,6 +1,6 @@
 package com.team3.services.impl;
 
-import com.team3.dtos.user.EmailDTO;
+import com.team3.dtos.email.EmailDTO;
 import com.team3.dtos.user.UserDTO;
 import com.team3.entities.PasswordResetToken;
 import com.team3.entities.User;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -224,8 +223,18 @@ public class UserServiceImpl implements UserService {
                 return null;
             }
 
-            if (search == null || search.isEmpty()) {
+            if (search == null || search.isEmpty() && role != null && !role.isEmpty()) {
                 return criteriaBuilder.equal(root.get("role"), role);
+            }
+
+            if (role == null || role.isEmpty()) {
+                return criteriaBuilder.or(
+                        criteriaBuilder.like(root.get("username"), "%" + search + "%"),
+                        criteriaBuilder.like(root.get("email"), "%" + search + "%"),
+                        criteriaBuilder.like(root.get("phoneNumber"), "%" + search + "%"),
+                        criteriaBuilder.like(root.get("role"), "%" + search + "%"),
+                        criteriaBuilder.like(root.get("status"), "%" + search + "%")
+                );
             }
 
             return criteriaBuilder.and(
