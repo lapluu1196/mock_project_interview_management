@@ -35,12 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(configurer ->
                         configurer.requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                                 .requestMatchers("/auth/password/**").permitAll()
-                                .requestMatchers("/interview-schedule/index").hasAnyAuthority("Admin", "Interviewer",  "Recruiter")
-                                .requestMatchers("/interview-schedule/add").hasAnyAuthority("Admin",  "Recruiter")
-                                .requestMatchers("/interview-schedule/edit/**").hasAnyAuthority("Admin",  "Recruiter", "Interviewer")
-                                .requestMatchers("/interview-schedule/scheduleDetail/**").hasAnyAuthority("Admin",  "Recruiter", "Interviewer")
                                 .requestMatchers("/**").permitAll()
-                                
                                 .anyRequest().authenticated())
                 .formLogin(login ->
                         login.loginPage("/auth/login")
