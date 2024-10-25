@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.team3.entities.Candidate;
@@ -11,14 +13,22 @@ import com.team3.entities.Candidate;
 @Repository
 public interface CandidateRepository extends JpaRepository<Candidate, Long>, JpaSpecificationExecutor<Candidate> {
 
-    // Find candidates by keyword and status
-    List<Candidate> findByKeywordAndStatus(String keyword, String status);
+    // Find candidates by keyword (name or email) and status
+    @Query("SELECT c FROM Candidate c WHERE (c.name LIKE %:keyword% OR c.email LIKE %:keyword%) AND c.status = :status")
+    List<Candidate> findByKeywordAndStatus(@Param("keyword") String keyword, @Param("status") String status);
 
-    // Find candidates by keyword only
-    List<Candidate> findByKeyword(String keyword);
+    // Find candidates by keyword (searching by name or email)
+    @Query("SELECT c FROM Candidate c WHERE c.name LIKE %:keyword% OR c.email LIKE %:keyword%")
+    List<Candidate> findByKeyword(@Param("keyword") String keyword);
 
-    // Find candidates by status only
-    List<Candidate> findByStatus(String status);
+    // Find candidates by status
+    @Query("SELECT c FROM Candidate c WHERE c.status = :status")
+    List<Candidate> findByStatus(@Param("status") String status);
 
-    Candidate findFullNameByCandidateId(Long candidateId);
+    // Find candidate's full name by candidate ID
+    // @Query("SELECT c.fullName FROM Candidate c WHERE c.id = :candidateId")
+    // Candidate findFullNameByCandidateId(@Param("candidateId") Long candidateId);
+
+    //Code dat: EM them de lam phan em ạ
+   Candidate findFullNameByCandidateId(Long candidateId);
 }
