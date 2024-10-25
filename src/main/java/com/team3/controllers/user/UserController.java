@@ -52,18 +52,18 @@ public class UserController {
         return "contents/user/user-create";
     }
 
-//    @PostMapping("/add")
-//    public String createUser(@ModelAttribute @Valid UserDTO userDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-//        if (bindingResult.hasErrors()) {
-//            return "contents/user/user-create";
-//        }
-//
-//        String result = userService.save(userDTO);
-//
-//        redirectAttributes.addFlashAttribute("result", result);
-//
-//        return "redirect:/users";
-//    }
+    @PostMapping("/add")
+    public String createUser(@ModelAttribute @Valid UserDTO userDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "contents/user/user-create";
+        }
+
+        String result = userService.save(userDTO);
+
+        redirectAttributes.addFlashAttribute("result", result);
+
+        return "redirect:/users";
+    }
 
     @GetMapping("/filter")
     public String filterUser(@RequestParam(required = false) String search,
