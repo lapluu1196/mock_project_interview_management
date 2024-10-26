@@ -36,7 +36,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
 
-
     @Override
     public Page<UserDTO> findAll(String search, Pageable pageable) {
         Specification<User> spec = (root, query, criteriaBuilder) -> {
@@ -260,6 +259,7 @@ public class UserServiceImpl implements UserService {
         });
     }
 
+
     @Override
     public String updateStatus(Long id) {
 
@@ -400,6 +400,5 @@ public class UserServiceImpl implements UserService {
 
         return "Password has been updated failed!";
     }
-
 
 }
