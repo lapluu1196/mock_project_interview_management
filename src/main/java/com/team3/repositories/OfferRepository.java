@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -21,4 +22,8 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
                              @Param("department") String department,
                              @Param("status") String status,
                              Pageable pageable);
+
+    @Query("SELECT o FROM Offer o WHERE o.createdAt BETWEEN :startDate AND :endDate")
+    List<Offer> findByDateRange(@Param("startDate") LocalDateTime startDate,
+                                @Param("endDate") LocalDateTime endDate);
 }

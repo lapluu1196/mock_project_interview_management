@@ -138,4 +138,95 @@ public class OfferController {
         offerService.saveOffer(offer);
         return "redirect:/offers";
     }
+
+    // edit
+    @GetMapping("/edit/{id}")
+    public String editOffer(@PathVariable("id") Long id, Model model) {
+        Offer offer = offerService.getOfferById(id);
+        if (offer == null) {
+            model.addAttribute("errorMessage", "Offer not found.");
+            return "redirect:/offers";
+        }
+        OfferDTO offerDTO = new OfferDTO();
+        offerDTO.setCandidate(offer.getCandidate().getCandidateId().toString());
+        offerDTO.setContractType(offer.getContractType());
+        offerDTO.setPosition(offer.getPosition());
+        offerDTO.setLevel(offer.getLevel());
+        offerDTO.setApprover(offer.getApprover().getUserId().toString());
+        offerDTO.setDepartment(offer.getDepartment());
+        offerDTO.setInterviewNote(offer.getInterviewInfo());
+        offerDTO.setRecruiterOwner(offer.getRecruiterOwner());
+        offerDTO.setBasicSalary(offer.getBasicSalary().toString());
+        offerDTO.setNotes(offer.getNotes());
+        offerDTO.setContractPeriodFrom(offer.getContractPeriodFrom().toString());
+        offerDTO.setContractPeriodTo(offer.getContractPeriodTo().toString());
+        offerDTO.setDueDate(offer.getDueDate().toString());
+        offerDTO.setOfferStatus(offer.getOfferStatus());
+        offerDTO.setInterviewNote(offer.getInterviewNote());
+
+        List<Candidate> candidates = candidateService.getAllCandidatesNoBanned();
+        List<User> managers = userService.getAllManagers();
+        List<InterviewSchedule> interviewSchedules = interviewScheduleService.getAllInterviewSchedules();
+        List<User> recruiters = userService.getAllRecruiters();
+        model.addAttribute("offer", offerDTO);
+        model.addAttribute("candidates", candidates);
+        model.addAttribute("managers", managers);
+        model.addAttribute("interviewSchedules", interviewSchedules);
+        model.addAttribute("recruiters", recruiters);
+        model.addAttribute("id", id);
+        return "contents/offer/offer_edit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String updateOffer(@PathVariable("id") Long id, @Valid @ModelAttribute("offer") OfferDTO offerDTO,
+
+                              BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            List<Candidate> candidates = candidateService.getAllCandidatesNoBanned();
+            List<User> managers = userService.getAllManagers();
+            List<InterviewSchedule> interviewSchedules = interviewScheduleService.getAllInterviewSchedules();
+            List<User> recruiters = userService.getAllRecruiters();
+            model.addAttribute("candidates", candidates);
+            model.addAttribute("managers", managers);
+            model.addAttribute("interviewSchedules", interviewSchedules);
+            model.addAttribute("recruiters", recruiters);
+            return "";
+        }
+        Offer offer = offerService.getOfferById(id);
+        if (offer == null) {
+            model.addAttribute("errorMessage", "Offer not found.");
+            return "redirect:/offers";
+        }
+
+        Candidate c = candidateService.getCandidateById(Long.parseLong(offerDTO.getCandidate()));
+        User m = userService.getUser(Long.parseLong(offerDTO.getApprover()));
+        offer.setCandidate(c);
+        offer.setContractType(offerDTO.getContractType());
+        offer.setPosition(offerDTO.getPosition());
+        offer.setLevel(offerDTO.getLevel());
+        offer.setApprover(m);
+        offer.setDepartment(offerDTO.getDepartment());
+        offer.setInterviewInfo(offerDTO.getInterviewNote());
+        offer.setRecruiterOwner(offerDTO.getRecruiterOwner());
+        offer.setBasicSalary(Double.parseDouble(offerDTO.getBasicSalary()));
+        offer.setNotes(offerDTO.getNotes());
+        try {
+            LocalDate contractPeriodFrom = LocalDate.parse(offerDTO.getContractPeriodFrom(),
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            LocalDate contractPeriodTo = LocalDate.parse(offerDTO.getContractPeriodTo(),
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            offer.setContractPeriodFrom(contractPeriodFrom);
+            offer.setContractPeriodTo(contractPeriodTo);
+            LocalDate dueDate = LocalDate.parse(offerDTO.getDueDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            offer.setDueDate(dueDate);
+        } catch (DateTimeParseException e) {
+            model.addAttribute("error", "Invalid date format.");
+            return "contents/offer/offer_edit";
+        } catch (Exception e) {
+            model.addAttribute("error", "Invalid date format.");
+            return "contents/offer/offer_edit";
+        }
+        offerService.saveOffer(offer);
+        return "redirect:/offers";
+    }
 }
