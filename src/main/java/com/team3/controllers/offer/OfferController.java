@@ -229,4 +229,24 @@ public class OfferController {
         offerService.saveOffer(offer);
         return "redirect:/offers";
     }
+
+    @GetMapping("/view/{id}")
+    public String viewOffer(@PathVariable("id") Long id, Model model) {
+        Offer offer = offerService.getOfferById(id);
+        if (offer == null) {
+            model.addAttribute("errorMessage", "Offer not found.");
+            return "redirect:/offers";
+        }
+        List<Candidate> candidates = candidateService.getAllCandidatesNoBanned();
+        List<User> managers = userService.getAllManagers();
+        List<InterviewSchedule> interviewSchedules = interviewScheduleService.getAllInterviewSchedules();
+        List<User> recruiters = userService.getAllRecruiters();
+        model.addAttribute("offer", offer);
+        model.addAttribute("candidates", candidates);
+        model.addAttribute("managers", managers);
+        model.addAttribute("interviewSchedules", interviewSchedules);
+        model.addAttribute("recruiters", recruiters);
+        model.addAttribute("id", id);
+        return "offer/view";
+    }
 }
