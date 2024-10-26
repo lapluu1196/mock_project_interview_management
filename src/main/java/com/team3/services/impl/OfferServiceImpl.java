@@ -1,7 +1,11 @@
 package com.team3.services.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.team3.entities.Candidate;
+import com.team3.payload.OfferStatus;
+import com.team3.repositories.CandidateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +21,9 @@ public class OfferServiceImpl implements OfferService {
 
     @Autowired
     private OfferRepository offerRepository;
+
+    @Autowired
+    private CandidateRepository candidateRepository;
 
     @Override
     public Page<Offer> getAllOffers(int pageNumber, int pageSize) {
@@ -44,6 +51,44 @@ public class OfferServiceImpl implements OfferService {
                 : candidateStatus;
 
         return offerRepository.searchOffers(searchParam, departmentParam, candidateStatusParam, pageable);
+    }
+
+    @Override
+    public void changeStatus(OfferStatus entity) {
+        try {
+
+            Offer offer = getOfferById(Long.parseLong(entity.getOfferId()));
+            offer.setOfferStatus(entity.getStatus());
+            saveOffer(offer);
+        } catch (Exception e) {
+            throw new RuntimeException("Offer not found");
+        }
+    }
+
+    @Override
+    public void updateCandidateStatus(OfferStatus entity) {
+        try {
+            Offer offer = getOfferById(Long.parseLong(entity.getOfferId()));
+            offer.setOfferStatus(entity.getStatus());
+            saveOffer(offer);
+            Candidate candidate = candidateRepository.findById(Long.parseLong(entity.getCandidateId())).get();
+            candidate.setStatus(entity.getStatus());
+            candidateRepository.save(candidate);
+        } catch (Exception e) {
+            throw new RuntimeException("Offer not found");
+        }
+    }
+
+    @Override
+    public void updateStatus(Long id, String status) {
+        Offer offer = getOfferById(id);
+        offer.setOfferStatus(status);
+        saveOffer(offer);
+    }
+
+    @Override
+    public List<Offer> getOffersByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        return offerRepository.findByDateRange(startDate, endDate);
     }
 
     @Override
