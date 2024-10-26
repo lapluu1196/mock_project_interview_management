@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,4 +19,11 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     User findByEmail(String email);
 
     User findByUsername(String username);
+
+    // Minh
+    @Query("SELECT u FROM User u WHERE u.role = 'MANAGER'")
+    List<User> findAllManagers();
+
+    @Query("SELECT u FROM User u WHERE u.role = 'RECRUITER'")
+    List<User> findAllRecruiters();
 }

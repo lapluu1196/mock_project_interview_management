@@ -31,4 +31,10 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long>, Jpa
 
     //Code dat: EM them de lam phan em ạ
    Candidate findFullNameByCandidateId(Long candidateId);
+
+
+    // Minh
+    // lấy ra danh sách ứng viên mà không bị banned
+    @Query("SELECT c FROM Candidate c WHERE c.status != 'Banned'")
+    List<Candidate> findAllNoBanned();
 }

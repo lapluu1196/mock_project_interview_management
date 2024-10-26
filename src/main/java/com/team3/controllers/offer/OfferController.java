@@ -73,6 +73,7 @@ public class OfferController {
         return "contents/offer/offer_list";
     }
 
+    // add
     @GetMapping("/add")
     public String addOffer(Model model) {
         model.addAttribute("offer", new OfferDTO());
@@ -84,11 +85,11 @@ public class OfferController {
         model.addAttribute("managers", managers);
         model.addAttribute("interviewSchedules", interviewSchedules);
         model.addAttribute("recruiters", recruiters);
-        return "contents/offer/offer_add";
+        return "contents/offer/offer_create";
     }
 
     @PostMapping("/add")
-    public String saveOffer(@Valid @ModelAttribute("offer") OfferDTO offerDTO, BindingResult result, Model model) {
+    public String saveOffer(@Valid @ModelAttribute("offer") OfferDTO offerDTO, BindingResult result,  Principal principal, Model model) {
         if (result.hasErrors()) {
             List<Candidate> candidates = candidateService.getAllCandidatesNoBanned();
             List<User> managers = userService.getAllManagers();
@@ -98,9 +99,9 @@ public class OfferController {
             model.addAttribute("managers", managers);
             model.addAttribute("interviewSchedules", interviewSchedules);
             model.addAttribute("recruiters", recruiters);
-            return "offer/add";
+            return "contents/offer/offer_create";
         }
-        String username = "admin";
+        String username = principal.getName() != null ? principal.getName() : "admin";
 
         Offer offer = new Offer();
         offer.setModifiedBy(username);
@@ -129,10 +130,10 @@ public class OfferController {
             offer.setDueDate(dueDate);
         } catch (DateTimeParseException e) {
             model.addAttribute("error", "Invalid date format.");
-            return "contents/offer/offer_add";
+            return "contents/offer/offer_create";
         } catch (Exception e) {
             model.addAttribute("error", "Invalid date format.");
-            return "contents/offer/offer_add";
+            return "contents/offer/offer_create";
         }
         offerService.saveOffer(offer);
         return "redirect:/offers";

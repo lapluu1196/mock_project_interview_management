@@ -488,4 +488,10 @@ public class InterviewScheduleServiceImpl implements InterviewScheduleService {
         }
     }
 
+    // Minh
+    @Override
+    public List<InterviewSchedule> getAllInterviewSchedules() {
+        return interviewScheduleRepository.findAll();
+    }
+
 }

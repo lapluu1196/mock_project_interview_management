@@ -401,4 +401,21 @@ public class UserServiceImpl implements UserService {
         return "Password has been updated failed!";
     }
 
+
+    // Minh
+    @Override
+    public List<User> getAllManagers() {
+        return userRepository.findAllManagers();
+    }
+
+    @Override
+    public List<User> getAllRecruiters() {
+        return userRepository.findAllRecruiters();
+    }
+
+    @Override
+    public User getUser(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
 }

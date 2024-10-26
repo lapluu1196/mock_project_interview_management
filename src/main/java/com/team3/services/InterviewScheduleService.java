@@ -25,4 +25,7 @@ public interface InterviewScheduleService {
     InterviewScheduleDTO findById(Long id);
 
     boolean cancelStatusById(Long id);
+
+    //Minh
+    List<InterviewSchedule> getAllInterviewSchedules();
 }
