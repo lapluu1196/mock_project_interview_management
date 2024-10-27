@@ -1,6 +1,6 @@
 package com.team3.services.impl;
 
-import com.team3.dtos.user.EmailDTO;
+import com.team3.dtos.email.EmailDTO;
 import com.team3.dtos.user.UserDTO;
 import com.team3.entities.PasswordResetToken;
 import com.team3.entities.User;

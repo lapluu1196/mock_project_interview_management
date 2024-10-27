@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/authLayout}">
+      layout:decorate="~{layouts/mainLayout}">
 <head>
   <title>Edit Job</title>
   <!-- Bootstrap CSS -->
@@ -126,7 +126,7 @@
       <a href="/jobs">Job List</a>
     </div>
 
-    <form th:action="@{/jobs/edit/{id}(id=${job.jobId})}" th:object="${job}" method="post">
+    <form th:action="@{/templates/contents/jobs/edit/{id}(id=${job.jobId})}" th:object="${job}" method="post">
 
       <div class="form-row">
         <div class="form-group">

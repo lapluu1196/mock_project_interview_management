@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/authLayout}">
+      layout:decorate="~{layouts/mainLayout}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job List</title>
-    <link rel="stylesheet" href="/static/css/job.css">
+    <link rel="stylesheet" href="/css/job.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -153,10 +153,10 @@
                 <td th:text="${job.level}">Level</td>
                 <td th:text="${job.status}">Status</td>
                 <td>
-                    <a th:href="@{/jobs/details/{id}(id=${job.jobId})}" class="action-icon">
+                    <a th:href="@{/templates/contents/jobs/details/{id}(id=${job.jobId})}" class="action-icon">
                         <i class="fas fa-eye"></i>
                     </a>
-                    <a th:href="@{/jobs/edit/{id}(id=${job.jobId})}" class="action-icon">
+                    <a th:href="@{/templates/contents/jobs/edit/{id}(id=${job.jobId})}" class="action-icon">
                         <i class="fas fa-edit"></i>
                     </a>
                     <a href="javascript:void(0)" class="action-icon delete-job" th:data-job-id="${job.jobId}">
@@ -172,14 +172,14 @@
         <div>
             <ul class="pagination">
                 <li th:classappend="${currentPage == 0} ? 'disabled' : ''">
-                    <a th:href="@{/jobs/list(page=${currentPage - 1}, size=10)}">Previous</a>
+                    <a th:href="@{/templates/contents/jobs/list(page=${currentPage - 1}, size=10)}">Previous</a>
                 </li>
                 <li th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
                     th:classappend="${pageNum == currentPage} ? 'active' : ''">
-                    <a th:href="@{/jobs/list(page=${pageNum}, size=10)}" th:text="${pageNum + 1}">1</a>
+                    <a th:href="@{/templates/contents/jobs/list(page=${pageNum}, size=10)}" th:text="${pageNum + 1}">1</a>
                 </li>
                 <li th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
-                    <a th:href="@{/jobs/list(page=${currentPage + 1}, size=10)}">Next</a>
+                    <a th:href="@{/templates/contents/jobs/list(page=${currentPage + 1}, size=10)}">Next</a>
                 </li>
             </ul>
         </div>

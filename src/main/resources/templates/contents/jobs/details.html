@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/authLayout}">
+      layout:decorate="~{layouts/mainLayout}">
 <head>
-    <title>Create Job</title>
+    <title>Job Details</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -111,39 +111,38 @@
             color: #000;
         }
     </style>
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/css/multi-select-tag.css">
 </head>
 <body>
 <div class="d-flex justify-content-center align-items-center" layout:fragment="content">
     <div class="container">
         <div class="header">
-            <h1>Create Job</h1>
+            <h1>Job Details</h1>
             <a href="/jobs">Job List</a>
         </div>
 
-        <form th:action="@{/jobs/createjob}" th:object="${job}" method="post">
+        <div>
             <div class="form-row">
                 <div class="form-group">
-                    <label for="jobTitle">Job title *</label>
-                    <input type="text" id="jobTitle" th:field="*{jobTitle}" placeholder="Type a title..." />
+                    <label for="jobTitle">Job Title *</label>
+                    <input type="text" id="jobTitle" th:value="${job.jobTitle}" disabled="disabled" />
                 </div>
 
                 <div class="form-group">
                     <label for="endDate">End Date</label>
-                    <input type="date" id="endDate" th:field="*{endDate}" />
+                    <input type="date" id="endDate" th:value="${job.endDate}" disabled="disabled" />
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="startDate">Start Date *</label>
-                    <input type="date" id="startDate" th:field="*{startDate}" />
+                    <input type="date" id="startDate" th:value="${job.startDate}" disabled="disabled" />
                 </div>
 
                 <div class="form-group">
-                    <label for="workingAddress">Working address</label>
-                    <input type="text" id="workingAddress" th:field="*{workingAddress}" placeholder="Type an address" />
+                    <label for="workingAddress">Working Address</label>
+                    <input type="text" id="workingAddress" th:value="${job.workingAddress}" disabled="disabled" />
                 </div>
             </div>
 
@@ -151,55 +150,56 @@
                 <div class="form-group">
                     <label for="salaryRange">Salary Range</label>
                     <div class="salary-inputs">
-                        <input type="number" id="salaryRangeFrom" th:field="*{salaryRangeFrom}" placeholder="From" class="small-input" />
-                        <input type="number" id="salaryRangeTo" th:field="*{salaryRangeTo}" placeholder="To" class="small-input" />
+                        <input type="number" id="salaryRangeFrom" th:value="${job.salaryRangeFrom}" disabled="disabled" />
+                        <input type="number" id="salaryRangeTo" th:value="${job.salaryRangeTo}" disabled="disabled" />
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="skills">Skills *</label>
-                    <select id="skills" name="requiredSkills" multiple >
-                        <option value="java">Java</option>
-                        <option value="flutter" >Flutter</option>
-                        <option value="nodejs">Node.js</option>
-                        <option value="system_design">System design</option>
+                    <select id="skills" multiple disabled="disabled">
+                        <option value="java" th:selected="${job.requiredSkills.contains('java')}">Java</option>
+                        <option value="flutter" th:selected="${job.requiredSkills.contains('flutter')}">Flutter</option>
+                        <option value="nodejs" th:selected="${job.requiredSkills.contains('nodejs')}">Node.js</option>
+                        <option value="system_design" th:selected="${job.requiredSkills.contains('system_design')}">System design</option>
                     </select>
                 </div>
+
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                <label for="benefits">Benefits *</label>
-                <select id="benefits" name="benefits" multiple>
-                    <option value="travel">Travel</option>
-                    <option value="leave" >25 leave days</option>
-                    <option value="hybrid" >Hybrid working</option>
-                    <option value="lunch" >Lunch</option>
-                </select>
-            </div>
+                    <label for="benefits">Benefits *</label>
+                    <select id="benefits" multiple th:value="${job.benefits}">
+                        <option value="travel" th:selected="${job.benefits.contains('travel')}">Travel</option>
+                        <option value="leave" th:selected="${job.benefits.contains('leave')}">25 leave days</option>
+                        <option value="hybrid" th:selected="${job.benefits.contains('hybrid')}">Hybrid working</option>
+                        <option value="lunch" th:selected="${job.benefits.contains('lunch')}">Lunch</option>
+                    </select>
+                </div>
 
                 <div class="form-group">
                     <label for="level">Level *</label>
-                    <select id="level" name="level" multiple>
-                        <option value="fresher">Fresher</option>
-                        <option value="junior">Junior</option>
-                        <option value="mid" >Mid</option>
-                        <option value="senior" >Senior</option>
+                    <select id="level" multiple disabled="disabled">
+                        <option value="fresher" th:selected="${job.level.contains('fresher')}">Fresher</option>
+                        <option value="junior" th:selected="${job.level.contains('junior')}">Junior</option>
+                        <option value="mid" th:selected="${job.level.contains('mid')}">Mid</option>
+                        <option value="senior" th:selected="${job.level.contains('senior')}">Senior</option>
                     </select>
                 </div>
+
 
             </div>
 
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea id="description" th:field="*{description}" placeholder="Type description"></textarea>
+                <textarea id="description" th:text="${job.description}" disabled="disabled"></textarea>
             </div>
 
             <div class="buttons">
-                <button type="submit">Submit</button>
-                <button type="button" class="cancel" onclick="window.location.href='/jobs/list'">Cancel</button>
+                <button type="button" class="cancel" onclick="window.location.href='/jobs/list'">Back to List</button>
             </div>
-        </form>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag@3.1.0/dist/js/multi-select-tag.js"></script>
     <script>
