@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
         if (users.isEmpty()) {
             nextId = 1L;
         } else {
-            nextId = users.getLast().getUserId() + 1;
+            nextId = users.get(users.size() - 1).getUserId() + 1;
         }
 
         String password = PasswordGenerateUtil.passwordGenerate();
