@@ -28,9 +28,9 @@ public class Log {
     private String entityType;
 
     @Column(name = "entity_id")
-    private Integer entityId;
+    private Long entityId;
 
-    @Column(name = "description", length = 500)
+    @Column(name = "description", length = 4000)
     private String description;
 
     @Column(name = "timestamp", nullable = false)

@@ -34,13 +34,16 @@ public class SecurityConfig {
         http. csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(configurer ->
                         configurer.requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                                .requestMatchers("/auth/password/**").permitAll()
-                                .requestMatchers("/interview-schedule/index").hasAnyAuthority("Admin", "Interviewer",  "Recruiter", "Manager")
-                                .requestMatchers("/interview-schedule/add").hasAnyAuthority("Admin",  "Recruiter", "Manager")
-                                .requestMatchers("/interview-schedule/edit/**").hasAnyAuthority("Admin",  "Recruiter", "Interviewer", "Manager")
-                                .requestMatchers("/interview-schedule/scheduleDetail/**").hasAnyAuthority("Admin",  "Recruiter", "Interviewer" , "Manager")
-                                .requestMatchers("/**").permitAll()
-                                
+                                .requestMatchers("/auth/**", "/api/auth/**").permitAll()
+                                .requestMatchers("/users/**", "/api/users/**").hasAuthority("Admin")
+                                .requestMatchers("/interview-schedule/add").hasAnyAuthority("Admin", "Manager", "Recruiter")
+                                .requestMatchers("/interview-schedule/edit/**").hasAnyAuthority("Admin", "Manager", "Recruiter", "Interviewer")
+                                .requestMatchers("/interview-schedule/scheduleDetail/**").hasAnyAuthority("Admin", "Manager",  "Recruiter", "Interviewer")
+                                .requestMatchers("/interview-schedule/cancel/**").hasAnyAuthority("Admin", "Recruiter")
+                                .requestMatchers("/jobs/create", "/jobs/createjob").hasAnyAuthority("Admin", "Manager", "Recruiter")
+                                .requestMatchers("/jobs/edit/**").hasAnyAuthority("Admin", "Manager", "Recruiter")
+                                .requestMatchers("/jobs/delete/**").hasAnyAuthority("Admin", "Manager", "Recruiter")
+                                .requestMatchers("/offers").hasAnyAuthority("Admin", "Manager", "Recruiter")
                                 .anyRequest().authenticated())
                 .formLogin(login ->
                         login.loginPage("/auth/login")
@@ -53,9 +56,7 @@ public class SecurityConfig {
                 .logout(logout ->
                         logout.logoutUrl("/logout")
                                 .logoutSuccessUrl("/auth/login?logout")
-                                .permitAll())
-                .exceptionHandling(configurer ->
-                        configurer.accessDeniedPage("/access-denied")
+                                .permitAll()
                 );
 
         return http.build();

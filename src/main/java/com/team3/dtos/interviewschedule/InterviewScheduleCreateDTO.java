@@ -1,7 +1,5 @@
 package com.team3.dtos.interviewschedule;
 
-
-
 import lombok.*;
 
 import java.time.LocalDate;
@@ -16,12 +14,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.team3.dtos.candidate.CandidateDTO;
 import com.team3.dtos.user.UserDTO;
-import com.team3.entities.Candidate;
 import com.team3.entities.Job;
-import com.team3.entities.User;
 
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

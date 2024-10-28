@@ -1,12 +1,13 @@
 package com.team3.services.impl;
 
-import com.team3.dtos.user.EmailDTO;
+import com.team3.dtos.email.EmailDTO;
 import com.team3.dtos.user.UserDTO;
 import com.team3.entities.PasswordResetToken;
 import com.team3.entities.User;
 import com.team3.repositories.PasswordResetTokenRepository;
 import com.team3.repositories.UserRepository;
 import com.team3.services.EmailService;
+import com.team3.services.LogService;
 import com.team3.services.UserService;
 import com.team3.utils.PasswordGenerateUtil;
 import com.team3.utils.UsernameGenerateUtil;
@@ -35,6 +36,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
+
+    @Autowired
+    private LogService logService;
 
     @Override
     public Page<UserDTO> findAll(String search, Pageable pageable) {
@@ -144,6 +148,8 @@ public class UserServiceImpl implements UserService {
 
             String result = emailService.sendEmail(emailDTO, "email-user-create-template");
 
+            logService.logAction("Create user", "User", savedUser.getUserId(), "Create new user with userId: " + savedUser.getUserId());
+
             return "Successfully created user!";
         }
         return "Failed to create user!";
@@ -181,6 +187,9 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
 
         if (savedUser.getUserId() != null) {
+
+            logService.logAction("Update user", "User", savedUser.getUserId(), "Old user: " + userDTO.toString() + ", New user: " + savedUser.toString());
+
             return "Change has been successfully updated!";
         }
 
@@ -273,6 +282,8 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.save(user);
+
+        logService.logAction("Update user status", "User", user.getUserId(), "User status: " + user.getStatus());
 
         return user.getStatus();
     }
@@ -395,6 +406,9 @@ public class UserServiceImpl implements UserService {
         String newPassword = user.getPassword();
 
         if (!oldPassword.equals(newPassword)) {
+
+            logService.logAction("Update user password", "User", user.getUserId(), "User updated password");
+
             return "Password has been updated successfully!";
         }
 
@@ -416,6 +430,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUser(Long id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+
+    // Long
+    @Override
+    public String getUserRole(Long userID) {
+        return userRepository.getUserRole(userID);
+
+    }
+
+    @Override
+    public boolean isAuthorized(Long userID, String... roles) {
+
+        User user = userRepository.findById(userID).orElse(null);
+        if (user == null) {
+            return false;
+        }
+
+        for (String role : roles) {
+            if (user.getRole().equals(role)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
