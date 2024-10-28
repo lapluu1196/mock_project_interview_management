@@ -14,9 +14,9 @@
     <name>Interview_Management</name>
     <description>Interview_Management</description>
     <properties>
-        <java.version>21</java.version> <!-- Change to Java 17 for compatibility -->
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>17</java.version> <!-- Change to Java 17 for compatibility -->
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
     <dependencies>
         <dependency>
