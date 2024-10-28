@@ -12,6 +12,7 @@ public class UsernameGenerateUtil {
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         String cleanedInput = pattern.matcher(normalized).replaceAll("");
 
+        cleanedInput = cleanedInput.replaceAll("Đ", "D").replaceAll("đ", "d");
         String[] words = cleanedInput.split(" ");
 
         StringBuilder username = new StringBuilder(words[words.length - 1]);

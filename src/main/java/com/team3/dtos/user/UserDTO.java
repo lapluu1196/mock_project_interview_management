@@ -43,4 +43,21 @@ public class UserDTO {
     @Pattern(regexp = "^(Active|Inactive)$", message = "Status is required!")
     private String status;
 
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "userId=" + userId +
+                ", username='" + username +
+                ", fullName='" + fullName +
+                ", email='" + email +
+                ", gender='" + gender +
+                ", department='" + department +
+                ", role='" + role +
+                ", phoneNumber='" + phoneNumber +
+                ", dateOfBirth=" + dateOfBirth +
+                ", notes='" + notes +
+                ", address='" + address +
+                ", status='" + status +
+                '}';
+    }
 }

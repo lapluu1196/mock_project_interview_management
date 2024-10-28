@@ -62,7 +62,7 @@ public class JobController {
         Job job = jobService.findById(id).orElse(null);
         if (job != null) {
             model.addAttribute("job", job);
-            return "jobs/details";  // Tên view HTML (jobDetails.html)
+            return "contents/jobs/details";  // Tên view HTML (jobDetails.html)
         }
         return "redirect:/jobs/list"; // Quay lại danh sách nếu không tìm thấy job
     }

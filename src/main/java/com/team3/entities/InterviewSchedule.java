@@ -23,7 +23,7 @@ public class InterviewSchedule {
     @Column(name = "schedule_id")
     private Long scheduleId;
 
-    @Column(name = "interview_title", nullable = false, length = 255)
+    @Column(name = "interview_title", nullable = false, length = 255, columnDefinition = "NVARCHAR(255)")
     private String interviewTitle;
 
     @ManyToOne
@@ -54,13 +54,13 @@ public class InterviewSchedule {
     )
     private List<User> interviewers;
 
-    @Column(name = "recruiter_owner", nullable = false, length = 255)
+    @Column(name = "recruiter_owner", nullable = false, length = 255, columnDefinition = "NVARCHAR(255)")
     private String recruiterOwner;
 
     @Column(name = "meeting_id", length = 255)
     private String meetingId;
 
-    @Column(name = "notes", length = 1000)
+    @Column(name = "notes", length = 1000, columnDefinition = "NVARCHAR(1000)")
     private String notes;
 
     @Column(name = "status", nullable = false, length = 50)

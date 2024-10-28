@@ -122,7 +122,7 @@
             <a href="/jobs">Job List</a>
         </div>
 
-        <form th:action="@{/templates/contents/jobs/createjob}" th:object="${job}" method="post">
+        <form th:action="@{/jobs/createjob}" th:object="${job}" method="post">
             <div class="form-row">
                 <div class="form-group">
                     <label for="jobTitle">Job title *</label>
@@ -130,7 +130,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="endDate">End Date</label>
+                    <label for="endDate">End Date *</label>
                     <input type="date" id="endDate" th:field="*{endDate}" />
                 </div>
             </div>
@@ -159,10 +159,12 @@
                 <div class="form-group">
                     <label for="skills">Skills *</label>
                     <select id="skills" name="requiredSkills" multiple >
-                        <option value="java">Java</option>
-                        <option value="flutter" >Flutter</option>
-                        <option value="nodejs">Node.js</option>
-                        <option value="system_design">System design</option>
+                        <option value="Java">Java</option>
+                        <option value="Nodejs">Java</option>
+                        <option value=".net">Java</option>
+                        <option value="C++">Java</option>
+                        <option value="Business analysis">Java</option>
+                        <option value="Communication">Java</option>
                     </select>
                 </div>
             </div>
@@ -181,10 +183,12 @@
                 <div class="form-group">
                     <label for="level">Level *</label>
                     <select id="level" name="level" multiple>
-                        <option value="fresher">Fresher</option>
-                        <option value="junior">Junior</option>
-                        <option value="mid" >Mid</option>
-                        <option value="senior" >Senior</option>
+                        <option value="Fresher">Fresher</option>
+                        <option value="Junior">Junior</option>
+                        <option value="Senior" >Senior</option>
+                        <option value="Leader" >Leader</option>
+                        <option value="Manager" >Manager</option>
+                        <option value="Vice Head" >Vice Head</option>
                     </select>
                 </div>
 

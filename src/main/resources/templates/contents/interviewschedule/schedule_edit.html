@@ -421,7 +421,7 @@
                     <div class="d-flex justify-content-center mt-5">
                         <button type="submit" class="btn btn-secondary">Submit</button>
                         <button type="button" class="btn btn-secondary ms-5" id="cancelButton"><a
-                                class="text-light text-decoration-none" th:href="${previousPageUrl}">Cancel</a></button>
+                                class="text-light text-decoration-none" onclick="window.history.back()">Cancel</a></button>
                     </div>
 
                 </form>
@@ -443,7 +443,7 @@
                         method="post">
                         <div class="modal-body d-flex flex-column align-items-center justify-content-center">
 
-                            <h6 class="text-center">Are you sure you want to cancel this interview?</h5>
+                            <h5 class="text-center">Are you sure you want to cancel this interview?</h5>
                         </div>
                         <div class="modal-footer d-flex justify-content-center grid gap-5">
                             <button type="submit" class="btn w-25 m-0 btn-secondary" id="comfirmCancelStatusBtn"

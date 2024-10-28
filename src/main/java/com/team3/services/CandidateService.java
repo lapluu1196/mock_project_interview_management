@@ -8,22 +8,23 @@ import com.team3.entities.Candidate;
 
 public interface CandidateService {
 
-    // // Search candidates by keyword and status
-    // List<CandidateDTO> searchCandidates(String keyword, String status);
+     // UC05: Search candidates by keyword, status, and role, with pagination
+//     List<CandidateDTO> searchCandidates(String keyword, String status, String role, int page);
 
-    // // Get candidate by ID
-    // CandidateDTO getCandidateById(Long id);
+     // UC06: Save new candidate
+     void saveCandidate(CandidateDTO candidateDTO);
 
-    // // Save a new candidate
-    // void saveCandidate(CandidateDTO candidateDTO);
+     // UC07: Get candidate by ID
+     CandidateDTO getCandidateDTOById(Long id);
 
-    // // Update an existing candidate
-    // void updateCandidate(CandidateDTO candidateDTO);
+     // UC08: Update existing candidate
+     void updateCandidate(CandidateDTO candidateDTO);
 
-    // // Delete a candidate by ID
-    // void deleteCandidate(Long id);
+     // UC09: Delete candidate by ID
+     void deleteCandidate(Long id);
 
-    // // Get all candidates
+     // UC10: Ban candidate
+     void banCandidate(Long id);
 
     // //Dat: Anh dung xoa nhe
 
@@ -32,6 +33,6 @@ public interface CandidateService {
      // Minh
      public List<Candidate> getAllCandidatesNoBanned();
 
-     public Candidate getCandidateById(Long candidateId);
+     Candidate getCandidateById(Long candidateId);
 
 }

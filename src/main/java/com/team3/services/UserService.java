@@ -44,4 +44,8 @@ public interface UserService {
     List<User> getAllRecruiters();
 
     User getUser(Long id);
+
+    // Long add phuong thuc lay User
+    String getUserRole(Long userID); // Gets role based on userID
+    boolean isAuthorized(Long userID, String... roles); // Checks if user has one of the roles
 }
