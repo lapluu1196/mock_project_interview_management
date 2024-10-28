@@ -126,7 +126,7 @@
       <a href="/jobs">Job List</a>
     </div>
 
-    <form th:action="@{/templates/contents/jobs/edit/{id}(id=${job.jobId})}" th:object="${job}" method="post">
+    <form th:action="@{/jobs/edit/{id}(id=${job.jobId})}" th:object="${job}" method="post">
 
       <div class="form-row">
         <div class="form-group">
@@ -164,10 +164,13 @@
         <div class="form-group">
           <label for="skills">Skills *</label>
           <select id="skills" name="requiredSkills" multiple >
-            <option value="java" th:selected="${job.requiredSkills.contains('java')}">Java</option>
-            <option value="flutter" th:selected="${job.requiredSkills.contains('flutter')}">Flutter</option>
-            <option value="nodejs" th:selected="${job.requiredSkills.contains('nodejs')}">Node.js</option>
-            <option value="system_design" th:selected="${job.requiredSkills.contains('system_design')}">System design</option>
+            <option value="Java" th:selected="${job.requiredSkills.contains('Java')}">Java</option>
+            <option value="Nodejs" th:selected="${job.requiredSkills.contains('Nodejs')}">Nodejs</option>
+            <option value=".net" th:selected="${job.requiredSkills.contains('.net')}">.net</option>
+            <option value="C++" th:selected="${job.requiredSkills.contains('C++')}">C++</option>
+            <option value="Business analysis" th:selected="${job.requiredSkills.contains('Business analysis')}">Business analysis</option>
+            <option value="Communication" th:selected="${job.requiredSkills.contains('Communication')}">Communication</option>
+
           </select>
         </div>
       </div>
@@ -186,10 +189,12 @@
         <div class="form-group">
           <label for="level">Level *</label>
           <select id="level" name="level"  multiple>
-            <option value="fresher" th:selected="${job.level.contains('fresher')}">Fresher</option>
-            <option value="junior" th:selected="${job.level.contains('junior')}">Junior</option>
-            <option value="mid" th:selected="${job.level.contains('mid')}">Mid</option>
-            <option value="senior" th:selected="${job.level.contains('senior')}">Senior</option>
+            <option value="Fresher" th:selected="${job.level.contains('Fresher')}">Fresher</option>
+            <option value="Junior" th:selected="${job.level.contains('Junior')}">Junior</option>
+            <option value="Senior" th:selected="${job.level.contains('Senior')}">Senior</option>
+            <option value="Leader" th:selected="${job.level.contains('Leader')}">Leader</option>
+            <option value="Manager" th:selected="${job.level.contains('Manager')}">Manager</option>
+            <option value="Vice Head" th:selected="${job.level.contains('Vice Head')}">Vice Head</option>
           </select>
         </div>
       </div>
