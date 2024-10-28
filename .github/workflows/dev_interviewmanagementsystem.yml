@@ -51,4 +51,4 @@ jobs:
           app-name: 'InterviewManagementSystem'
           slot-name: 'Production'
           package: '*.jar'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B03AA612DEF842B5A7EE6DDF15BBCB95 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_300EB6A48A434DD49B4FEBA764468566 }}
