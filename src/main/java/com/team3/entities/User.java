@@ -6,6 +6,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Users")
@@ -25,7 +26,7 @@ public class User {
     @Column(name = "password" , nullable = false, length = 255)
     private String password;
 
-    @Column(name = "full_name", nullable = false, length = 150)
+    @Column(name = "full_name", nullable = false, length = 150, columnDefinition = "NVARCHAR(150)")
     private String fullName;
 
     @Column(name = "email", nullable = false, unique = true, length = 150)
@@ -52,7 +53,7 @@ public class User {
     @Column(name = "status", nullable = false, length = 50)
     private String status;
 
-    @Column(name = "Notes", length = 1000)
+    @Column(name = "Notes", length = 1000, columnDefinition = "NVARCHAR(1000)")
     private String notes;
 
     @Column(name = "created_at", nullable = false)
@@ -64,4 +65,29 @@ public class User {
     // Quan hệ nhiều-nhiều với InterviewSchedule
     @ManyToMany(mappedBy = "interviewers")
     private List<InterviewSchedule> interviewSchedules;
+
+    // Quan hệ 1-n với PasswordResetToken
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<PasswordResetToken> passwordResetTokens;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", username='" + username +
+                ", password='" + password +
+                ", fullName='" + fullName +
+                ", email='" + email +
+                ", phoneNumber='" + phoneNumber +
+                ", dateOfBirth=" + dateOfBirth +
+                ", address='" + address +
+                ", gender='" + gender +
+                ", department='" + department +
+                ", role='" + role +
+                ", status='" + status +
+                ", notes='" + notes +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 }

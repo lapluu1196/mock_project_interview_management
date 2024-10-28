@@ -31,20 +31,32 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(configurer ->
+        http. csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(configurer ->
                         configurer.requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                                .requestMatchers("/**").permitAll()
+                                .requestMatchers("/auth/**", "/api/auth/**").permitAll()
+                                .requestMatchers("/users/**", "/api/users/**").hasAuthority("Admin")
+                                .requestMatchers("/interview-schedule/add").hasAnyAuthority("Admin", "Manager", "Recruiter")
+                                .requestMatchers("/interview-schedule/edit/**").hasAnyAuthority("Admin", "Manager", "Recruiter", "Interviewer")
+                                .requestMatchers("/interview-schedule/scheduleDetail/**").hasAnyAuthority("Admin", "Manager",  "Recruiter", "Interviewer")
+                                .requestMatchers("/interview-schedule/cancel/**").hasAnyAuthority("Admin", "Recruiter")
+                                .requestMatchers("/jobs/create", "/jobs/createjob").hasAnyAuthority("Admin", "Manager", "Recruiter")
+                                .requestMatchers("/jobs/edit/**").hasAnyAuthority("Admin", "Manager", "Recruiter")
+                                .requestMatchers("/jobs/delete/**").hasAnyAuthority("Admin", "Manager", "Recruiter")
+                                .requestMatchers("/offers").hasAnyAuthority("Admin", "Manager", "Recruiter")
                                 .anyRequest().authenticated())
                 .formLogin(login ->
                         login.loginPage("/auth/login")
                                 .loginProcessingUrl("/authenticateUser")
                                 .permitAll())
+                .rememberMe(rememberMe -> rememberMe
+                        .tokenValiditySeconds(86400)
+                        .key("uniqueAndSecret")
+                        .rememberMeParameter("rememberMe"))
                 .logout(logout ->
                         logout.logoutUrl("/logout")
-                                .logoutSuccessUrl("/login?logout")
-                                .permitAll())
-                .exceptionHandling(configurer ->
-                        configurer.accessDeniedPage("/access-denied")
+                                .logoutSuccessUrl("/auth/login?logout")
+                                .permitAll()
                 );
 
         return http.build();

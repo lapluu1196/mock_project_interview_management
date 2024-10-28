@@ -18,7 +18,7 @@ public class Candidate {
     @Column(name = "candidate_id")
     private Long candidateId;
 
-    @Column(name = "full_name", nullable = false, length = 150)
+    @Column(name = "full_name", nullable = false, length = 150, columnDefinition = "NVARCHAR(150)")
     private String fullName;
 
     @Column(name = "email", nullable = false, unique = true, length = 150)
@@ -27,7 +27,7 @@ public class Candidate {
     @Column(name = "phone_number", length = 15)
     private String phoneNumber;
 
-    @Column(name = "address", length = 255)
+    @Column(name = "address", length = 255, columnDefinition = "NVARCHAR(255)")
     private String address;
 
     @Column(name = "date_of_birth")
@@ -58,7 +58,7 @@ public class Candidate {
     @Column(name = "status", nullable = false, length = 50)
     private String status;
 
-    @Column(name = "notes", length = 1000)
+    @Column(name = "notes", length = 1000, columnDefinition = "NVARCHAR(1000)")
     private String notes;
 
     @Column(nullable = false)
