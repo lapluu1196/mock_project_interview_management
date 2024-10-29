@@ -1,6 +1,22 @@
 $(document).ready(function () {
+    const togglePassword = $('#togglePassword');
+    const password = $('#password');
+    const toggleConfirmPassword = $('#toggleConfirmPassword');
+    const confirmPassword = $('#confirmPassword');
 
-        $('#forgotPasswordForm').on('submit', function(event) {
+    togglePassword.on('click', function () {
+        const type = password.attr('type') === 'password' ? 'text' : 'password';
+        password.attr('type', type);
+        this.classList.toggle('bi-eye');
+    });
+
+    toggleConfirmPassword.on('click', function () {
+        const type = confirmPassword.attr('type') === 'password' ? 'text' : 'password';
+        confirmPassword.attr('type', type);
+        this.classList.toggle('bi-eye');
+    });
+
+    $('#forgotPasswordForm').on('submit', function (event) {
         event.preventDefault();
 
         var email = $('#email').val();
@@ -14,10 +30,10 @@ $(document).ready(function () {
             data: {
                 email: email
             },
-            success: function(response) {
+            success: function (response) {
                 $('#success-message').text("We've sent an email with the link to reset your password.");
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 $('#error-message').text("The Email address doesn't exist. Please try again.");
             }
         });

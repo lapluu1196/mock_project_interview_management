@@ -118,6 +118,7 @@ public class OfferController {
         offer.setRecruiterOwner(offerDTO.getRecruiterOwner());
         offer.setBasicSalary(Double.parseDouble(offerDTO.getBasicSalary()));
         offer.setNotes(offerDTO.getNotes());
+        offer.setOfferStatus("Waiting for Approval");
         try {
             System.out.println(offerDTO.getContractPeriodFrom());
             LocalDate contractPeriodFrom = LocalDate.parse(offerDTO.getContractPeriodFrom(),

@@ -42,14 +42,14 @@ public class JobController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", jobPage.getTotalPages());
 
-        return "jobs/list";
+        return "contents/jobs/list";
     }
 
     @GetMapping("/create")
     public String createJobForm(Model model) {
         Job job = new Job();
         model.addAttribute("job", job);
-        return "jobs/create";
+        return "contents/jobs/create";
     }
     @PostMapping("/createjob")
     public String saveJob(@ModelAttribute("job") Job job) {
@@ -62,7 +62,7 @@ public class JobController {
         Job job = jobService.findById(id).orElse(null);
         if (job != null) {
             model.addAttribute("job", job);
-            return "jobs/details";  // Tên view HTML (jobDetails.html)
+            return "contents/jobs/details";  // Tên view HTML (jobDetails.html)
         }
         return "redirect:/jobs/list"; // Quay lại danh sách nếu không tìm thấy job
     }
@@ -71,7 +71,7 @@ public class JobController {
         Job job = jobService.findById(id).orElse(null);
         if (job != null) {
             model.addAttribute("job", job);
-            return "jobs/edit";  // Tên view HTML (jobDetails.html)
+            return "contents/jobs/edit";  // Tên view HTML (jobDetails.html)
         }
         return "redirect:/jobs/list"; // Quay lại danh sách nếu không tìm thấy job
     }
