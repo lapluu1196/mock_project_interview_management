@@ -34,7 +34,6 @@ public class SecurityConfig {
         http. csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(configurer ->
                         configurer.requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                                .requestMatchers("/error/**").permitAll()
                                 .requestMatchers("/auth/**", "/api/auth/**").permitAll()
                                 .requestMatchers("/users/**", "/api/users/**").hasAuthority("Admin")
                                 .requestMatchers("/interview-schedule/add").hasAnyAuthority("Admin", "Manager", "Recruiter")
