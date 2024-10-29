@@ -3,6 +3,8 @@ $(document).ready(function () {
     const password = $('#password');
     const toggleConfirmPassword = $('#toggleConfirmPassword');
     const confirmPassword = $('#confirmPassword');
+    const passwordError = $("#passwordError");
+    const confirmPasswordError = $("#confirmPasswordError");
 
     togglePassword.on('click', function () {
         const type = password.attr('type') === 'password' ? 'text' : 'password';
@@ -38,5 +40,43 @@ $(document).ready(function () {
             }
         });
     });
+
+    $('#resetPasswordForm > form').on('submit', function (event) {
+        if (!validateInputs()) {
+            event.preventDefault();
+        }
+    });
+
+    password.on("change", function () {
+        validateInputs();
+    });
+
+    confirmPassword.on("change", function () {
+        validateInputs();
+    });
+
+
+    function validateInputs() {
+        const passwordValue = password.val();
+        const confirmPasswordValue = confirmPassword.val();
+        const passwordCriteria = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{7,}$/;
+        let isValid = true;
+
+        if (!passwordCriteria.test(passwordValue)) {
+            passwordError.text("Use at least one letter, one number and seven characters");
+            isValid = false;
+        } else {
+            passwordError.text("");
+        }
+
+        if (passwordValue !== confirmPasswordValue) {
+            confirmPasswordError.text("Passwords do not match. Please try again.");
+            isValid = false;
+        } else {
+            confirmPasswordError.text("");
+        }
+
+        return isValid;
+    }
 
 })
