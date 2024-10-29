@@ -236,6 +236,16 @@ public class UserServiceImpl implements UserService {
                 return criteriaBuilder.equal(root.get("role"), role);
             }
 
+            if (role == null || role.isEmpty()) {
+                return criteriaBuilder.or(
+                    criteriaBuilder.like(root.get("username"), "%" + search + "%"),
+                    criteriaBuilder.like(root.get("email"), "%" + search + "%"),
+                    criteriaBuilder.like(root.get("phoneNumber"), "%" + search + "%"),
+                    criteriaBuilder.like(root.get("role"), "%" + search + "%"),
+                    criteriaBuilder.like(root.get("status"), "%" + search + "%")
+                ) ;
+            }
+
             return criteriaBuilder.and(
                     criteriaBuilder.or(
                         criteriaBuilder.like(root.get("username"), "%" + search + "%"),

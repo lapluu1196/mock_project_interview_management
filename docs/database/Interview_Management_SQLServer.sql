@@ -18,7 +18,7 @@ INSERT INTO Candidates (full_name, email, phone_number, address, date_of_birth, 
 VALUES
     (N'Nguyễn Thị Mai', 'nguyenthimai@example.com', '0912345670', N'20 Trần Phú, Hà Nội', '1990-01-15', 'Female', 'cv_mainguyen.pdf', 'Tester', '.Net, Java', 3, 'Bachelor’s Degree', 3, 'Applied', NULL, GETDATE(), GETDATE()),
     (N'Trần Văn Nam', 'tranvanMale@example.com', '0912345671', N'10 Phạm Văn Đồng, TP.HCM', '1991-04-10', 'Male', 'cv_Maletran.pdf', 'Backend Developer', 'Java, C++', 4, 'Master Degree', 4, 'Interviewed', NULL, GETDATE(), GETDATE()),
-    (N'Lê Thị Hòa', 'lethihòa@example.com', '0912345672', N'30 Lý Thường Kiệt, Đà Nẵng', '1992-07-25', 'Female', 'cv_hoale.pdf', 'Business Analyst', 'Business analysis, Communication', 5, 'Bachelor’s Degree', 3, 'Applied', NULL, GETDATE(), GETDATE()),
+    (N'Lê Thị Hòa', 'lethihoa@example.com', '0912345672', N'30 Lý Thường Kiệt, Đà Nẵng', '1992-07-25', 'Female', 'cv_hoale.pdf', 'Business Analyst', 'Business analysis, Communication', 5, 'Bachelor’s Degree', 3, 'Applied', NULL, GETDATE(), GETDATE()),
     (N'Vũ Hoàng Anh', 'vuhoanganh@example.com', '0912345673', N'40 Đinh Tiên Hoàng, Hải Phòng', '1993-09-05', 'Male', 'cv_anhvu.pdf', 'Frontend Developer', 'JavaScript, React', 3, 'Bachelor’s Degree', 3, 'Applied', NULL, GETDATE(), GETDATE()),
     (N'Phạm Minh Tâm', 'phamminhtam@example.com', '0912345674', N'50 Nguyễn Văn Cừ, Cần Thơ', '1994-12-01', 'Male', 'cv_tampham.pdf', 'Tester', 'Nodejs, .Net', 2, 'High school', 4, 'Rejected', NULL, GETDATE(), GETDATE()),
     (N'Đỗ Quỳnh Hoa', 'doquynhhoa@example.com', '0912345675', N'60 Trần Hưng Đạo, Hà Nội', '1995-06-10', 'Female', 'cv_hoado.pdf', 'Business Analyst', 'Business analysis, Java', 5, 'Bachelor’s Degree', 3, 'Interviewed', NULL, GETDATE(), GETDATE()),
