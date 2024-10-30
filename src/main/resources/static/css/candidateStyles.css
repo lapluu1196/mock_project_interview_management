@@ -1,0 +1,22 @@
+#searchCandidateForm img {
+    position: relative;
+    top: -50%;
+    left: 85%;
+}
+
+#candidateList > tr > td > a {
+    padding: 6px 1px !important;
+}
+
+#candidateTable {
+    background-color: #F1F6FB;
+}
+
+#candidateTable thead th {
+    background-color: #F2F2EE;
+}
+
+#candidateTable td, #candidateTable th {
+    vertical-align: middle;
+    text-align: center;
+}

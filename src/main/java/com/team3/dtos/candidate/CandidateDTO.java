@@ -4,10 +4,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data // Lombok annotation to generate getters, setters, toString, equals, and hashCode
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CandidateDTO {
@@ -23,6 +25,7 @@ public class CandidateDTO {
     private String skills;
     private Integer yearsOfExperience;
     private String highestEducationLevel;
+    private String recruiterOwner;
     private String status;
     private String notes;
     private LocalDateTime createdAt;

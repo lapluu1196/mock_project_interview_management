@@ -24,6 +24,10 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
+table * {
+    white-space: nowrap;
+}
+
 .wrapper {
     display: flex;
 }
