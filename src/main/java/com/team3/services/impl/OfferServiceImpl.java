@@ -1,5 +1,6 @@
 package com.team3.services.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,6 +32,11 @@ public class OfferServiceImpl implements OfferService {
         return offerRepository.findAll(pageable);
     }
 
+    @Override
+    public List<Offer> getOffersDueToday() {
+        LocalDate today = LocalDate.now();
+        return offerRepository.findByDueDate(today);
+    }
     @Override
     public Offer getOfferById(Long id) {
         if (!offerRepository.findById(id).isPresent()) {
