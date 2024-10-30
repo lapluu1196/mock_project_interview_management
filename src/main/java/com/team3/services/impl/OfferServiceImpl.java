@@ -1,8 +1,11 @@
 package com.team3.services.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
+import com.team3.dtos.email.EmailDTO;
 import com.team3.entities.Candidate;
 import com.team3.payload.OfferStatus;
 import com.team3.repositories.CandidateRepository;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.team3.entities.Offer;
@@ -94,5 +98,11 @@ public class OfferServiceImpl implements OfferService {
     @Override
     public List<Offer> getAllOffers() {
         return offerRepository.findAll();
+    }
+
+    @Override
+    public List<Offer> getOffersDueToday() {
+        LocalDate today = LocalDate.now();
+        return offerRepository.findByDueDate(today);
     }
 }

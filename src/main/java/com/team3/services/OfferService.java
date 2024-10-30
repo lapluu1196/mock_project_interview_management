@@ -14,6 +14,7 @@ public interface OfferService {
     Offer getOfferById(Long id);
 
     void saveOffer(Offer offer);
+    List<Offer> getOffersDueToday();
 
     // get all offers
     List<Offer> getAllOffers();

@@ -248,6 +248,7 @@ public class OfferController {
         model.addAttribute("interviewSchedules", interviewSchedules);
         model.addAttribute("recruiters", recruiters);
         model.addAttribute("id", id);
-        return "offer/view";
+
+        return "contents/offer/offer_view";
     }
 }

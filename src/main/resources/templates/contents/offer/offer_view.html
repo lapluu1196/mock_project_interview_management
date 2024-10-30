@@ -30,63 +30,95 @@
         </div>
     </div>
 
+    <script>
+        function changeStatus(button) {
+            const offerId = button.getAttribute('data-offer-id');
+            const status = button.getAttribute('data-status');
+
+            fetch(`/api/offers/${offerId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(status),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    alert(`Status updated to: ${status}`);
+                    location.reload();
+                })
+                .catch((error) => {
+                    console.error('There was a problem with your fetch operation:', error);
+                });
+        }
+    </script>
+
     <div th:object="${offer}">
         <div class="card">
             <div class="card-header">
                 <div th:switch="${offer.offerStatus}">
                     <div th:case="'Waiting for Approval'">
                         <button class="btn btn-primary">Edit</button>
-                        <button class="btn btn-success" th:data-offer-id="${id}" data-status="Approved"
-                                th:data-candidate="*{candidate.candidateId}"
-                                onclick="changeStatusTwo(this)">Approve</button>
-                        <button class="btn btn-danger" th:data-offer-id="${id}" data-status="Rejected"
-                                th:data-candidate="*{candidate.candidateId}"
-                                onclick="changeStatusTwo(this)">Reject</button>
-                        <button class="btn btn-warning" th:data-offer-id="${id}" data-status="Cancelled"
-                                th:data-candidate="*{candidate.candidateId}" onclick="changeStatusDialog(this)">Cancel
-                            Offer</button>
+                        <div>
+                            <button class="btn btn-success" th:data-offer-id="${id}" data-status="Approved"
+                                    onclick="changeStatus(this)">Approve
+                            </button>
+                            <button class="btn btn-danger" th:data-offer-id="${id}" data-status="Rejected"
+                                    onclick="changeStatus(this)">Reject
+                            </button>
+                            <button class="btn btn-warning" th:data-offer-id="${id}" data-status="Cancelled"
+                                    onclick="changeStatus(this)">Cancel Offer
+                            </button>
+                        </div>
 
                     </div>
                     <div th:case="'Approved'">
                         <button class="btn btn-info" th:data-offer-id="${id}" data-status="Waiting for Response"
-                                th:data-candidate="*{candidate.candidateId}" onclick="changeStatusTwo(this)">Mark as
-                            sent to candidate</button>
+                                onclick="changeStatus(this)">Mark as Sent to Candidate
+                        </button>
                         <button class="btn btn-warning" th:data-offer-id="${id}" data-status="Cancelled"
-                                th:data-candidate="*{candidate.candidateId}" onclick="changeStatusDialog(this)">Cancel
-                            Offer</button>
+                                onclick="changeStatus(this)">Cancel Offer
+                        </button>
                     </div>
                     <div th:case="'Rejected'">
-
+                        <!-- No actions available for rejected offers -->
+                        <span>No actions available.</span>
                     </div>
                     <div th:case="'Waiting for Response'">
-                        <button class="btn btn-success" th:data-offer-id="${id}" data-status="Accepted offer"
-                                th:data-candidate="*{candidate.candidateId}" onclick="changeStatusTwo(this)">Accepted
-                            Offer</button>
-                        <button class="btn btn-danger" th:data-offer-id="${id}" data-status="Declined Offer"
-                                th:data-candidate="*{candidate.candidateId}" onclick="changeStatusTwo(this)">Declined
-                            Offer</button>
-                        <button class="btn btn-warning" th:data-offer-id="${id}" data-status="Cancelled"
-                                th:data-candidate="*{candidate.candidateId}" onclick="changeStatusDialog(this)">Cancel
-                            Offer</button>
+                        <div>
+                            <button class="btn btn-success" th:data-offer-id="${id}" data-status="Accepted"
+                                    onclick="changeStatus(this)">Accepted Offer
+                            </button>
+                            <button class="btn btn-danger" th:data-offer-id="${id}" data-status="Declined"
+                                    onclick="changeStatus(this)">Declined Offer
+                            </button>
+                            <button class="btn btn-warning" th:data-offer-id="${id}" data-status="Cancelled"
+                                    onclick="changeStatus(this)">Cancel Offer
+                            </button>
+                        </div>
                     </div>
                     <div th:case="'Accepted offer'">
                         <button class="btn btn-warning" th:data-offer-id="${id}" data-status="Cancelled"
-                                th:data-candidate="*{candidate.candidateId}" onclick="changeStatusDialog(this)">Cancel
-                            Offer</button>
+                                onclick="changeStatus(this)">Cancel Offer
+                        </button>
                     </div>
                     <div th:case="'Declined Offer'">
-                        <!-- No buttons -->
+                        <!-- No actions available for declined offers -->
+                        <span>No actions available.</span>
                     </div>
                     <div th:case="'Cancelled'">
-                        <!-- No buttons -->
+                        <!-- No actions available for cancelled offers -->
+                        <span>No actions available.</span>
                     </div>
                 </div>
 
                 <div class="card-tools">
-                        <span
-                                th:text="'Created on '+*{#temporals.format(createdAt, 'dd/MM/yyyy')} +', last updated by ' + *{modifiedBy ?: 'admin'} + ' ' +  (*{#temporals.format(updatedAt, 'dd/MM/yyyy')} == ${currentDate} ? 'hôm nay':   '' +*{#temporals.format(createdAt, 'dd/MM/yyyy')}    ) "></span>
-
-                </div>
+                    <span th:text="'Created on ' + *{#temporals.format(createdAt, 'dd/MM/yyyy')} + ', last updated by admin' + ' ' + (*{#temporals.format(updatedAt, 'dd/MM/yyyy')} == ${currentDate} ? 'today': '' + *{#temporals.format(createdAt, 'dd/MM/yyyy')})"></span>
             </div>
             <div class="card-body">
 
@@ -100,8 +132,8 @@
                     </div>
                     <div class="col-md-6">
                         <div class="">
-                            <label for="job" class="form-label required">Job</label>
-                            <span th:text="*{job}" class="form-control" id="job" readonly></span>
+<!--                            <label for="job" class="form-label required">Job</label>-->
+<!--                            <span th:text="*{job}" class="form-control" id="job" readonly></span>-->
 
                         </div>
                     </div>

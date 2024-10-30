@@ -46,14 +46,19 @@
                 </select>
             </div>
             <div class="col-3">
-                <button type="submit" id="searchButton" class="btn" style="background-color: #D9D9D9; font-weight: bold;">Search</button>
+                <button type="submit" id="searchButton" class="btn"
+                        style="background-color: #D9D9D9; font-weight: bold;">Search
+                </button>
             </div>
         </div>
     </form>
 
     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
         <a class="btn" style="background-color: #D9D9D9; font-weight: bold;" href="/offers/add">Add new</a>
-        <button type="submit" class="btn" style="background-color: #D9D9D9; font-weight: bold;" id="exportButton">Export</button>
+        <button type="button" class="btn" style="background-color: #D9D9D9; font-weight: bold;" id="exportButton"
+                data-toggle="modal" data-target="#exportModal">
+            Export
+        </button>
     </div>
     <div class="table-responsive-md p-0">
         <table class="table table-bordered table-striped ">
@@ -77,12 +82,13 @@
                 <td th:text="${offer.notes}"></td>
                 <td th:text="${offer.offerStatus}"></td>
                 <td>
-                    <button type="button" class="btn">
+                    <a th:href="@{/offers/view/{id}(id=${offer.offerId})}" class="btn">
                         <img src="/images/visible.png" alt="info icon">
-                    </button>
-                    <button type="button" class="btn">
+                    </a>
+                    </a>
+                    <a th:href="@{/offers/edit/{id}(id=${offer.offerId})}" class="btn">
                         <img src="/images/edit-button.png" alt="edit icon">
-                    </button>
+                    </a>
                 </td>
             </tr>
 
@@ -102,7 +108,8 @@
                     <span th:text="${(currentPage + 1) * 10 < totalOffers} ? ${(currentPage + 1) * 10} + '/' + ${totalOffers} + ' rows' : ${totalOffers} + '/' + ${totalOffers} + ' rows'"></span>
                 </li>
                 <li class="page-item">
-                    <a class="btn page-link" role="button" th:href="@{/offers(keyword=${keyword}, page=${currentPage - 1})}"
+                    <a class="btn page-link" role="button"
+                       th:href="@{/offers(keyword=${keyword}, page=${currentPage - 1})}"
                        th:classappend="${currentPage > 0} ? '' : 'disabled'"
                        th:attr="aria-disabled=${currentPage > 0} ? 'false' : 'true'">
                         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">
@@ -112,7 +119,8 @@
                     </a>
                 </li>
                 <li class="page-item">
-                    <a class="btn page-link" role="button" th:href="@{/offers(keyword=${keyword}, page=${currentPage + 1})}"
+                    <a class="btn page-link" role="button"
+                       th:href="@{/offers(keyword=${keyword}, page=${currentPage + 1})}"
                        th:classappend="${currentPage + 1 < totalPages} ? '' : 'disabled'"
                        th:attr="aria-disabled=${currentPage + 1 < totalPages} ? 'false' : 'true'">
                         <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" viewBox="0 0 24 24">
@@ -156,22 +164,38 @@
 
     <div layout:fragment="js">
         <script>
-            $(document).ready(function () {
-                // Open the modal when exportButton is clicked
-                $("#exportButton").click(function () {
-                    $("#exportModal").modal("show");
+            document.addEventListener("DOMContentLoaded", function () {
+                const exportButton = document.getElementById("exportButton");
+                const exportModal = document.getElementById("exportModal");
+
+                exportButton.addEventListener("click", function () {
+                    exportModal.classList.add("show");
+                    exportModal.style.display = "block";
+                    document.body.classList.add("modal-open");
                 });
 
-                // Handle form submission
-                $("#submitExport").click(function () {
-                    var startDate = $("#startDate").val();
-                    var endDate = $("#endDate").val();
+                const closeButton = exportModal.querySelector(".close");
+                closeButton.addEventListener("click", function () {
+                    exportModal.classList.remove("show");
+                    exportModal.style.display = "none";
+                    document.body.classList.remove("modal-open");
+                });
 
-                    // Redirect to the export endpoint with the selected dates
+                const submitExport = document.getElementById("submitExport");
+                submitExport.addEventListener("click", function () {
+                    const startDate = document.getElementById("startDate").value;
+                    const endDate = document.getElementById("endDate").value;
+
+                    if (!startDate || !endDate) {
+                        alert("Vui lòng chọn cả ngày bắt đầu và ngày kết thúc.");
+                        return;
+                    }
+
                     window.location.href = "/api/offers/export/excel?startDate=" + startDate + "&endDate=" + endDate;
 
-                    // Close the modal
-                    $("#exportModal").modal("hide");
+                    exportModal.classList.remove("show");
+                    exportModal.style.display = "none";
+                    document.body.classList.remove("modal-open");
                 });
             });
         </script>
