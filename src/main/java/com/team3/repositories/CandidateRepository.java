@@ -34,11 +34,12 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long>, Jpa
     //Candidate findFullNameByCandidateId(Long candidateId);
 
     // UC05: Find candidates assigned to a specific interviewer by keyword and status with pagination
-    @Query("SELECT c FROM Candidate c JOIN c.interviewSchedules i WHERE (c.fullName LIKE %:keyword% OR c.email LIKE %:keyword%) AND c.status = :status AND i.interviewer.id = :interviewerId")
+    @Query("SELECT c FROM Candidate c JOIN c.interviewSchedules i JOIN i.interviewers u " +
+        "WHERE (c.fullName LIKE %:keyword% OR c.email LIKE %:keyword%) AND c.status = :status AND u.userId = :interviewerId")
     List<Candidate> findCandidatesForInterviewer(
-            @Param("keyword") String keyword, 
-            @Param("status") String status, 
-            @Param("interviewerId") Long interviewerId,
-            Pageable pageable);
+        @Param("keyword") String keyword, 
+        @Param("status") String status, 
+        @Param("interviewerId") Long interviewerId,
+        Pageable pageable);
 
 }

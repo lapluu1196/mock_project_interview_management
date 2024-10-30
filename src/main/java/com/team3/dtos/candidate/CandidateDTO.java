@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data // Lombok annotation to generate getters, setters, toString, equals, and hashCode
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CandidateDTO {
@@ -27,4 +27,5 @@ public class CandidateDTO {
     private String notes;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long recruiterOwnerId;
 }

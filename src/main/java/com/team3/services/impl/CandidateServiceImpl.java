@@ -1,16 +1,19 @@
 package com.team3.services.impl;
 
-import com.team3.dtos.candidate.CandidateDTO;
-import com.team3.entities.Candidate;
-import com.team3.repositories.CandidateRepository;
-import com.team3.services.CandidateService;
-import com.team3.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
+import com.team3.dtos.candidate.CandidateDTO;
+import com.team3.entities.Candidate;
+import com.team3.entities.User;
+import com.team3.repositories.CandidateRepository;
+import com.team3.services.CandidateService;
+import com.team3.services.UserService;
 
 @Service
 public class CandidateServiceImpl implements CandidateService {
@@ -45,7 +48,7 @@ public class CandidateServiceImpl implements CandidateService {
     public void saveCandidate(CandidateDTO candidateDTO) {
         validateCandidateDTO(candidateDTO, true);
         Candidate candidate = convertToEntity(candidateDTO);
-        candidate.setStatus("Open");
+        candidate.setStatus("Open"); // Default status when saving new candidates
         candidateRepository.save(candidate);
     }
 
@@ -61,6 +64,8 @@ public class CandidateServiceImpl implements CandidateService {
         Optional<Candidate> candidate = candidateRepository.findById(id);
         if (candidate.isPresent() && "Open".equals(candidate.get().getStatus())) {
             candidateRepository.deleteById(id);
+        } else {
+            throw new IllegalStateException("Cannot delete candidate with status: " + candidate.get().getStatus());
         }
     }
 
@@ -71,10 +76,11 @@ public class CandidateServiceImpl implements CandidateService {
             Candidate candidateEntity = candidate.get();
             candidateEntity.setStatus("Banned");
             candidateRepository.save(candidateEntity);
+        } else {
+            throw new IllegalArgumentException("Candidate not found with ID: " + id);
         }
     }
 
-    // Implementation of getAllCandidates method
     @Override
     public List<CandidateDTO> getAllCandidates() {
         List<Candidate> candidates = candidateRepository.findAll();
@@ -110,11 +116,17 @@ public class CandidateServiceImpl implements CandidateService {
                 candidate.getStatus(),
                 candidate.getNotes(),
                 candidate.getCreatedAt(),
-                candidate.getUpdatedAt()
+                candidate.getUpdatedAt(),
+                candidate.getRecruiterOwner() != null ? candidate.getRecruiterOwner().getUserId() : null // Handling recruiterOwner ID
         );
     }
 
     private Candidate convertToEntity(CandidateDTO candidateDTO) {
+        User recruiterOwner = null;
+        if (candidateDTO.getRecruiterOwnerId() != null) {
+            recruiterOwner = userService.findUserById(candidateDTO.getRecruiterOwnerId());
+        }
+
         return new Candidate(
                 candidateDTO.getCandidateId(),
                 candidateDTO.getFullName(),
@@ -128,11 +140,12 @@ public class CandidateServiceImpl implements CandidateService {
                 candidateDTO.getSkills(),
                 candidateDTO.getYearsOfExperience(),
                 candidateDTO.getHighestEducationLevel(),
-                null,
+                recruiterOwner,
                 candidateDTO.getStatus(),
                 candidateDTO.getNotes(),
                 candidateDTO.getCreatedAt(),
-                candidateDTO.getUpdatedAt()
+                candidateDTO.getUpdatedAt(), 
+                null
         );
     }
 }

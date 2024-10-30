@@ -1,14 +1,21 @@
 package com.team3.controllers.candidate;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.team3.dtos.candidate.CandidateDTO;
 import com.team3.services.CandidateService;
 import com.team3.services.UserService;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/candidates")
@@ -115,5 +122,14 @@ public class CandidateController {
         }
         candidateService.banCandidate(id);
         return "redirect:/candidates";
+    }
+    
+    @GetMapping("/your-endpoint")
+    public ResponseEntity<?> yourMethod(@RequestParam(value = "userID", required = false) Long userID) {
+    if (userID == null) {
+        return ResponseEntity.badRequest().body("userID parameter is missing.");
+    }
+    // Proceed with method logic if userID is present
+    return null;
     }
 }
