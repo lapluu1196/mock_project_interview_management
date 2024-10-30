@@ -8,6 +8,7 @@ import com.team3.services.UserService;
 import com.team3.utils.CurrentUserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -67,6 +68,22 @@ public class CandidateServiceImpl implements CandidateService {
         var candidates = candidateRepository.findAll(spec, pageable);
 
         return candidates.map(this::convertToDTO);
+    }
+
+    @Override
+    public String deleteCandidateById(Long candidateId) {
+        Candidate candidate = candidateRepository.findById(candidateId).orElse(null);
+        if (candidate == null) {
+            return "Candidate not found";
+        }
+        try {
+            candidateRepository.deleteById(candidateId);
+        } catch (DataIntegrityViolationException e) {
+            return "Cannot delete candidate because of existing references to interview";
+        } catch (Exception e) {
+            return "Failed to delete candidate";
+        }
+        return "Candidate deleted successfully";
     }
 
     // Implementation of getAllCandidates method

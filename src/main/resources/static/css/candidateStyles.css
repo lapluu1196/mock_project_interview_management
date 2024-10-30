@@ -4,8 +4,12 @@
     left: 85%;
 }
 
-#candidateList > tr > td > a {
-    padding: 6px 1px !important;
+#candidateList > tr > td > a, #candidateList > tr > td > form > button {
+    padding: 6px 2px !important;
+}
+
+#candidateList > tr > td.d-flex.justify-content-center > a:nth-child(2) {
+    margin: 0 2px;
 }
 
 #candidateTable {

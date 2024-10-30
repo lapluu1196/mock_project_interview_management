@@ -55,9 +55,9 @@
             </a>
         </div>
         <!-- END Search form and Sort by role -->
-        <!--        <div class="row">-->
-        <!--            <span th:if="${result}" th:text="${result}" class="text-success text-end fst-italic"></span>-->
-        <!--        </div>-->
+                <div class="row">
+                    <span th:if="${message}" th:text="${message}" class="text-success text-end fst-italic"></span>
+                </div>
         <!-- User list table -->
         <div class="row" id="candidateTable">
             <div class="col-12 table-responsive">
@@ -81,7 +81,7 @@
                         <td th:text="${candidate.currentPosition}" style="background-color: #EBEFF3"></td>
                         <td th:text="${candidate.recruiterOwner}"></td>
                         <td th:text="${candidate.status}"></td>
-                        <td style="background-color: #EBEFF3">
+                        <td class="d-flex justify-content-center" style="background-color: #EBEFF3">
                             <!--                            <a th:href="@{/users/detail/{id}(id=${user.userId})}" class="btn">-->
                             <a class="btn">
                                 <img src="/images/visible.png" alt="info icon">
@@ -90,11 +90,13 @@
                             <a class="btn">
                                 <img src="/images/edit-button.png" alt="edit icon">
                             </a>
-                            <a class="btn">
-                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
-                                </svg>
-                            </a>
+                            <form th:action="@{/candidates/delete/{id}(id=${candidate.candidateId})}" method="post">
+                                <button type="submit" class="btn">
+                                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+                                    </svg>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     </tbody>

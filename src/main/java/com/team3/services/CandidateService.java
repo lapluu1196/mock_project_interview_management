@@ -12,6 +12,8 @@ public interface CandidateService {
 
      Page<CandidateDTO> filterCandidate(String search, String status, Pageable pageable);
 
+     String deleteCandidateById(Long candidateId);
+
     // //Dat: Anh dung xoa nhe
 
      List<CandidateDTO> getAllCandidates();

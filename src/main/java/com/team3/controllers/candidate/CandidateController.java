@@ -6,10 +6,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.team3.services.CandidateService;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/candidates")
@@ -60,4 +63,13 @@ public class CandidateController {
 //
 //        return "fragments/candidate-table :: candidateTable";
 //    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteCandidate(@PathVariable("id") Long candidateId, RedirectAttributes redirectAttributes) {
+        String result = candidateService.deleteCandidateById(candidateId);
+
+        redirectAttributes.addFlashAttribute("message", result);
+
+        return "redirect:/candidates";
+    }
 }
