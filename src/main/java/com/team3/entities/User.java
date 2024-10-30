@@ -38,7 +38,7 @@ public class User {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(name = "address", length = 255)
+    @Column(name = "address", length = 255, columnDefinition = "NVARCHAR(255)")
     private String address;
 
     @Column(name = "gender", nullable = false, length = 50)
