@@ -14,6 +14,8 @@ public interface CandidateService {
 
      String deleteCandidateById(Long candidateId);
 
+     CandidateDTO findById(Long id);
+
     // //Dat: Anh dung xoa nhe
 
      List<CandidateDTO> getAllCandidates();

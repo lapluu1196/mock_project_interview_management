@@ -72,4 +72,14 @@ public class CandidateController {
 
         return "redirect:/candidates";
     }
+
+    @GetMapping("/detail/{id}")
+    public String candidateDetail(@PathVariable("id") Long id, Model model) {
+
+        var candidateDTO = candidateService.findById(id);
+
+        model.addAttribute("candidate", candidateDTO);
+
+        return "contents/candidate/candidate-detail";
+    }
 }

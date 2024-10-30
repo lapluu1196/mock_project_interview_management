@@ -86,6 +86,15 @@ public class CandidateServiceImpl implements CandidateService {
         return "Candidate deleted successfully";
     }
 
+    @Override
+    public CandidateDTO findById(Long id) {
+        Candidate candidate = candidateRepository.findById(id).orElse(null);
+        if (candidate == null) {
+            throw new RuntimeException("Candidate not found");
+        }
+        return convertToDTODetail(candidate);
+    }
+
     // Implementation of getAllCandidates method
     @Override
     public List<CandidateDTO> getAllCandidates() {
@@ -123,6 +132,28 @@ public class CandidateServiceImpl implements CandidateService {
                 candidate.getYearsOfExperience(),
                 candidate.getHighestEducationLevel(),
                 candidate.getRecruiterOwner().getUsername(),
+                candidate.getStatus(),
+                candidate.getNotes(),
+                candidate.getCreatedAt(),
+                candidate.getUpdatedAt()
+        );
+    }
+
+    private CandidateDTO convertToDTODetail(Candidate candidate) {
+        return new CandidateDTO(
+                candidate.getCandidateId(),
+                candidate.getFullName(),
+                candidate.getEmail(),
+                candidate.getPhoneNumber(),
+                candidate.getAddress(),
+                candidate.getDateOfBirth(),
+                candidate.getGender(),
+                candidate.getCv(),
+                candidate.getCurrentPosition(),
+                candidate.getSkills(),
+                candidate.getYearsOfExperience(),
+                candidate.getHighestEducationLevel(),
+                candidate.getRecruiterOwner().getFullName() + " (" + candidate.getRecruiterOwner().getUsername() + ")",
                 candidate.getStatus(),
                 candidate.getNotes(),
                 candidate.getCreatedAt(),

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainLayout}">
+<head>
+    <meta charset="UTF-8">
+    <title layout:fragment="title">Candidate Detail</title>
+</head>
+<body>
+<div id="mainBoard" layout:fragment="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav justify-content-start fs-4">
+                    <li class="nav-item">
+                        <a class="nav-link text-reset text-decoration-underline" th:href="@{/users}">User List</a>
+                    </li>
+                    <li class="nav-item d-flex align-items-center">
+                        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                             xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="m9 5 7 7-7 7"/>
+                        </svg>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-reset text-decoration-underline disabled" href="#" aria-disabled="true">View detail
+                            candidate</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row mt-3 py-4 userBoardContent" id="userDetail">
+            <div class="row mb-2">
+                <div id="statusButtonContainer" class="col-12 d-flex justify-content-end">
+                    <button id="banCandidateButton" class="btn btn-danger">Ban Candidate</button>
+                </div>
+            </div>
+
+            <div class="row d-flex justify-content-between mb-4">
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold">I. Personal information</span>
+                </div>
+                <div class="col-6 d-flex justify-content-end">
+                    <span class="fst-italic" style="font-size: 0.75rem;">Created on <span th:text="${candidate.createdAt}"></span>, last updated by <span th:text="${currentUser.username}"></span> <span th:text="${candidate.updatedAt}"></span></span>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-between mb-4">
+                <input type="hidden" name="id" id="id" th:value="${candidate.candidateId}">
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">Full name</span>
+                    <span class="w-25" th:text="${candidate.fullName}"></span>
+                </div>
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">Email</span>
+                    <span class="w-25" th:text="${candidate.email}"></span>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-between mb-4">
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">D.O.B</span>
+                    <span class="w-25" th:text="${candidate.dateOfBirth}"></span>
+                </div>
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">Address</span>
+                    <span class="w-25" th:text="${candidate.address}"></span>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-between mb-4">
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">Phone number</span>
+                    <span class="w-25" th:text="${candidate.phoneNumber}"></span>
+                </div>
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">Gender</span>
+                    <span class="w-25" th:text="${candidate.gender}"></span>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-between mb-4">
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold">II. Professional information</span>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-between mb-4">
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">CV</span>
+                    <span class="w-25" th:text="${candidate.cv}"></span>
+                </div>
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">Status</span>
+                    <span class="w-25" th:text="${candidate.status}"></span>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-between mb-4">
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">Current position</span>
+                    <span class="w-25" th:text="${candidate.currentPosition}" id="userStatus"></span>
+                </div>
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">Year of experience</span>
+                    <span class="w-25" th:text="${candidate.yearsOfExperience}"></span>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-between mb-4">
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">Skills</span>
+                    <span class="w-25" th:text="${candidate.skills}"></span>
+                </div>
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">Highest level</span>
+                    <span class="w-25" th:text="${candidate.highestEducationLevel}"></span>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-between mb-4">
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">Recruiter</span>
+                    <span class="w-25" th:text="${candidate.recruiterOwner}"></span>
+                </div>
+                <div class="col-6 d-flex justify-content-start">
+                    <span class="fw-bold w-25">Note</span>
+                    <span class="w-25" th:text="${candidate.notes}"></span>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center my-5">
+                <a href="#" role="button" class="btn btn-secondary" sec:authorize="hasAnyAuthority('Admin', 'Manager', 'Recruiter')">Edit</a>
+                <button type="button" class="btn btn-secondary ms-5" id="cancelButton">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
