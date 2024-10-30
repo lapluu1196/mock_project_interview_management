@@ -21,10 +21,6 @@ target/
 
 .github
 
-.src/main/resources/application.properties
-pom.xml
-
-
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
