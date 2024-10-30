@@ -26,7 +26,6 @@ public class OfferApiController {
 
     @PutMapping("/change-status")
     public String postMethodName(@RequestBody OfferStatus entity) {
-        // offerService.changeStatus(entity);
         offerService.changeStatus(entity);
         return "success";
     }
@@ -49,8 +48,10 @@ public class OfferApiController {
             @RequestParam("startDate") String startDateStr,
             @RequestParam("endDate") String endDateStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
         LocalDateTime startDate = LocalDateTime.parse(startDateStr + "T00:00:00", formatter);
         LocalDateTime endDate = LocalDateTime.parse(endDateStr + "T23:59:59", formatter);
+
         ByteArrayInputStream in = excelExportService.exportOffersToExcel(startDate, endDate);
         String fileName = "Offer-" + startDateStr + "_" + endDateStr + ".xlsx";
 
@@ -60,7 +61,7 @@ public class OfferApiController {
         return ResponseEntity
                 .ok()
                 .headers(headers)
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(new InputStreamResource(in));
     }
 }

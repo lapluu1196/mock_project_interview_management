@@ -1,5 +1,8 @@
 package com.team3.dtos.offer;
 
+import com.team3.entities.Candidate;
+import com.team3.entities.User;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

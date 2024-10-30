@@ -35,7 +35,8 @@
             <div class="row g-3">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="candidate" class="form-label required">Candidate <span style="color: red">*</span></label>
+                        <label for="candidate" class="form-label required">Candidate <span
+                                style="color: red">*</span></label>
                         <select id="candidate" class="form-select" th:field="*{candidate}">
                             <option selected value="">Select Candidate Name</option>
                             <!-- for candidates and get name -->
@@ -45,7 +46,8 @@
                     </div>
                     <div class="mb-3">
 
-                        <label for="position" class="form-label required">Position <span style="color: red">*</span></label>
+                        <label for="position" class="form-label required">Position <span
+                                style="color: red">*</span></label>
                         <select id="position" th:field="*{position}" class="form-select" required>
                             <option selected value="">Select a position</option>
                             <option value="Backend Developer">Backend Developer</option>
@@ -57,7 +59,8 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="approver" class="form-label required">Approver <span style="color: red">*</span></label>
+                        <label for="approver" class="form-label required">Approver <span
+                                style="color: red">*</span></label>
                         <select id="approver" class="form-select" required th:field="*{approver}">
                             <option selected value="">Select an approver</option>
 
@@ -102,7 +105,8 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="contract-type" class="form-label required">Contract Type <span style="color: red">*</span></label>
+                        <label for="contract-type" class="form-label required">Contract Type <span
+                                style="color: red">*</span></label>
                         <select id="contract-type" class="form-select" th:field="*{contractType}" required>
                             <option selected value="">Select a type of contract</option>
                             <option value="Trial 2 months">Trial 2 months</option>
@@ -137,7 +141,8 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="recruiter-owner" class="form-label required">Recruiter Owner <span style="color: red">*</span></label>
+                        <label for="recruiter-owner" class="form-label required">Recruiter Owner <span
+                                style="color: red">*</span></label>
                         <select id="recruiter-owner" th:field="*{recruiterOwner}" class="form-select" required>
                             <option selected value="">Select a recruiter owner</option>
                             <!-- for recruiters and get name -->
@@ -146,12 +151,14 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="due-date" class="form-label required">Due Date <span style="color: red">*</span></label>
+                        <label for="due-date" class="form-label required">Due Date <span
+                                style="color: red">*</span></label>
                         <input type="date" id="due-date" class="form-control" th:field="*{dueDate}"
                                placeholder="DD/MM/YYYY" required>
                     </div>
                     <div class="mb-3">
-                        <label for="basic-salary" class="form-label required">Basic Salary <span style="color: red">*</span></label>
+                        <label for="basic-salary" class="form-label required">Basic Salary <span
+                                style="color: red">*</span></label>
                         <input type="text" id="basic-salary" class="form-control" placeholder="Enter basic salary"
                                required th:field="*{basicSalary}">
                     </div>

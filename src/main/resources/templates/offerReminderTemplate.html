@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Offer Reminder</title>
+</head>
+<body>
+<h1>Reminder for Offer</h1>
+<p th:text="'You have an offer due today: ' + ${offer.offerId}"></p>
+<p th:text="'Contract Type: ' + ${offer.contractType}"></p>
+<p th:text="'Level: ' + ${offer.level}"></p>
+<p th:text="'Position: ' + ${offer.position}"></p>
+<p th:text="'Department: ' + ${offer.department}"></p>
+<p th:text="'Due Date: ' + ${#temporals.format(offer.dueDate, 'dd/MM/yyyy')}"></p>
+<p th:text="'Notes: ' + ${offer.notes}"></p>
+
+<a th:href="'http://localhost:8080/offers/view/' + ${offer.offerId}">View Offer Details</a>
+</body>
+</html>
