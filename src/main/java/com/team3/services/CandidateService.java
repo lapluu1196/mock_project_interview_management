@@ -16,13 +16,18 @@ public interface CandidateService {
 
      CandidateDTO findById(Long id);
 
-    // //Dat: Anh dung xoa nhe
+     CandidateDTO save(CandidateDTO candidateDTO);
 
-     List<CandidateDTO> getAllCandidates();
+     CandidateDTO updateCandidate(CandidateDTO candidateDTO);
 
-     // Minh
-     public List<Candidate> getAllCandidatesNoBanned();
+     boolean existsByEmail(String email);
+
+     String banCandidate(Long candidateId);
 
      Candidate getCandidateById(Long candidateId);
+
+     List<CandidateDTO> getCandidateByStatus(String status);
+
+     void updateCandidateStatus(Long candidateId, String status);
 
 }

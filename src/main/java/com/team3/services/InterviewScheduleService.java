@@ -1,31 +1,29 @@
 package com.team3.services;
 
-import java.util.List;
-
+import com.team3.dtos.interviewschedule.ScheduleCreateDTO;
+import com.team3.dtos.interviewschedule.ScheduleDetailDTO;
+import com.team3.dtos.interviewschedule.ScheduleEditDTO;
+import com.team3.dtos.interviewschedule.ScheduleListDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-
-import com.team3.dtos.interviewschedule.InterviewScheduleCreateDTO;
-import com.team3.dtos.interviewschedule.InterviewScheduleDTO;
-
-import com.team3.entities.InterviewSchedule;
-
 public interface InterviewScheduleService {
-    
-    Page<InterviewScheduleDTO> filterSchedule(String keyword, Long userId , String status, Pageable pageable);
-    // InterviewSchedule findById(Long id);
-    InterviewScheduleDTO create(InterviewScheduleCreateDTO interviewScheduleCreateDTO);
-    InterviewScheduleDTO update(Long id, InterviewScheduleDTO interviewScheduleDTO);
-    List<InterviewSchedule> getAllSchedulesWithInterviewers();
 
-    boolean isInterviewTitleExists(String interviewTitle);
-    boolean existsByCandidateId(Long candidateId);
+    Page<ScheduleListDTO> searchAll(String search, Long interviewerId , String status, Pageable pageable);
 
-    InterviewScheduleDTO findById(Long id);
+    ScheduleCreateDTO save(ScheduleCreateDTO scheduleCreateDTO);
 
-    boolean cancelStatusById(Long id);
+    ScheduleDetailDTO getScheduleDetail(Long id);
 
-    //Minh
-    List<InterviewSchedule> getAllInterviewSchedules();
+    ScheduleEditDTO getScheduleEdit(Long id);
+
+    String submitResult(Long id, String result, String notes);
+
+    ScheduleDetailDTO update(ScheduleEditDTO scheduleEditDTO);
+
+    String cancelSchedule(Long id);
+
+    void sendReminder(Long id, String url);
+
+    void autoSendReminder();
 }

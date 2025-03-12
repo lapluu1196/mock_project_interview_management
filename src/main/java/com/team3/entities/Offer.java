@@ -22,10 +22,6 @@ public class Offer {
     @JoinColumn(name = "candidate_id", nullable = false)
     private Candidate candidate;
 
-//    @ManyToOne
-//    @JoinColumn(name = "job_id", nullable = false)
-//    private Job job;
-
     @ManyToOne
     @JoinColumn(name = "approver", nullable = false)
     private User approver;
@@ -36,7 +32,6 @@ public class Offer {
     @Column(name = "level", nullable = false, length = 255)
     private String level;
 
-//    Thêm position
     @Column(name = "position", length = 255)
     private String position;
 
