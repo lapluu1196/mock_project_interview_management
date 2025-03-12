@@ -1,9 +1,11 @@
 package com.team3.services.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.team3.entities.User;
+import com.team3.repositories.UserRepository;
+import com.team3.services.LogService;
 import com.team3.services.UserService;
 import com.team3.utils.CurrentUserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,12 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Autowired
     private CandidateRepository candidateRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private LogService logService;
 
     @Autowired
     private CurrentUserUtil currentUserUtil;
@@ -71,6 +79,18 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
+    public CandidateDTO save(CandidateDTO candidateDTO) {
+        Candidate candidate = convertToEntity(candidateDTO);
+        candidate.setRecruiterOwner(userRepository.findByUsername(candidateDTO.getRecruiterOwner()));
+
+        Candidate savedCandidate = candidateRepository.save(candidate);
+
+        logService.logAction("Create candidate", "Candidate", savedCandidate.getCandidateId(), "Candidate created");
+
+        return convertToDTO(savedCandidate);
+    }
+
+    @Override
     public String deleteCandidateById(Long candidateId) {
         Candidate candidate = candidateRepository.findById(candidateId).orElse(null);
         if (candidate == null) {
@@ -83,6 +103,9 @@ public class CandidateServiceImpl implements CandidateService {
         } catch (Exception e) {
             return "Failed to delete candidate";
         }
+
+        logService.logAction("Delete candidate", "Candidate", candidateId, "Candidate deleted");
+
         return "Candidate deleted successfully";
     }
 
@@ -95,26 +118,80 @@ public class CandidateServiceImpl implements CandidateService {
         return convertToDTODetail(candidate);
     }
 
-    // Implementation of getAllCandidates method
     @Override
-    public List<CandidateDTO> getAllCandidates() {
-        List<Candidate> candidates = candidateRepository.findAll();
-        return candidates.stream().map(this::convertToDTO).collect(Collectors.toList());
+    public CandidateDTO updateCandidate(CandidateDTO candidateDTO) {
+        Candidate candidate = candidateRepository.findById(candidateDTO.getCandidateId()).orElse(null);
+        if (candidate == null) {
+            throw new RuntimeException("Candidate not found");
+        }
+        candidate.setFullName(candidateDTO.getFullName());
+        candidate.setEmail(candidateDTO.getEmail());
+        candidate.setPhoneNumber(candidateDTO.getPhoneNumber());
+        candidate.setAddress(candidateDTO.getAddress());
+        candidate.setDateOfBirth(candidateDTO.getDateOfBirth());
+        candidate.setGender(candidateDTO.getGender());
+        candidate.setCvFileName(candidateDTO.getCvFileName());
+        candidate.setCurrentPosition(candidateDTO.getCurrentPosition());
+        candidate.setSkills(candidateDTO.getSkills());
+        candidate.setYearsOfExperience(candidateDTO.getYearsOfExperience());
+        candidate.setHighestEducationLevel(candidateDTO.getHighestEducationLevel());
+        candidate.setRecruiterOwner(userRepository.findByUsername(candidateDTO.getRecruiterOwner()));
+        candidate.setStatus(candidateDTO.getStatus());
+        candidate.setNotes(candidateDTO.getNotes());
+        candidate.setUpdatedAt(LocalDateTime.now());
+        candidate = candidateRepository.save(candidate);
+
+        logService.logAction("Update candidate", "Candidate", candidate.getCandidateId(), "Candidate updated");
+
+        return convertToDTO(candidate);
     }
 
-    // Minh
     @Override
-    public List<Candidate> getAllCandidatesNoBanned() {
-        return candidateRepository.findAllNoBanned();
+    public boolean existsByEmail(String email) {
+        return candidateRepository.existsByEmail(email);
+    }
+
+    @Override
+    public String banCandidate(Long candidateId) {
+        Candidate candidate = candidateRepository.findById(candidateId).orElse(null);
+        if (candidate == null) {
+            return "Candidate not found";
+        }
+        if (candidate.getStatus().equals("Banned")) {
+            candidate.setStatus("Open");
+        } else {
+            candidate.setStatus("Banned");
+        }
+        candidateRepository.save(candidate);
+        logService.logAction("Ban candidate", "Candidate", candidateId, "Candidate banned");
+
+        return candidate.getStatus();
     }
 
     @Override
     public Candidate getCandidateById(Long candidateId) {
-        Candidate candidate = candidateRepository.findById(candidateId).get();
+        Candidate candidate = candidateRepository.findById(candidateId).orElse(null);
         if (candidate == null) {
             throw new RuntimeException("Candidate not found");
         }
         return candidate;
+    }
+
+    @Override
+    public List<CandidateDTO> getCandidateByStatus(String status) {
+        List<Candidate> candidates = candidateRepository.getCandidateByStatus(status);
+
+        return candidates.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateCandidateStatus(Long candidateId, String status) {
+        Candidate candidate = candidateRepository.findById(candidateId).orElse(null);
+        if (candidate == null) {
+            throw new RuntimeException("Candidate not found");
+        }
+        candidate.setStatus(status);
+        candidateRepository.save(candidate);
     }
 
     private CandidateDTO convertToDTO(Candidate candidate) {
@@ -126,7 +203,7 @@ public class CandidateServiceImpl implements CandidateService {
                 candidate.getAddress(),
                 candidate.getDateOfBirth(),
                 candidate.getGender(),
-                candidate.getCv(),
+                candidate.getCvFileName(),
                 candidate.getCurrentPosition(),
                 candidate.getSkills(),
                 candidate.getYearsOfExperience(),
@@ -134,8 +211,8 @@ public class CandidateServiceImpl implements CandidateService {
                 candidate.getRecruiterOwner().getUsername(),
                 candidate.getStatus(),
                 candidate.getNotes(),
-                candidate.getCreatedAt(),
-                candidate.getUpdatedAt()
+                candidate.getCreatedAt().toLocalDate(),
+                candidate.getUpdatedAt().toLocalDate()
         );
     }
 
@@ -148,16 +225,16 @@ public class CandidateServiceImpl implements CandidateService {
                 candidate.getAddress(),
                 candidate.getDateOfBirth(),
                 candidate.getGender(),
-                candidate.getCv(),
+                candidate.getCvFileName(),
                 candidate.getCurrentPosition(),
                 candidate.getSkills(),
                 candidate.getYearsOfExperience(),
                 candidate.getHighestEducationLevel(),
-                candidate.getRecruiterOwner().getFullName() + " (" + candidate.getRecruiterOwner().getUsername() + ")",
+                candidate.getRecruiterOwner().getUsername(),
                 candidate.getStatus(),
                 candidate.getNotes(),
-                candidate.getCreatedAt(),
-                candidate.getUpdatedAt()
+                candidate.getCreatedAt().toLocalDate(),
+                candidate.getUpdatedAt().toLocalDate()
         );
     }
 
@@ -170,7 +247,7 @@ public class CandidateServiceImpl implements CandidateService {
                 candidateDTO.getAddress(),
                 candidateDTO.getDateOfBirth(),
                 candidateDTO.getGender(),
-                candidateDTO.getCv(),
+                candidateDTO.getCvFileName(),
                 candidateDTO.getCurrentPosition(),
                 candidateDTO.getSkills(),
                 candidateDTO.getYearsOfExperience(),
@@ -178,8 +255,8 @@ public class CandidateServiceImpl implements CandidateService {
                 null,
                 candidateDTO.getStatus(),
                 candidateDTO.getNotes(),
-                candidateDTO.getCreatedAt(),
-                candidateDTO.getUpdatedAt()
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
     }
 }

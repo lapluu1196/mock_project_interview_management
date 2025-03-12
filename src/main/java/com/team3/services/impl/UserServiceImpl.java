@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -146,7 +147,7 @@ public class UserServiceImpl implements UserService {
                     .data(Map.of("username", user.getUsername(), "password", password))
                     .build();
 
-            String result = emailService.sendEmail(emailDTO, "email-user-create-template");
+            String result = emailService.sendEmail(emailDTO, "", "email-user-create-template");
 
             logService.logAction("Create user", "User", savedUser.getUserId(), "Create new user with userId: " + savedUser.getUserId());
 
@@ -202,27 +203,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> getInterviewers() {
-        List<User> users = userRepository.findByRole("Interviewer");
-        if (!users.isEmpty()) {
-            return users.stream().map(user -> {
-                UserDTO userDTO = new UserDTO();
-                userDTO.setUserId(user.getUserId());
-                userDTO.setUsername(user.getUsername());
-                userDTO.setFullName(user.getFullName());
-                userDTO.setEmail(user.getEmail());
-                userDTO.setGender(user.getGender());
-                userDTO.setDepartment(user.getDepartment());
-                userDTO.setRole(user.getRole());
-                userDTO.setDateOfBirth(user.getDateOfBirth());
-                userDTO.setAddress(user.getAddress());
-                userDTO.setPhoneNumber(user.getPhoneNumber());
-                userDTO.setStatus(user.getStatus());
-                userDTO.setNotes(user.getNotes());
-                return userDTO;
-            }).collect(Collectors.toList());
-        }
-        return List.of();
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 
     @Override
@@ -238,21 +220,21 @@ public class UserServiceImpl implements UserService {
 
             if (role == null || role.isEmpty()) {
                 return criteriaBuilder.or(
-                    criteriaBuilder.like(root.get("username"), "%" + search + "%"),
-                    criteriaBuilder.like(root.get("email"), "%" + search + "%"),
-                    criteriaBuilder.like(root.get("phoneNumber"), "%" + search + "%"),
-                    criteriaBuilder.like(root.get("role"), "%" + search + "%"),
-                    criteriaBuilder.like(root.get("status"), "%" + search + "%")
-                ) ;
-            }
-
-            return criteriaBuilder.and(
-                    criteriaBuilder.or(
                         criteriaBuilder.like(root.get("username"), "%" + search + "%"),
                         criteriaBuilder.like(root.get("email"), "%" + search + "%"),
                         criteriaBuilder.like(root.get("phoneNumber"), "%" + search + "%"),
                         criteriaBuilder.like(root.get("role"), "%" + search + "%"),
                         criteriaBuilder.like(root.get("status"), "%" + search + "%")
+                );
+            }
+
+            return criteriaBuilder.and(
+                    criteriaBuilder.or(
+                            criteriaBuilder.like(root.get("username"), "%" + search + "%"),
+                            criteriaBuilder.like(root.get("email"), "%" + search + "%"),
+                            criteriaBuilder.like(root.get("phoneNumber"), "%" + search + "%"),
+                            criteriaBuilder.like(root.get("role"), "%" + search + "%"),
+                            criteriaBuilder.like(root.get("status"), "%" + search + "%")
                     ),
                     criteriaBuilder.equal(root.get("role"), role)
             );
@@ -355,25 +337,53 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDTO> getRecruiters() {
         List<User> users = userRepository.findByRole("Recruiter");
-        if (!users.isEmpty()) {
-            return users.stream().map(user -> {
-                UserDTO userDTO = new UserDTO();
-                userDTO.setUserId(user.getUserId());
-                userDTO.setUsername(user.getUsername());
-                userDTO.setFullName(user.getFullName());
-                userDTO.setEmail(user.getEmail());
-                userDTO.setGender(user.getGender());
-                userDTO.setDepartment(user.getDepartment());
-                userDTO.setRole(user.getRole());
-                userDTO.setDateOfBirth(user.getDateOfBirth());
-                userDTO.setAddress(user.getAddress());
-                userDTO.setPhoneNumber(user.getPhoneNumber());
-                userDTO.setStatus(user.getStatus());
-                userDTO.setNotes(user.getNotes());
-                return userDTO;
-            }).collect(Collectors.toList());
+
+        if (users.isEmpty()) {
+            return new ArrayList<>();
         }
-        return List.of();
+
+        return users.stream().map(user -> {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserId(user.getUserId());
+            userDTO.setUsername(user.getUsername());
+            userDTO.setFullName(user.getFullName());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setGender(user.getGender());
+            userDTO.setDepartment(user.getDepartment());
+            userDTO.setRole(user.getRole());
+            userDTO.setDateOfBirth(user.getDateOfBirth());
+            userDTO.setAddress(user.getAddress());
+            userDTO.setPhoneNumber(user.getPhoneNumber());
+            userDTO.setStatus(user.getStatus());
+            userDTO.setNotes(user.getNotes());
+            return userDTO;
+        }).toList();
+    }
+
+    @Override
+    public List<UserDTO> getInterviewers() {
+        List<User> users = userRepository.findByRole("Interviewer");
+
+        if (users.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return users.stream().map(user -> {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserId(user.getUserId());
+            userDTO.setUsername(user.getUsername());
+            userDTO.setFullName(user.getFullName());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setGender(user.getGender());
+            userDTO.setDepartment(user.getDepartment());
+            userDTO.setRole(user.getRole());
+            userDTO.setDateOfBirth(user.getDateOfBirth());
+            userDTO.setAddress(user.getAddress());
+            userDTO.setPhoneNumber(user.getPhoneNumber());
+            userDTO.setStatus(user.getStatus());
+            userDTO.setNotes(user.getNotes());
+            return userDTO;
+        }).toList();
     }
 
     public void createPasswordResetTokenForUser(String email, String resetUrl, String token) {
@@ -399,7 +409,7 @@ public class UserServiceImpl implements UserService {
                 .to(user.getEmail())
                 .data(Map.of("resetEmail", email, "resetUrl", resetUrl))
                 .build();
-        String result = emailService.sendEmail(emailDTO, "email-user-password-reset-template");
+        String result = emailService.sendEmail(emailDTO, "", "email-user-password-reset-template");
     }
 
     @Override
@@ -424,46 +434,4 @@ public class UserServiceImpl implements UserService {
 
         return "Password has been updated failed!";
     }
-
-
-    // Minh
-    @Override
-    public List<User> getAllManagers() {
-        return userRepository.findAllManagers();
-    }
-
-    @Override
-    public List<User> getAllRecruiters() {
-        return userRepository.findAllRecruiters();
-    }
-
-    @Override
-    public User getUser(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
-
-
-    // Long
-    @Override
-    public String getUserRole(Long userID) {
-        return userRepository.getUserRole(userID);
-
-    }
-
-    @Override
-    public boolean isAuthorized(Long userID, String... roles) {
-
-        User user = userRepository.findById(userID).orElse(null);
-        if (user == null) {
-            return false;
-        }
-
-        for (String role : roles) {
-            if (user.getRole().equals(role)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

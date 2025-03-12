@@ -43,7 +43,7 @@ public class InterviewSchedule {
     @Column(name = "schedule_to")
     private LocalTime scheduleTo;
 
-    @Column(name = "location", length = 255)
+    @Column(name = "location", length = 255, columnDefinition = "NVARCHAR(255)")
     private String location;
 
     @ManyToMany
@@ -54,8 +54,8 @@ public class InterviewSchedule {
     )
     private List<User> interviewers;
 
-    @Column(name = "recruiter_owner", nullable = false, length = 255, columnDefinition = "NVARCHAR(255)")
-    private String recruiterOwner;
+    @Column(name = "recruiter_owner", nullable = false)
+    private Long recruiterOwner;
 
     @Column(name = "meeting_id", length = 255)
     private String meetingId;

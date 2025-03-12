@@ -1,5 +1,7 @@
 package com.team3.dtos.user;
 
+import com.team3.entities.User;
+import com.team3.validates.UniqueField;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -19,7 +21,7 @@ public class UserDTO {
     @NotBlank(message = "Full name is required!")
     private String fullName;
 
-    @Pattern(regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$", message = "Invalid email address! (eg. 8hQkA@example.com)")
+    @NotBlank(message = "Email must not be empty!")
     private String email;
 
     @Pattern(regexp = "^(Male|Female|Other)$", message = "Gender is required!")

@@ -53,7 +53,7 @@
             <div class="row d-flex justify-content-between mb-4">
                 <div class="col-6 d-flex justify-content-start">
                     <span class="fw-bold w-25">D.O.B</span>
-                    <span class="w-25" th:text="${userDTO.dateOfBirth}"></span>
+                    <span class="w-25" th:text="${#temporals.format(userDTO.dateOfBirth, 'dd/MM/yyyy')}"></span>
                 </div>
                 <div class="col-6 d-flex justify-content-start">
                     <span class="fw-bold w-25">Address</span>

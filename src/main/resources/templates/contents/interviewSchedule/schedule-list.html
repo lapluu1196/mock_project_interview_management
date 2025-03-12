@@ -1,0 +1,145 @@
+Inter<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/mainLayout}">
+<head>
+    <meta charset="UTF-8">
+    <title layout:fragment="title">Interview Schedule List</title>
+</head>
+<body>
+<div id="mainBoard" layout:fragment="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h4>Interview Schedule</h4>
+            </div>
+        </div>
+
+        <!-- Search form and Sort by role -->
+        <div class="row d-flex justify-content-start">
+            <div id="searchCandidateForm" class="list-form-search">
+                <form action="#" class="row g-3">
+                    <div class="col-auto">
+                        <input class="form-control" type="search" name="search" id="searchCandidate"
+                               aria-label="Recipient's username" aria-describedby="searchIcon" placeholder="Search"
+                               th:value="${keyword}">
+                        <img src="/images/search.png" alt="search-icon" id="searchIcon">
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" name="interviewerId" id="filterByInterviewer" th:value="${interviewerId}">
+                            <option value="">Interviewer</option>
+                            <option th:each="interviewer : ${interviewers}" th:value="${interviewer.getUserId()}" th:text="${interviewer.getFullName()}" th:selected="${interviewer.getUserId() == interviewerId}"></option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" name="status" id="filterByStatus" th:value="${status}">
+                            <option value="">Status</option>
+                            <option value="New" th:selected="${status} == 'New'">New</option>
+                            <option value="Invited" th:selected="${status} == 'Invited'">Invited</option>
+                            <option value="Interviewed" th:selected="${status} == 'Interviewed'">Interviewed</option>
+                            <option value="Cancelled" th:selected="${status} == 'Cancelled'">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-secondary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-6 d-flex justify-content-end w-100 pe-4 pb-4"
+             sec:authorize="hasAnyAuthority('Admin', 'Manager', 'Recruiter')">
+            <a th:href="@{/interview-schedules/create}" id="addNewButton" class="btn btn-secondary">
+                Add new
+            </a>
+        </div>
+        <!-- END Search form and Sort by role -->
+        <div class="row">
+            <span th:if="${message}" th:text="${message}" class="text-success text-end fst-italic"></span>
+            <span th:if="${error}" th:text="${error}" class="text-danger text-end fst-italic"></span>
+        </div>
+        <!-- User list table -->
+        <div class="row table-data" id="candidateTable">
+            <div class="col-12 table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Candidate Name</th>
+                        <th scope="col">Interviewer</th>
+                        <th scope="col">Schedule</th>
+                        <th scope="col">Result</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Job</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="scheduleList" class="table-body-data">
+                    <tr th:each="interviewSchedule : ${interviewSchedules}">
+                        <td th:text="${interviewSchedule.interviewTitle}"></td>
+                        <td th:text="${interviewSchedule.candidateName}" style="background-color: #EBEFF3"></td>
+                        <td th:text="${interviewSchedule.interviewerNames}"></td>
+                        <td th:text="${#temporals.format(interviewSchedule.scheduleDate, 'dd/MM/yyyy') + ' ' + #temporals.format(interviewSchedule.getScheduleFrom(), 'HH:mm') + ' - ' + #temporals.format(interviewSchedule.getScheduleTo(), 'HH:mm')}"
+                            style="background-color: #EBEFF3"></td>
+                        <td th:text="${interviewSchedule.result}"></td>
+                        <td th:text="${interviewSchedule.status}" style="background-color: #EBEFF3"></td>
+                        <td th:text="${interviewSchedule.jobTitle}"></td>
+                        <td class="d-flex justify-content-center" style="background-color: #EBEFF3">
+                            <a class="btn" th:href="@{/interview-schedules/detail/{id}(id=${interviewSchedule.scheduleId})}">
+                                <img src="/images/visible.png" alt="info icon">
+                            </a>
+                            <a th:href="@{/interview-schedules/edit/{id}(id=${interviewSchedule.scheduleId})}" class="btn"
+                               sec:authorize="hasAnyAuthority('Admin', 'Manager', 'Recruiter')">
+                                <img src="/images/edit-button.png" alt="edit icon">
+                            </a>
+                            <a th:href="@{/interview-schedules/edit/{id}(id=${interviewSchedule.scheduleId})}" class="btn"
+                               sec:authorize="hasAnyAuthority('Interviewer')">
+                                <img src="/images/submit.png" alt="submit icon" width="20" height="20">
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="row" id="pagination">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-end align-items-center">
+                        <li class="page-item">
+                            <span th:text="${(currentPage + 1) * 10 < totalSchedules} ? ${(currentPage + 1) * 10} + '/' + ${totalSchedules} + ' rows' : ${totalSchedules} + '/' + ${totalSchedules} + ' rows'"></span>
+                        </li>
+                        <li class="page-item">
+                            <a class="btn page-link" role="button"
+                               th:href="@{/interview-schedules(search=${keyword}, status=${status}, page=${currentPage - 1})}"
+                               th:classappend="${currentPage > 0} ? '' : 'disabled'"
+                               th:attr="aria-disabled=${currentPage > 0} ? 'false' : 'true'">
+                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                     xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none"
+                                     viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="2" d="m15 19-7-7 7-7"/>
+                                </svg>
+
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="btn page-link" role="button"
+                               th:href="@{/interview-schedules(search=${keyword}, status=${status}, page=${currentPage + 1})}"
+                               th:classappend="${currentPage + 1 < totalPages} ? '' : 'disabled'"
+                               th:attr="aria-disabled=${currentPage + 1 < totalPages} ? 'false' : 'true'">
+                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                     xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none"
+                                     viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="2" d="m9 5 7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <!-- END Pagination -->
+        </div>
+    </div>
+</div>
+</body>
+</html>

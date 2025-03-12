@@ -1,19 +1,24 @@
 package com.team3.services;
 
-import java.util.List;
-import java.util.Optional;
-
-import com.team3.entities.Job;
+import com.team3.dtos.job.JobDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface JobService {
-    List<Job> getAllJobs();
-    Page<Job> searchJobs(String title, String status, Pageable pageable);
+import java.util.List;
 
-    void addJob(Job job);
-    Optional<Job> findById(Long id);
-    void save(Job job);
+public interface JobService {
+
+    Page<JobDTO> filterJobs(String search, String status, Pageable pageable);
+
+    JobDTO save(JobDTO jobDTO);
+
+    JobDTO findById(Long id);
+
     void deleteJobById(Long jobId);
-    List<Job> getAllJobsOpen();
+
+    List<JobDTO> getJobByStatus(String status);
+
+    void updateJobStatus(Long jobId, String status);
+
+    void autoUpdateJobStatus();
 }

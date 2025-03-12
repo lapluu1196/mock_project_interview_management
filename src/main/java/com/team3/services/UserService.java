@@ -20,17 +20,17 @@ public interface UserService {
 
     void deleteById(Long id);
 
-    List<UserDTO> getInterviewers();
-
     Page<UserDTO> filterUser(String search, String role, Pageable pageable);
 
     String updateStatus(Long id);
 
     UserDTO findByUsername(String username);
 
+    boolean existsByEmail(String username);
 
     List<UserDTO> getRecruiters();
 
+    List<UserDTO> getInterviewers();
 
     UserDTO findByEmail(String email);
 
@@ -38,14 +38,4 @@ public interface UserService {
 
     String updatePassword(Long id, String password);
 
-    // Minh
-    List<User> getAllManagers();
-
-    List<User> getAllRecruiters();
-
-    User getUser(Long id);
-
-    // Long add phuong thuc lay User
-    String getUserRole(Long userID); // Gets role based on userID
-    boolean isAuthorized(Long userID, String... roles); // Checks if user has one of the roles
 }

@@ -61,7 +61,6 @@ $(document).ready(function () {
     });
 
     /* Active and Inactive button */
-
     $("#activeUserButton").on("click", function () {
         const id = $(this).data('user-id');
 
@@ -87,42 +86,57 @@ $(document).ready(function () {
         });
     });
 
+    /* Ban and Open button */
+    $("#candidateBanOkBtn").on("click", function () {
+        const candidateId = $(this).data('candidate-id');
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/candidate/banCandidate',
+            data: {
+                candidateId: candidateId
+            },
+            success: function (response) {
+                if (response === 'Banned') {
+                    $('#banCandidateButton').removeClass('btn-danger').addClass('btn-success');
+                    $('#banCandidateButton').text('Open Candidate');
+                } else {
+                    $('#banCandidateButton').removeClass('btn-success').addClass('btn-danger');
+                    $('#banCandidateButton').text('Ban Candidate');
+                }
+                $("#candidateStatus").html(response);
+            },
+            error: function () {
+                alert("Error updating candidate status!");
+            }
+        });
+
+        $("#candidateBanConfirmationModal").modal('hide');
+    });
+
     /* Logout button */
     $("#logoutOkBtn").on("click", function () {
         window.location.href = '/logout';
+    });
+
+    /* Send Reminder for Interviewer */
+    $("#sendReminderOkBtn").on("click", function () {
+        const scheduleId = $(this).data('schedule-id');
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/interview-schedules/send-reminder',
+            data: {
+                id: scheduleId
+            },
+            success: function (response) {
+                $("#successMessage").text("Email reminder has been sent to the interviewers.");
+            },
+            error: function () {
+                $("#errorMessage").text("Error sending reminder!");
+                $("#sendReminderConfirmationModal").modal('hide');
+            }
+        });
     })
-    // Script Form add Interview Schedule
-    /* Multi select  */
-    new MultiSelectTag('multiSelect')
-
-    // Set current date as minimum date for input field
-    var today = new Date().toISOString().split('T')[0];
-    document.getElementById("scheduleDateFormAdd").setAttribute("min", today);
-
-    //Dinh dang gio
-    flatpickr("#scheduleTimeFrom", {
-        enableTime: true,        // Cho phép chọn thời gian
-        noCalendar: true,        // Ẩn lịch ngày tháng
-        dateFormat: "H:i", 
-        defaultDate: new Date(),      // Định dạng 24 giờ (HH:mm)
-        time_24hr: true          // Hiển thị định dạng 24 giờ, không AM/PM
-    });
-
-    flatpickr("#scheduleTimeFromFormEdit", {
-        enableTime: true,        // Cho phép chọn thời gian
-        noCalendar: true,        // Ẩn lịch ngày tháng
-        dateFormat: "H:i", 
-
-        time_24hr: true          // Hiển thị định dạng 24 giờ, không AM/PM
-    });
-
-
-    flatpickr("#scheduleTimeTo", {
-        enableTime: true,        // Cho phép chọn thời gian
-        noCalendar: true,        // Ẩn lịch ngày tháng
-        dateFormat: "H:i",       // Định dạng 24 giờ (HH:mm)
-        time_24hr: true          // Hiển thị định dạng 24 giờ, không AM/PM
-    });
-
 
 });

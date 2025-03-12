@@ -1,10 +1,11 @@
 package com.team3.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.*;;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Candidates")
@@ -36,8 +37,8 @@ public class Candidate {
     @Column(name = "gender", nullable = false, length = 50)
     private String gender;
 
-    @Column(name = "cv", length = 255)
-    private String cv;
+    @Column(name = "cvFileName", length = 255)
+    private String cvFileName;
 
     @Column(name = "current_position", nullable = false, length = 100)
     private String currentPosition;

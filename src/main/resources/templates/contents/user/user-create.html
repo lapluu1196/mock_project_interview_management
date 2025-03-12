@@ -48,6 +48,7 @@
                         <div class="d-flex flex-column w-75 ms-3">
                             <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
                                   class="invalid-input-user text-danger"></span>
+                            <span id="emailError" class="invalid-input-user text-danger"></span>
                             <span th:if="${error}" th:text="${error}" class="text-danger"></span>
                             <input type="text" class="form-control" placeholder="Type an email..." id="email"
                                    th:field="*{email}">

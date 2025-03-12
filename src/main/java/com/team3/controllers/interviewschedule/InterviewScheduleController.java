@@ -1,15 +1,17 @@
 package com.team3.controllers.interviewschedule;
 
-import java.time.LocalDate;
-import java.util.List;
-
+import com.team3.dtos.candidate.CandidateDTO;
+import com.team3.dtos.interviewschedule.ScheduleCreateDTO;
+import com.team3.dtos.interviewschedule.ScheduleDetailDTO;
+import com.team3.dtos.interviewschedule.ScheduleEditDTO;
+import com.team3.services.CandidateService;
+import com.team3.services.InterviewScheduleService;
+import com.team3.services.JobService;
+import com.team3.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,35 +20,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.team3.dtos.candidate.CandidateDTO;
-import com.team3.dtos.interviewschedule.InterviewScheduleCreateDTO;
-import com.team3.dtos.interviewschedule.InterviewScheduleDTO;
-import com.team3.dtos.interviewschedule.TimeUtils;
-import com.team3.dtos.user.UserDTO;
-import com.team3.entities.Candidate;
-import com.team3.entities.InterviewSchedule;
-import com.team3.entities.Job;
-import com.team3.entities.User;
-import com.team3.services.CandidateService;
-import com.team3.services.InterviewScheduleService;
-import com.team3.services.JobService;
-import com.team3.services.UserService;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
-@RequestMapping("/interview-schedule")
+@RequestMapping("/interview-schedules")
 public class InterviewScheduleController {
 
     @Autowired
     private InterviewScheduleService interviewScheduleService;
-
-    @Autowired
-    private CandidateService candidateService;
 
     @Autowired
     private UserService userService;
@@ -54,280 +39,192 @@ public class InterviewScheduleController {
     @Autowired
     private JobService jobService;
 
-    @GetMapping("/index")
-    public String index(@RequestParam(required = false) String keyword,
-            @RequestParam(name = "interviewerId", required = false) Long interviewerId,
-            @RequestParam(name = "status", required = false) String status,
-            @RequestParam(defaultValue = "0") int page,
-            Model model) {
-        int size = 10;
-        ;
-        var pageable = PageRequest.of(page, size);
-        Page<InterviewScheduleDTO> interviewScheduleDTOs = interviewScheduleService.filterSchedule(keyword, interviewerId,
-                status, pageable);
+    @Autowired
+    private CandidateService candidateService;
 
-        List<UserDTO> interviewers = userService.getInterviewers();
-        List<InterviewSchedule> schedules = interviewScheduleService.getAllSchedulesWithInterviewers();
-        if (interviewScheduleDTOs.isEmpty()) {
-            model.addAttribute("message", "Data not found!");
-        }
-        model.addAttribute("schedules", schedules);
-        model.addAttribute("interviewers", interviewers);
-        model.addAttribute("interviewScheduleDTOs", interviewScheduleDTOs);
-        model.addAttribute("keyword", keyword);
+    @GetMapping("")
+    public String interviewScheduleList(@RequestParam(required = false) String search,
+                                        @RequestParam(required = false) Long interviewerId,
+                                        @RequestParam(required = false) String status,
+                                        @RequestParam(defaultValue = "0") int page,
+                                        Model model) {
+        int size = 10;
+        var pageable = PageRequest.of(page, size);
+        var interviewSchedulesDTO = interviewScheduleService.searchAll(search, interviewerId, status, pageable);
+
+        model.addAttribute("interviewSchedules", interviewSchedulesDTO);
+        model.addAttribute("keyword", search);
+        model.addAttribute("interviewerId", interviewerId);
+        model.addAttribute("status", status);
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", interviewScheduleDTOs.getTotalPages());
-        model.addAttribute("totalUsers", interviewScheduleDTOs.getTotalElements());
-        return "contents/interviewschedule/schedule_list";
+        model.addAttribute("totalPages", interviewSchedulesDTO.getTotalPages());
+        model.addAttribute("totalSchedules", interviewSchedulesDTO.getTotalElements());
+
+        var interviewers = userService.getInterviewers();
+        model.addAttribute("interviewers", interviewers);
+
+        return "contents/interviewSchedule/schedule-list";
     }
 
-    @GetMapping("/add")
-    public String addInterviewSchedule(HttpServletRequest request,Model model) {
-        var interviewCreateDTO = new InterviewScheduleCreateDTO();
-        model.addAttribute("interviewScheduleCreateDTO", interviewCreateDTO);
-        List<UserDTO> interviewers = userService.getInterviewers();
-        model.addAttribute("interviewers", interviewers);
-        var candidates = candidateService.getAllCandidates();
-        model.addAttribute("candidates", candidates);
+    @GetMapping("/create")
+    public String interviewScheduleCreate(Model model) {
 
-        var jobs = jobService.getAllJobsOpen();
-        model.addAttribute("jobs", jobs);
+        var scheduleCreateDTO = new ScheduleCreateDTO();
+        model.addAttribute("scheduleCreateDTO", scheduleCreateDTO);
+
+        var interviewers = userService.getInterviewers();
+        model.addAttribute("interviewers", Optional.ofNullable(interviewers).orElse(new ArrayList<>()));
 
         var recruiters = userService.getRecruiters();
-        model.addAttribute("recruiters", recruiters);
-        // Lấy URL của trang trước (nếu có)
-        String previousPageUrl = request.getHeader("Referer");
-        if (previousPageUrl == null || previousPageUrl.isEmpty()) {
-            previousPageUrl = "/interview-schedule/index"; // URL mặc định nếu không có Referer
-        }
-        model.addAttribute("previousPageUrl", previousPageUrl);
-        return "contents/interviewschedule/schedule_create";
+        model.addAttribute("recruiters", Optional.ofNullable(recruiters).orElse(new ArrayList<>()));
+
+        var openJobs = jobService.getJobByStatus("Open");
+        model.addAttribute("jobs", Optional.ofNullable(openJobs).orElse(new ArrayList<>()));
+
+        var openCandidates = candidateService.getCandidateByStatus("Open");
+        model.addAttribute("candidates", Optional.ofNullable(openCandidates).orElse(new ArrayList<>()));
+
+        return "contents/interviewSchedule/schedule-create";
     }
 
-    @PostMapping("/add")
-    public String addInterviewSchedule(
-            @ModelAttribute @Valid InterviewScheduleCreateDTO interviewScheduleCreateDTO,
-            BindingResult bindingResult,
-            RedirectAttributes redirectAttributes,
-            Model model) {
-
-        // Kiểm tra nếu interviewTitle đã tồn tại
-        if (interviewScheduleService.isInterviewTitleExists(interviewScheduleCreateDTO.getInterviewTitle())) {
-
-            bindingResult.rejectValue("interviewTitle", "interviewTitle.exists", "Interview title already exists!");
-
-        }
-
-        if (interviewScheduleCreateDTO.getScheduleFrom().isAfter(interviewScheduleCreateDTO.getScheduleTo())) {
-
-            bindingResult.rejectValue("scheduleFrom", "scheduleFrom.invalid",
-                    "Schedule to must be after schedule from!");
-
-        }
-
-        if (interviewScheduleService.existsByCandidateId(interviewScheduleCreateDTO.getCandidateId())) {
-
-            bindingResult.rejectValue("candidateId", "candidateId.exists", "Candidate already scheduled!");
-        }
-
-        // Kiểm tra BindingResult có lỗi không
+    @PostMapping("/create")
+    public String interviewScheduleCreate(@ModelAttribute("scheduleCreateDTO") @Valid ScheduleCreateDTO scheduleCreateDTO,
+                                          BindingResult bindingResult,
+                                          RedirectAttributes redirectAttributes,
+                                          Model model) {
         if (bindingResult.hasErrors()) {
-            // Nếu có lỗi, giữ lại các lựa chọn cho các trường
+            if (scheduleCreateDTO.getInterviewersIdList() != null) {
+                List<String> interviewerChosen = List.of(scheduleCreateDTO.getInterviewersIdList().split(","));
+                model.addAttribute("interviewerChosen", interviewerChosen);
+            }
 
-            List<UserDTO> interviewers = userService.getInterviewers();
-            model.addAttribute("interviewers", interviewers);
+            var interviewers = userService.getInterviewers();
+            model.addAttribute("interviewers", Optional.ofNullable(interviewers).orElse(new ArrayList<>()));
 
-            List<CandidateDTO> candidates = candidateService.getAllCandidates();
-            model.addAttribute("candidates", candidates);
+            var recruiters = userService.getRecruiters();
+            model.addAttribute("recruiters", Optional.ofNullable(recruiters).orElse(new ArrayList<>()));
 
-            List<Job> jobs = jobService.getAllJobsOpen();
-            model.addAttribute("jobs", jobs);
+            var openJobs = jobService.getJobByStatus("Open");
+            model.addAttribute("jobs", Optional.ofNullable(openJobs).orElse(new ArrayList<>()));
 
-            List<UserDTO> recruiters = userService.getRecruiters();
-            model.addAttribute("recruiters", recruiters);
+            var openCandidates = candidateService.getCandidateByStatus("Open");
+            model.addAttribute("candidates", Optional.ofNullable(openCandidates).orElse(new ArrayList<>()));
 
-            return "contents/interviewschedule/schedule_create"; // Trả lại form nếu có lỗi
+            return "contents/interviewSchedule/schedule-create";
         }
 
-        // Tiến hành tạo lịch phỏng vấn nếu không có lỗi
-        var result = interviewScheduleService.create(interviewScheduleCreateDTO);
-        if (result == null) {
-            model.addAttribute("errorPopupMessage", "Failed to created interview schedule");
+        ScheduleCreateDTO saved = interviewScheduleService.save(scheduleCreateDTO);
 
-            // Nếu không tạo thành công, ném lỗi
-            throw new IllegalArgumentException("Failed to create schedule");
+        if (saved == null) {
+            redirectAttributes.addFlashAttribute("error", "Failed to create the schedule");
+        } else {
+            candidateService.updateCandidateStatus(saved.getCandidateId(), "Waiting for interview");
+
+            redirectAttributes.addFlashAttribute("message", "Schedule created successfully");
         }
 
-        // Thêm thông báo thành công vào RedirectAttributes
-        redirectAttributes.addFlashAttribute("successMessage", "Successfully created schedule!");
-
-        // Redirect về trang quản lý sau khi thêm thành công
-        return "redirect:/interview-schedule/index";
+        return "redirect:/interview-schedules";
     }
 
-    @GetMapping("/scheduleDetail/{id}")
-    public String scheduleDetail(@PathVariable("id") Long id, Model model) {
+    @GetMapping("/detail/{id}")
+    public String detailInterviewSchedule(@PathVariable("id") Long id, Model model) {
+        var interviewScheduleDTO = interviewScheduleService.getScheduleDetail(id);
+        model.addAttribute("interviewSchedule", interviewScheduleDTO);
 
-        InterviewScheduleDTO interviewSchedule = interviewScheduleService.findById(id);
-        String formattedFrom = TimeUtils.formatTimeTo12Hour(interviewSchedule.getScheduleFrom());
-        String formattedTo = TimeUtils.formatTimeTo12Hour(interviewSchedule.getScheduleTo());
-
-        model.addAttribute("scheduleFrom", formattedFrom);
-        model.addAttribute("scheduleTo", formattedTo);
-        model.addAttribute("interviewSchedule", interviewSchedule);
-        return "contents/interviewschedule/schedule_detail";
+        return "contents/interviewSchedule/schedule-detail";
     }
 
     @GetMapping("/edit/{id}")
-    public String updateInterviewSchedule(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
-        // Tìm kiếm thông tin phỏng vấn
-        InterviewScheduleDTO interviewScheduleDTO = interviewScheduleService.findById(id);
-        model.addAttribute("interviewScheduleDTO", interviewScheduleDTO);
+    public String editInterviewSchedule(@PathVariable("id") Long id, Model model) {
+        var interviewScheduleDTO = interviewScheduleService.getScheduleEdit(id);
 
-        // Định dạng thời gian
-        String formattedFrom = TimeUtils.formatTimeTo12Hour(interviewScheduleDTO.getScheduleFrom());
-        String formattedTo = TimeUtils.formatTimeTo12Hour(interviewScheduleDTO.getScheduleTo());
-        model.addAttribute("scheduleFrom", formattedFrom);
-        model.addAttribute("scheduleTo", formattedTo);
+        model.addAttribute("interviewSchedule", interviewScheduleDTO);
 
-        // Lấy các danh sách cần thiết (người phỏng vấn, ứng viên, công việc, nhà tuyển
-        // dụng)
-        List<UserDTO> interviewers = userService.getInterviewers();
-        List<CandidateDTO> candidates = candidateService.getAllCandidates();
-        List<Job> jobs = jobService.getAllJobsOpen();
-        List<UserDTO> recruiters = userService.getRecruiters();
-
-        model.addAttribute("interviewers", interviewers);
-        model.addAttribute("candidates", candidates);
-        model.addAttribute("jobs", jobs);
-        model.addAttribute("recruiters", recruiters);
-
-        // Lấy URL của trang trước (nếu có)
-        String previousPageUrl = request.getHeader("Referer");
-        if (previousPageUrl == null || previousPageUrl.isEmpty()) {
-            previousPageUrl = "/interview-schedule/index"; // URL mặc định nếu không có Referer
+        if (interviewScheduleDTO.getInterviewersIdList() != null) {
+            List<String> interviewerChosen = List.of(interviewScheduleDTO.getInterviewersIdList().split(","));
+            model.addAttribute("interviewerChosen", interviewerChosen);
         }
-        model.addAttribute("previousPageUrl", previousPageUrl);
 
-        return "contents/interviewschedule/schedule_edit";
+        var interviewers = userService.getInterviewers();
+        model.addAttribute("interviewers", Optional.ofNullable(interviewers).orElse(new ArrayList<>()));
+
+        var recruiters = userService.getRecruiters();
+        model.addAttribute("recruiters", Optional.ofNullable(recruiters).orElse(new ArrayList<>()));
+
+        var openJobs = jobService.getJobByStatus("Open");
+        model.addAttribute("jobs", Optional.ofNullable(openJobs).orElse(new ArrayList<>()));
+
+        List<CandidateDTO> openCandidates = candidateService.getCandidateByStatus("Open");
+        CandidateDTO chosenCandidateDTO = candidateService.findById(interviewScheduleDTO.getCandidateId());
+        openCandidates.add(chosenCandidateDTO);
+        model.addAttribute("candidates", openCandidates);
+
+        return "contents/interviewSchedule/schedule-edit";
     }
 
-    @PostMapping("/edit/{id}")
-    public String updateInterviewSchedulePost(@PathVariable("id") Long id, 
-            @Valid InterviewScheduleDTO interviewScheduleDTO,
-            BindingResult bindingResult,
-            RedirectAttributes redirectAttributes,
-            Model model) {
-
-        InterviewScheduleDTO existingSchedule = interviewScheduleService.findById(id);
-
-        // Kiểm tra xem candidate có khác null không trước khi gọi getCandidateId
-        if (existingSchedule != null && existingSchedule.getCandidateId() != null) {
-            if (!existingSchedule.getCandidateId().equals(interviewScheduleDTO.getCandidateId())) {
-                // Kiểm tra candidate mới đã tồn tại trong lịch phỏng vấn khác chưa
-                if (interviewScheduleService.existsByCandidateId(interviewScheduleDTO.getCandidateId())) {
-                    bindingResult.rejectValue("candidateId", "candidateId.exists", "Candidate already scheduled!");
-                }
-            }
-        } else {
-            // Xử lý trường hợp không tìm thấy candidate hoặc existingSchedule là null
-            bindingResult.rejectValue("candidateId", "candidateId.notFound", "Candidate not found!");
-        }
-        // Kiểm tra nếu interviewTitle đã tồn tại
-        if (!existingSchedule.getInterviewTitle().equals(interviewScheduleDTO.getInterviewTitle())) {
-            // Kiểm tra candidate mới đã tồn tại trong lịch phỏng vấn khác chưa{
-            if (interviewScheduleService.isInterviewTitleExists(interviewScheduleDTO.getInterviewTitle())) {
-
-                bindingResult.rejectValue("interviewTitle", "interviewTitle.exists", "Interview title already exists!");
-
-            }
-        }
-
-        if(interviewScheduleDTO.getScheduleDate().isBefore((existingSchedule.getCreatedAt().toLocalDate()))) {
-            bindingResult.rejectValue("scheduleDate", "scheduleDate.invalid", "Schedule date must be in the future!");
-        }
-        
-
-        if (interviewScheduleDTO.getScheduleFrom().isAfter(interviewScheduleDTO.getScheduleTo()) ) {
-
-            bindingResult.rejectValue("scheduleFrom", "scheduleFrom.invalid",
-                    "Schedule to must be after schedule from!");
-
-        }
-
-
+    @PostMapping("/edit")
+    public String editInterviewSchedule(@ModelAttribute("interviewSchedule") @Valid ScheduleEditDTO scheduleEditDTO,
+                                        BindingResult bindingResult,
+                                        RedirectAttributes redirectAttributes,
+                                        Model model) {
         if (bindingResult.hasErrors()) {
-            InterviewScheduleDTO test = interviewScheduleService.findById(id);
-            Long testId = test.getScheduleId();
-            // Nếu có lỗi, giữ lại các lựa chọn cho các trường
-            List<UserDTO> interviewers = userService.getInterviewers();
-            model.addAttribute("interviewers", interviewers);
+            if (scheduleEditDTO.getInterviewersIdList() != null) {
+                List<String> interviewerChosen = List.of(scheduleEditDTO.getInterviewersIdList().split(","));
+                model.addAttribute("interviewerChosen", interviewerChosen);
+            }
 
-            List<CandidateDTO> candidates = candidateService.getAllCandidates();
-            model.addAttribute("candidates", candidates);
+            var interviewers = userService.getInterviewers();
+            model.addAttribute("interviewers", Optional.ofNullable(interviewers).orElse(new ArrayList<>()));
 
-            List<Job> jobs = jobService.getAllJobsOpen();
-            model.addAttribute("jobs", jobs);
+            var recruiters = userService.getRecruiters();
+            model.addAttribute("recruiters", Optional.ofNullable(recruiters).orElse(new ArrayList<>()));
 
-            List<UserDTO> recruiters = userService.getRecruiters();
-            model.addAttribute("recruiters", recruiters);
-            
-            return "contents/interviewschedule/schedule_edit"; // Trả lại form nếu có lỗi
+            var openJobs = jobService.getJobByStatus("Open");
+            model.addAttribute("jobs", Optional.ofNullable(openJobs).orElse(new ArrayList<>()));
+
+            List<CandidateDTO> openCandidates = candidateService.getCandidateByStatus("Open");
+            if (scheduleEditDTO.getCandidateId() != null) {
+                CandidateDTO chosenCandidateDTO = candidateService.findById(scheduleEditDTO.getCandidateId());
+                openCandidates.add(chosenCandidateDTO);
+            }
+            model.addAttribute("candidates", openCandidates);
+
+            return "contents/interviewSchedule/schedule-edit";
         }
 
-        // Lấy bản ghi lịch phỏng vấn cũ từ cơ sở dữ liệu theo ID
-
-        // Tiến hành cập nhật lịch phỏng vấn nếu không có lỗi
-        var result = interviewScheduleService.update(id, interviewScheduleDTO);
-        if (result == null) {
-            model.addAttribute("errorPopupMessage", "Failed to created interview schedule");
-            // Nếu không cập nhật thành công, ném lỗi
-            throw new IllegalArgumentException("Failed to create schedule");
+        ScheduleDetailDTO saved = interviewScheduleService.update(scheduleEditDTO);
+        if (saved == null) {
+            redirectAttributes.addFlashAttribute("error", "Failed to update the schedule");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "Schedule updated successfully");
         }
 
-        // Thêm thông báo thành công vào RedirectAttributes
-        redirectAttributes.addFlashAttribute("successMessage", "Change has been successfully updated!");
+        return "redirect:/interview-schedules/detail/" + scheduleEditDTO.getScheduleId();
 
-        // Redirect về trang quản lý sau khi thêm thành công
-        return "redirect:/interview-schedule/index";
     }
 
-    @GetMapping("/filter")
-    public String filterSchedules(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(name = "interviewerId", required = false) Long interviewerId,
-            @RequestParam(name = "status", required = false) String status,
-            @RequestParam(defaultValue = "0") int page,
-            Model model) {
+    @GetMapping("/submit-result/{id}")
+    public String submitResult(@PathVariable("id") Long id, Model model) {
+        var interviewScheduleDTO = interviewScheduleService.getScheduleDetail(id);
+        model.addAttribute("interviewSchedule", interviewScheduleDTO);
 
-        int size = 10;
-        var pageable = PageRequest.of(page, size);
+        return "contents/interviewSchedule/schedule-submit-result";
+    }
 
-        var interviewScheduleDTOs = interviewScheduleService.filterSchedule(keyword, interviewerId, status, pageable);
-
-        model.addAttribute("interviewScheduleDTOs", interviewScheduleDTOs);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("interviewerId", interviewerId);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", interviewScheduleDTOs.getTotalPages());
-        model.addAttribute("totalUsers", interviewScheduleDTOs.getTotalElements());
-
-        return "fragments/interview-schedule-table :: interviewScheduleTable";
+    @PostMapping("/submit-result/{id}")
+    public String submitResult(@PathVariable("id") Long id,
+                               @RequestParam("result") String result,
+                               @RequestParam("notes") String notes,
+                               RedirectAttributes redirectAttributes) {
+        String message = interviewScheduleService.submitResult(id, result, notes);
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/interview-schedules/detail/" + id;
     }
 
     @PostMapping("/cancel/{id}")
-    @Transactional
-    public String cancelInterview(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        boolean isCancelled = interviewScheduleService.cancelStatusById(id); // Gọi phương thức để hủy lịch phỏng vấn
-        if (isCancelled) {
-            redirectAttributes.addFlashAttribute("successMessage", "Interview has been successfully canceled!");
-            return "redirect:/interview-schedule/index";
-
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Interview not found.");
-            return "redirect:/interview-schedule/index";
-        }
+    public String cancelSchedule(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        String message = interviewScheduleService.cancelSchedule(id);
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/interview-schedules/detail/" + id;
     }
-
-
 }
